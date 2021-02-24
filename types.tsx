@@ -7,6 +7,7 @@ export type BottomTabParamList = {
   Home: undefined;
   Search: undefined;
   Profile: undefined;
+  Map: undefined;
 };
 
 export type HomeParamList = {
@@ -19,4 +20,8 @@ export type SearchParamList = {
 
 export type ProfileParamList = {
   ProfileScreen: undefined;
+};
+
+export type MapParamList = {
+  MapScreen: undefined;
 };

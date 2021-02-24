@@ -16,9 +16,14 @@ export default {
               SearchScreen: 'two',
             },
           },
+          Map: {
+            screens: {
+              MapScreen: 'three',
+            },
+          },
           Profile: {
             screens: {
-              ProfileScreen: 'three',
+              ProfileScreen: 'four',
             },
           },
         },
