@@ -16,6 +16,8 @@ import {
   MapParamList,
 } from "../types";
 import MapScreen from "../screens/MapScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import LoginScreen from "../screens/LoginScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -122,6 +124,16 @@ function ProfileNavigator() {
         name="ProfileScreen"
         component={ProfileScreen}
         options={{ headerTitle: "Profile" }}
+      />
+      <ProfileStack.Screen
+        name="RegisterScreen"
+        component={RegisterScreen}
+        options={{ headerTitle: "Register" }}
+      />
+      <ProfileStack.Screen
+        name="LoginScreen"
+        component={LoginScreen}
+        options={{ headerTitle: "Login" }}
       />
     </ProfileStack.Navigator>
   );

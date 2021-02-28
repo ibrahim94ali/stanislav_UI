@@ -1,22 +1,35 @@
-import * as React from "react";
-import { useContext } from "react";
+import { useQuery } from "@apollo/client";
+import { observer, useObserver } from "mobx-react";
+import React, { useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
-import { ApartmentsContext } from "../ApartmentsContext";
 import Apartment from "../components/Apartment";
 
 import { View, Text } from "../components/Themed";
+import { GET_APARTMENTS } from "../graphQL/Queries";
 import { ApartmentI } from "../interfaces";
+import { StoreData } from "../StoreContext";
 
-export default function HomeScreen() {
-  const apartments = useContext(ApartmentsContext);
+function HomeScreen() {
+  const store = StoreData();
+
+  const { data } = useQuery(GET_APARTMENTS);
+  useEffect(() => {
+    if (data) {
+      store.setApartments(data.apartments);
+    }
+  }, [data]);
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{apartments.length} Apartments found</Text>
+      <Text style={styles.title}>
+        {store.apartments.length} Apartments found
+      </Text>
       <FlatList
-        data={apartments}
+        data={store.apartments}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
+        extraData={store.apartments}
       />
     </View>
   );
@@ -25,6 +38,8 @@ export default function HomeScreen() {
 const renderItem = ({ item }: { item: ApartmentI }) => {
   return <Apartment apartment={item} />;
 };
+
+export default observer(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {

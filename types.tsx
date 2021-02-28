@@ -20,6 +20,8 @@ export type SearchParamList = {
 
 export type ProfileParamList = {
   ProfileScreen: undefined;
+  RegisterScreen: undefined;
+  LoginScreen: undefined;
 };
 
 export type MapParamList = {

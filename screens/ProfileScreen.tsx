@@ -1,24 +1,60 @@
-import * as React from 'react';
-import { StyleSheet } from 'react-native';
+import * as React from "react";
+import { Button, StyleSheet } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Text, View } from "../components/Themed";
+import { StoreData } from "../StoreContext";
+import { observer } from "mobx-react";
 
-import { Text, View } from '../components/Themed';
+function ProfileScreen({ navigation }: { navigation: any }) {
+  const store = StoreData();
 
-export default function TabTwoScreen() {
+  const handleRegister = () => {
+    navigation.navigate("RegisterScreen");
+  };
+
+  const handleLogin = () => {
+    navigation.navigate("LoginScreen");
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.clear();
+      store.setUser(null);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+      {store.user ? (
+        <View>
+          <Text>You are already logged in</Text>
+          <Button title="Logout" onPress={handleLogout} />
+        </View>
+      ) : (
+        <View>
+          <Text>You are not logged in</Text>
+          <Button title="Login" onPress={handleLogin} />
+          <Text style={styles.title}>Please register here</Text>
+          <Button title="Register" onPress={handleRegister} />
+        </View>
+      )}
     </View>
   );
 }
 
+export default observer(ProfileScreen);
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   title: {
     fontSize: 20,
-    fontWeight: 'bold',
-  }
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
 });

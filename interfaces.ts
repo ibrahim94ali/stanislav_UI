@@ -13,3 +13,14 @@ export interface ApartmentI {
     msquare: number;
     roomCount: number;
 }
+
+export interface UserI {
+    id?: string;
+    email: string;
+    token?: string;
+    phone: string;
+    name: string;
+    surname: string;
+    roles?: string[];
+    verified: boolean; 
+}

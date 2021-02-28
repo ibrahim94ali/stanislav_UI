@@ -8,22 +8,24 @@ export default {
         screens: {
           Home: {
             screens: {
-              HomeScreen: 'one',
+              HomeScreen: 'home',
             },
           },
           Search: {
             screens: {
-              SearchScreen: 'two',
+              SearchScreen: 'search',
             },
           },
           Map: {
             screens: {
-              MapScreen: 'three',
+              MapScreen: 'map',
             },
           },
           Profile: {
             screens: {
-              ProfileScreen: 'four',
+              ProfileScreen: 'profile',
+              RegisterScreen: 'register',
+              LoginScreen: 'login',
             },
           },
         },
