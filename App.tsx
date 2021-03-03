@@ -15,10 +15,10 @@ import { onError } from "@apollo/client/link/error";
 
 const errorLink = onError(({ graphQLErrors, networkError }) => {
   if (graphQLErrors) {
-    alert("Error" + graphQLErrors[0].message);
+    alert("Error: " + graphQLErrors[0].message);
   }
   if (networkError) {
-    alert("Error" + networkError.message);
+    alert("Error: " + networkError.message);
   }
 });
 const link = from([

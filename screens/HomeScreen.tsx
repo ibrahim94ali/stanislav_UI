@@ -1,19 +1,29 @@
 import { observer } from "mobx-react";
 import React from "react";
 import { StyleSheet } from "react-native";
-import { FlatList } from "react-native-gesture-handler";
+import {
+  FlatList,
+  TouchableWithoutFeedback,
+} from "react-native-gesture-handler";
 import Apartment from "../components/Apartment";
 
 import { View, Text } from "../components/Themed";
 import { ApartmentI } from "../interfaces";
 import { useStore } from "../hooks/StoreContext";
+import { StackNavigationHelpers } from "@react-navigation/stack/lib/typescript/src/types";
 
-function HomeScreen() {
+function HomeScreen({ navigation }: { navigation: StackNavigationHelpers }) {
   const store = useStore();
 
-  const renderItem = ({ item }: { item: ApartmentI }) => {
-    return <Apartment apartment={item} />;
-  };
+  const renderItem = ({ item }: { item: ApartmentI }) => (
+    <TouchableWithoutFeedback
+      onPress={() =>
+        navigation.navigate("ApartmentDetailsScreen", { apartment: item })
+      }
+    >
+      <Apartment apartment={item} />
+    </TouchableWithoutFeedback>
+  );
 
   return (
     <View style={styles.container}>

@@ -18,6 +18,7 @@ import {
 import MapScreen from "../screens/MapScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
+import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -77,11 +78,15 @@ const HomeStack = createStackNavigator<HomeParamList>();
 
 function HomeNavigator() {
   return (
-    <HomeStack.Navigator>
+    <HomeStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
         options={{ headerTitle: "Home" }}
+      />
+      <HomeStack.Screen
+        name="ApartmentDetailsScreen"
+        component={ApartmentDetailsScreen}
       />
     </HomeStack.Navigator>
   );
@@ -91,7 +96,7 @@ const SearchStack = createStackNavigator<SearchParamList>();
 
 function SearchNavigator() {
   return (
-    <SearchStack.Navigator>
+    <SearchStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <SearchStack.Screen
         name="SearchScreen"
         component={SearchScreen}
@@ -105,7 +110,7 @@ const MapStack = createStackNavigator<MapParamList>();
 
 function MapNavigator() {
   return (
-    <MapStack.Navigator>
+    <MapStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <MapStack.Screen
         name="MapScreen"
         component={MapScreen}
@@ -119,7 +124,7 @@ const ProfileStack = createStackNavigator<ProfileParamList>();
 
 function ProfileNavigator() {
   return (
-    <ProfileStack.Navigator>
+    <ProfileStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
       <ProfileStack.Screen
         name="ProfileScreen"
         component={ProfileScreen}

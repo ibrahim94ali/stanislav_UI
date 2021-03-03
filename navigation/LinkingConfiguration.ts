@@ -9,6 +9,7 @@ export default {
           Home: {
             screens: {
               HomeScreen: 'home',
+              ApartmentDetailsScreen: 'apartmentDetails'
             },
           },
           Search: {
