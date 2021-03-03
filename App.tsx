@@ -24,7 +24,7 @@ const errorLink = onError(({ graphQLErrors, networkError }) => {
 const link = from([
   errorLink,
   new HttpLink({
-    uri: "http://192.168.0.33:3000/graphql",
+    uri: "https://stanislav-app.herokuapp.com/graphql",
   }),
 ]);
 
