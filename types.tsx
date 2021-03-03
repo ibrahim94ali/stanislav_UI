@@ -23,6 +23,7 @@ export type ProfileParamList = {
   ProfileScreen: undefined;
   RegisterScreen: undefined;
   LoginScreen: undefined;
+  NewApartmentFormScreen: undefined;
 };
 
 export type MapParamList = {

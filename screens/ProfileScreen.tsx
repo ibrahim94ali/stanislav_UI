@@ -31,6 +31,20 @@ function ProfileScreen({ navigation }: { navigation: any }) {
         <View>
           <Text style={styles.title}>You are already logged in</Text>
           <Button title="Logout" onPress={handleLogout} />
+          <Text style={[styles.title, { marginTop: 50 }]}>
+            Create new Apartment
+          </Text>
+          <Button
+            title="Create Apartment"
+            onPress={() => navigation.navigate("NewApartmentFormScreen")}
+          />
+          <Text style={[styles.title, { marginTop: 50 }]}>
+            Manage Your Apartments
+          </Text>
+          <Button
+            title="See Your Apartments"
+            onPress={() => navigation.navigate("HomeScreen")}
+          />
         </View>
       ) : (
         <View>
