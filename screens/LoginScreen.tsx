@@ -5,10 +5,10 @@ import { Button, StyleSheet, TextInput } from "react-native";
 import { View, Text } from "../components/Themed";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
-import { StoreData } from "../StoreContext";
+import { useStore } from "../hooks/StoreContext";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
-  const store = StoreData();
+  const store = useStore();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
 

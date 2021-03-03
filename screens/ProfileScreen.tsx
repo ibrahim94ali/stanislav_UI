@@ -2,11 +2,11 @@ import * as React from "react";
 import { Button, StyleSheet } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Text, View } from "../components/Themed";
-import { StoreData } from "../StoreContext";
+import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
 
 function ProfileScreen({ navigation }: { navigation: any }) {
-  const store = StoreData();
+  const store = useStore();
 
   const handleRegister = () => {
     navigation.navigate("RegisterScreen");
@@ -29,14 +29,16 @@ function ProfileScreen({ navigation }: { navigation: any }) {
     <View style={styles.container}>
       {store.user ? (
         <View>
-          <Text>You are already logged in</Text>
+          <Text style={styles.title}>You are already logged in</Text>
           <Button title="Logout" onPress={handleLogout} />
         </View>
       ) : (
         <View>
-          <Text>You are not logged in</Text>
+          <Text style={styles.title}>You are not logged in</Text>
           <Button title="Login" onPress={handleLogin} />
-          <Text style={styles.title}>Please register here</Text>
+          <Text style={[styles.title, styles.register]}>
+            Please register here
+          </Text>
           <Button title="Register" onPress={handleRegister} />
         </View>
       )}
@@ -56,5 +58,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: "bold",
     marginBottom: 10,
+  },
+  register: {
+    marginTop: 30,
   },
 });

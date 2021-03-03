@@ -1,24 +1,19 @@
-import { useQuery } from "@apollo/client";
-import { observer, useObserver } from "mobx-react";
-import React, { useEffect } from "react";
+import { observer } from "mobx-react";
+import React from "react";
 import { StyleSheet } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Apartment from "../components/Apartment";
 
 import { View, Text } from "../components/Themed";
-import { GET_APARTMENTS } from "../graphQL/Queries";
 import { ApartmentI } from "../interfaces";
-import { StoreData } from "../StoreContext";
+import { useStore } from "../hooks/StoreContext";
 
 function HomeScreen() {
-  const store = StoreData();
+  const store = useStore();
 
-  const { data } = useQuery(GET_APARTMENTS);
-  useEffect(() => {
-    if (data) {
-      store.setApartments(data.apartments);
-    }
-  }, [data]);
+  const renderItem = ({ item }: { item: ApartmentI }) => {
+    return <Apartment apartment={item} />;
+  };
 
   return (
     <View style={styles.container}>
@@ -29,15 +24,10 @@ function HomeScreen() {
         data={store.apartments}
         renderItem={renderItem}
         keyExtractor={(item) => item.id}
-        extraData={store.apartments}
       />
     </View>
   );
 }
-
-const renderItem = ({ item }: { item: ApartmentI }) => {
-  return <Apartment apartment={item} />;
-};
 
 export default observer(HomeScreen);
 

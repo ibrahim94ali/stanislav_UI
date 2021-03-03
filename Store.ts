@@ -8,6 +8,7 @@ export class StoreImpl {
     constructor() {
         makeObservable(this, {
             user: observable,
+            apartments: observable,
             setUser: action,
             setApartments: action
         });

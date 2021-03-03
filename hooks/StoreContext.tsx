@@ -1,6 +1,6 @@
 import { useLocalObservable } from "mobx-react";
 import React, { createContext, useContext } from "react";
-import { Store, StoreImp } from "./Store";
+import { Store } from "../Store";
 
 const StoreContext = createContext(Store);
 
@@ -11,4 +11,4 @@ export default function StoreContextProvider({ children }: any) {
   );
 }
 
-export const StoreData = () => useContext(StoreContext);
+export const useStore = () => useContext(StoreContext);

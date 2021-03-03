@@ -36,9 +36,9 @@ const client = new ApolloClient({
 import useCachedResources from "./hooks/useCachedResources";
 import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
-import StoreContextProvider, { StoreData } from "./StoreContext";
-import { View } from "./components/Themed";
+import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GET_APARTMENTS } from "./graphQL/Queries";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -51,8 +51,9 @@ export default function App() {
       <ApolloProvider client={client}>
         <StoreContextProvider>
           <SafeAreaProvider>
-            <AuthenticateUser />
             <Navigation colorScheme={colorScheme} />
+            <AuthenticateUser />
+            <GetInitialData />
             <StatusBar />
           </SafeAreaProvider>
         </StoreContextProvider>
@@ -73,9 +74,21 @@ const AuthenticateUser = () => {
     }
   };
 
-  const store = StoreData();
+  const store = useStore();
   useEffect(() => {
     getStoredUserData();
   });
-  return <View />;
+  return null;
+};
+
+const GetInitialData = () => {
+  const store = useStore();
+
+  const { data } = useQuery(GET_APARTMENTS);
+  useEffect(() => {
+    if (data) {
+      store.setApartments(data.apartments);
+    }
+  }, [data]);
+  return null;
 };
