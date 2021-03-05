@@ -1,7 +1,13 @@
 import React, { useLayoutEffect } from "react";
-import { Image, StyleSheet, Dimensions, ScrollView } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import { ApartmentI } from "../interfaces";
-import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {

@@ -15,10 +15,6 @@ export type HomeParamList = {
   ApartmentDetailsScreen: undefined;
 };
 
-export type SearchParamList = {
-  SearchScreen: undefined;
-};
-
 export type ProfileParamList = {
   ProfileScreen: undefined;
   RegisterScreen: undefined;

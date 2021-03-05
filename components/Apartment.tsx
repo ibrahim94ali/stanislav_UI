@@ -1,7 +1,6 @@
 import React from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import { ApartmentI } from "../interfaces";
-import { View, Text } from "../components/Themed";
 import Colors from "../constants/Colors";
 
 export default function Apartment({ apartment }: { apartment: ApartmentI }) {
@@ -21,9 +20,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   title: {
-    color: "#fff",
+    color: Colors.white,
   },
   field: {
     fontSize: 16,
+    color: Colors.white,
   },
 });

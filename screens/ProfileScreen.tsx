@@ -1,7 +1,6 @@
 import * as React from "react";
-import { Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Text, View } from "../components/Themed";
 import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
 

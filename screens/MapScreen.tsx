@@ -1,6 +1,5 @@
 import React from "react";
-import { StyleSheet } from "react-native";
-import { View, Text } from "../components/Themed";
+import { StyleSheet, View, Text } from "react-native";
 
 export default function MapScreen() {
   return (

@@ -1,8 +1,7 @@
 import { useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet } from "react-native";
+import { Button, StyleSheet, View } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
-import { View } from "../components/Themed";
 import Colors from "../constants/Colors";
 import { ADD_APARTMENT } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";

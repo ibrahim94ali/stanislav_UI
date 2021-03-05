@@ -14,17 +14,14 @@ import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
 import useCachedResources from "./hooks/useCachedResources";
-import useColorScheme from "./hooks/useColorScheme";
 import Navigation from "./navigation";
 import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GET_APARTMENTS } from "./graphQL/Queries";
 import { Alert } from "react-native";
-import { autorun } from "mobx";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
-  const colorScheme = useColorScheme();
 
   const store = useStore();
 
@@ -81,9 +78,9 @@ export default function App() {
       <ApolloProvider client={client}>
         <StoreContextProvider>
           <SafeAreaProvider>
-            <Navigation colorScheme={colorScheme} />
+            <Navigation />
             <GetInitialData />
-            <StatusBar />
+            {/* <StatusBar /> */}
           </SafeAreaProvider>
         </StoreContextProvider>
       </ApolloProvider>

@@ -1,8 +1,7 @@
 import { useMutation } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, TextInput } from "react-native";
-import { View, Text } from "../components/Themed";
+import { Button, StyleSheet, TextInput, View, Text } from "react-native";
 import { REGISTER_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
 import { useStore } from "../hooks/StoreContext";

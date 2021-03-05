@@ -4,14 +4,11 @@ import { createStackNavigator } from "@react-navigation/stack";
 import * as React from "react";
 
 import Colors from "../constants/Colors";
-import useColorScheme from "../hooks/useColorScheme";
 import HomeScreen from "../screens/HomeScreen";
-import SearchScreen from "../screens/SearchScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import {
   BottomTabParamList,
   HomeParamList,
-  SearchParamList,
   ProfileParamList,
   MapParamList,
 } from "../types";
@@ -24,25 +21,16 @@ import NewApartmentFormScreen from "../screens/NewApartmentFormScreen";
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
-
   return (
     <BottomTab.Navigator
       initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: Colors[colorScheme].tint }}
+      tabBarOptions={{ activeTintColor: Colors.primary }}
     >
       <BottomTab.Screen
         name="Home"
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
-        }}
-      />
-      <BottomTab.Screen
-        name="Search"
-        component={SearchNavigator}
-        options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="search" color={color} />,
         }}
       />
       <BottomTab.Screen
@@ -90,20 +78,6 @@ function HomeNavigator() {
         component={ApartmentDetailsScreen}
       />
     </HomeStack.Navigator>
-  );
-}
-
-const SearchStack = createStackNavigator<SearchParamList>();
-
-function SearchNavigator() {
-  return (
-    <SearchStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
-      <SearchStack.Screen
-        name="SearchScreen"
-        component={SearchScreen}
-        options={{ headerTitle: "Search" }}
-      />
-    </SearchStack.Navigator>
   );
 }
 
