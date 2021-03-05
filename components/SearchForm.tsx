@@ -9,6 +9,8 @@ import { useStore } from "../hooks/StoreContext";
 const SearchForm = () => {
   const store = useStore();
 
+  const [selectedOrder, setSelectedOrder] = useState(-1);
+
   const [selectedSort, setSelectedSort] = useState("date");
   const [selectedCity, setSelectedCity] = useState("All");
 
@@ -17,15 +19,16 @@ const SearchForm = () => {
   const [maxPrice, setMaxPrice] = useState(1000);
   const [maxPriceText, setMaxPriceText] = useState(1000);
 
-  const sortFields = ["date", "price", "msquare", "roomCount"];
+  const sortFields = ["Date", "Price", "Msquare", "RoomCount"];
   const filterCities = ["All", "Skopje", "Gostivar"];
 
   const { data } = useQuery(GET_APARTMENTS, {
     variables: {
-      sortBy: selectedSort,
+      sortBy: selectedSort?.toLowerCase(),
       city: selectedCity === "All" ? null : selectedCity,
       minPrice,
       maxPrice,
+      sortOrder: selectedOrder,
     },
   });
 
@@ -37,6 +40,19 @@ const SearchForm = () => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.item}>
+        <Text style={styles.itemText}>Sort Order: </Text>
+        <Picker
+          style={styles.picker}
+          selectedValue={selectedOrder}
+          onValueChange={(itemValue) => {
+            setSelectedOrder(itemValue);
+          }}
+        >
+          <Picker.Item label={"High to Low"} value={-1} />
+          <Picker.Item label={"Low to High"} value={1} />
+        </Picker>
+      </View>
       <View style={styles.item}>
         <Text style={styles.itemText}>Sort By: </Text>
         <Picker
