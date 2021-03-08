@@ -13,6 +13,8 @@ import {
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
 
+import { createUploadLink } from "apollo-upload-client";
+
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
 import StoreContextProvider, { useStore } from "./hooks/StoreContext";
@@ -49,10 +51,13 @@ export default function App() {
     }
   });
 
+  const localAPIUri = "http://192.168.0.36:3000/graphql";
+  const herokuUri = "https://stanislav-app.herokuapp.com/graphql";
+
   const link = from([
     errorLink,
-    new HttpLink({
-      uri: "https://stanislav-app.herokuapp.com/graphql",
+    createUploadLink({
+      uri: herokuUri,
     }),
   ]);
 

@@ -5,14 +5,17 @@ import { Button, StyleSheet, TextInput, View, Text } from "react-native";
 import { REGISTER_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
 import { useStore } from "../hooks/StoreContext";
+import Colors from "../constants/Colors";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const store = useStore();
 
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
+  const [confirmPassword, onConfirmPasswordChange] = useState("");
   const [name, onNameChange] = useState("");
   const [surname, onSurnameChange] = useState("");
+  const [phone, onPhoneChange] = useState("");
 
   const [createUser, { data }] = useMutation(REGISTER_USER);
 
@@ -23,7 +26,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         password: password,
         name: name,
         surname: surname,
-        phone: "123234",
+        phone: phone || null,
       },
     });
   };
@@ -52,16 +55,23 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         style={styles.input}
         onChangeText={(text) => onEmailChange(text)}
         value={email}
-        placeholder="Email"
-        placeholderTextColor="#fff"
+        placeholder="Email *"
         textContentType="emailAddress"
+        keyboardType="email-address"
       ></TextInput>
       <TextInput
         style={styles.input}
         onChangeText={(text) => onPasswordChange(text)}
         value={password}
-        placeholder="Password"
-        placeholderTextColor="#fff"
+        placeholder="Password *"
+        secureTextEntry
+        textContentType="password"
+      ></TextInput>
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onConfirmPasswordChange(text)}
+        value={confirmPassword}
+        placeholder="Confirm Password *"
         secureTextEntry
         textContentType="password"
       ></TextInput>
@@ -69,23 +79,35 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         style={styles.input}
         onChangeText={(text) => onNameChange(text)}
         value={name}
-        placeholder="Name"
-        placeholderTextColor="#fff"
+        placeholder="Name *"
         textContentType="name"
       ></TextInput>
       <TextInput
         style={styles.input}
         onChangeText={(text) => onSurnameChange(text)}
         value={surname}
-        placeholder="Surname"
-        placeholderTextColor="#fff"
+        placeholder="Surname *"
         textContentType="name"
+      ></TextInput>
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onPhoneChange(text)}
+        value={phone}
+        placeholder="Phone"
+        textContentType="telephoneNumber"
+        keyboardType="number-pad"
       ></TextInput>
       <View style={styles.buttonContainer}>
         <Button
           title="Register"
           onPress={handleSubmit}
-          disabled={!email || !password || !name || !surname}
+          disabled={
+            !email ||
+            !password ||
+            !name ||
+            !surname ||
+            password !== confirmPassword
+          }
         />
       </View>
     </View>
@@ -106,9 +128,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "80%",
-    borderColor: "#fff",
+    borderColor: Colors.black,
     borderWidth: 2,
-    color: "#fff",
+    color: Colors.black,
     padding: 10,
   },
   buttonContainer: {

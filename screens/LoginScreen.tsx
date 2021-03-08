@@ -5,6 +5,7 @@ import { Button, StyleSheet, TextInput, View, Text } from "react-native";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
 import { useStore } from "../hooks/StoreContext";
+import Colors from "../constants/Colors";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const store = useStore();
@@ -47,15 +48,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onEmailChange(text)}
         value={email}
         placeholder="Email"
-        placeholderTextColor="#fff"
         textContentType="emailAddress"
+        keyboardType="email-address"
       ></TextInput>
       <TextInput
         style={styles.input}
         onChangeText={(text) => onPasswordChange(text)}
         value={password}
         placeholder="Password"
-        placeholderTextColor="#fff"
         secureTextEntry
         textContentType="password"
       ></TextInput>
@@ -84,9 +84,9 @@ const styles = StyleSheet.create({
   },
   input: {
     width: "80%",
-    borderColor: "#fff",
+    borderColor: Colors.black,
     borderWidth: 2,
-    color: "#fff",
+    color: Colors.black,
     padding: 10,
   },
   buttonContainer: {

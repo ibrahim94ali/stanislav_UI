@@ -1,10 +1,20 @@
 import { useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import { Button, StyleSheet, View } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  View,
+  Image,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { ADD_APARTMENT } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
+import * as ImagePicker from "expo-image-picker";
+import { Platform } from "react-native";
+import { ReactNativeFile } from "apollo-upload-client";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -16,35 +26,76 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [type, setType] = useState("");
   const [msquare, setMsquare] = useState<number>();
   const [roomCount, setRoomCount] = useState<number>();
-  // const [photos, setPhotos] = useState<string[]>([]);
   // const [geoLocation, setGeolocation] = useState<number[]>([]);
-
   const geolocation = [41.99646, 21.43141];
-  const photos = [
+
+  const [images, setImages] = useState<string[]>([]);
+  const [uploading, setUploading] = useState(false);
+
+  const dummyPhotos = [
     "https://i2.wp.com/www.discoveringmacedonia.com/wp-content/uploads/2019/06/skopje-city-mall.jpg?fit=1000%2C525&ssl=1",
     "https://balkaninsight.com/wp-content/uploads/2012/10/skopje-city-mall-by-build-mk4x3.jpg",
   ];
 
-  const [addApartment, { data: newApartment }] = useMutation(ADD_APARTMENT);
+  const { width } = Dimensions.get("window");
+  const height = width * 0.5;
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== "web") {
+        const {
+          status,
+        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
+  }, []);
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImages([...images, result.uri]);
+    }
+  };
+
+  const [
+    addApartment,
+    { data: newApartment, loading: loadingNewApartment },
+  ] = useMutation(ADD_APARTMENT);
 
   useEffect(() => {
     if (newApartment) {
       store.addApartment(newApartment.addApartment);
       navigation.navigate("HomeScreen");
     }
-  }, [newApartment]);
+    if (loadingNewApartment) {
+      setUploading(true);
+    }
+  }, [newApartment, loadingNewApartment]);
+
+  function generateRNFile(uri: string, name: string) {
+    return uri
+      ? new ReactNativeFile({
+          uri,
+          type: "image/jpeg",
+          name,
+        })
+      : null;
+  }
 
   const handleSubmit = () => {
-    console.log(
-      "submit",
-      title,
-      details,
-      address,
-      price,
-      type,
-      msquare,
-      roomCount
-    );
+    //there is a bug in api for upload files.
+
+    // const photos: any = [];
+    // images.forEach((photo, i) => {
+    //   photos.push(generateRNFile(photo, `picture-${Date.now()}-${i + 1}`));
+    // });
 
     addApartment({
       variables: {
@@ -56,7 +107,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         city,
         price,
         type,
-        photos,
+        // photos,
         msquare,
         roomCount,
       },
@@ -64,71 +115,85 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   };
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        autoFocus
-        value={title}
-        placeholder="Title"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setTitle(value)}
-      />
-      <TextInput
-        style={styles.input}
-        value={details}
-        placeholder="Details"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setDetails(value)}
-      />
-      <TextInput
-        style={styles.input}
-        value={address}
-        placeholder="Address"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setAddress(value)}
-      />
-      <TextInput
-        style={styles.input}
-        value={city}
-        placeholder="City"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setCity(value)}
-      />
-      <TextInput
-        style={styles.input}
-        value={price?.toString()}
-        placeholder="Price"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setPrice(+value)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        value={type}
-        placeholder="Type"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setType(value)}
-      />
-      <TextInput
-        style={styles.input}
-        value={msquare?.toString()}
-        placeholder="Meter Sqaure"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setMsquare(+value)}
-        keyboardType="numeric"
-      />
-      <TextInput
-        style={styles.input}
-        value={roomCount?.toString()}
-        placeholder="Rooms Count"
-        placeholderTextColor={Colors.white}
-        onChangeText={(value) => setRoomCount(+value)}
-        keyboardType="numeric"
-      />
+      <ScrollView>
+        <View style={{ width, height }}>
+          <ScrollView pagingEnabled horizontal style={{ width, height }}>
+            {images.map((photo, index) => (
+              <Image
+                key={index}
+                style={{ width, height }}
+                source={{
+                  uri: photo,
+                }}
+              />
+            ))}
+          </ScrollView>
+        </View>
+        <View style={{ marginVertical: 20 }}>
+          <Button
+            title={images.length < 1 ? "Add Photo *" : "Add More Photos"}
+            disabled={uploading || images.length > 4}
+            onPress={pickImage}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          value={title}
+          placeholder="Title *"
+          onChangeText={(value) => setTitle(value)}
+        />
+        <TextInput
+          style={styles.input}
+          value={details}
+          placeholder="Details *"
+          onChangeText={(value) => setDetails(value)}
+        />
+        <TextInput
+          style={styles.input}
+          value={type}
+          placeholder="Type *"
+          onChangeText={(value) => setType(value)}
+        />
+        <TextInput
+          style={styles.input}
+          value={address}
+          placeholder="Address *"
+          onChangeText={(value) => setAddress(value)}
+        />
+        <TextInput
+          style={styles.input}
+          value={city}
+          placeholder="City *"
+          onChangeText={(value) => setCity(value)}
+        />
+        <TextInput
+          style={styles.input}
+          value={price?.toString()}
+          placeholder="Price *"
+          onChangeText={(value) => setPrice(+value)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          value={msquare?.toString()}
+          placeholder="Meter Sqaure *"
+          onChangeText={(value) => setMsquare(+value)}
+          keyboardType="numeric"
+        />
+        <TextInput
+          style={styles.input}
+          value={roomCount?.toString()}
+          placeholder="Rooms Count *"
+          onChangeText={(value) => setRoomCount(+value)}
+          keyboardType="numeric"
+        />
+      </ScrollView>
       <View style={{ marginTop: 20 }}>
         <Button
           title="Submit"
           onPress={handleSubmit}
           disabled={
+            uploading ||
             !title ||
             !details ||
             !address ||
@@ -136,7 +201,8 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !type ||
             !msquare ||
             !roomCount ||
-            !title
+            !title ||
+            images.length < 1
           }
         />
       </View>
@@ -149,14 +215,13 @@ export default NewApartmentFormScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 30,
   },
   input: {
     padding: 10,
-    borderColor: Colors.white,
+    borderColor: Colors.black,
     borderWidth: 1,
     marginBottom: 10,
-    color: Colors.white,
+    color: Colors.black,
     fontSize: 18,
   },
 });

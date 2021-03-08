@@ -6,7 +6,7 @@ export const REGISTER_USER = gql`
     $password: String!
     $name: String!
     $surname: String!
-    $phone: String!
+    $phone: String
   ) {
     register(
       email: $email
@@ -52,7 +52,7 @@ export const ADD_APARTMENT = gql`
     $city: String!
     $price: Int!
     $type: String!
-    $photos: [String]!
+    $photos: [Upload]
     $msquare: Int!
     $roomCount: Int!
   ) {

@@ -95,7 +95,6 @@ const SearchForm = () => {
               setMaxPriceText(max);
             }}
             onValuesChangeFinish={([min, max]) => {
-              console.log(min, max);
               setMinPrice(min);
               setMaxPrice(max);
             }}
