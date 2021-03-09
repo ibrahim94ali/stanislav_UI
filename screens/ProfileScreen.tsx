@@ -3,8 +3,9 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
+import Colors from "../constants/Colors";
 
-function ProfileScreen({ navigation }: { navigation: any }) {
+function ProfileScreen({ navigation }: any) {
   const store = useStore();
 
   const handleRegister = () => {
@@ -28,31 +29,35 @@ function ProfileScreen({ navigation }: { navigation: any }) {
     <View style={styles.container}>
       {store.user ? (
         <View>
-          <Text style={styles.title}>You are already logged in</Text>
-          <Button title="Logout" onPress={handleLogout} />
-          <Text style={[styles.title, { marginTop: 50 }]}>
-            Create new Apartment
+          <Text style={styles.title}>
+            Hello, {store.user.name} {store.user.surname}
           </Text>
           <Button
-            title="Create Apartment"
-            onPress={() => navigation.navigate("NewApartmentFormScreen")}
+            title="Logout"
+            onPress={handleLogout}
+            color={Colors.secondary}
           />
           <Text style={[styles.title, { marginTop: 50 }]}>
             Manage Your Apartments
           </Text>
           <Button
-            title="See Your Apartments"
-            onPress={() => navigation.navigate("HomeScreen")}
+            title="Your Apartments"
+            color={Colors.primary}
+            onPress={() => navigation.push("MyApartmentsScreen")}
           />
         </View>
       ) : (
         <View>
           <Text style={styles.title}>You are not logged in</Text>
-          <Button title="Login" onPress={handleLogin} />
+          <Button color={Colors.primary} title="Login" onPress={handleLogin} />
           <Text style={[styles.title, styles.register]}>
             Please register here
           </Text>
-          <Button title="Register" onPress={handleRegister} />
+          <Button
+            color={Colors.secondary}
+            title="Register"
+            onPress={handleRegister}
+          />
         </View>
       )}
     </View>
@@ -70,6 +75,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    alignSelf: "center",
     marginBottom: 10,
   },
   register: {

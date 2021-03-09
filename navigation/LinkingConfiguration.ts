@@ -28,6 +28,7 @@ export default {
               RegisterScreen: "register",
               LoginScreen: "login",
               NewApartmentFormScreen: "newApartment",
+              MyApartmentsScreen: "myApartments",
             },
           },
         },

@@ -17,6 +17,7 @@ import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
 import NewApartmentFormScreen from "../screens/NewApartmentFormScreen";
+import MyApartmentsScreen from "../screens/MyApartmentsScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -119,6 +120,15 @@ function ProfileNavigator() {
         name="NewApartmentFormScreen"
         component={NewApartmentFormScreen}
         options={{ headerTitle: "Create New Apartment" }}
+      />
+      <ProfileStack.Screen
+        name="MyApartmentsScreen"
+        component={MyApartmentsScreen}
+        options={{ headerTitle: "My Apartments" }}
+      />
+      <ProfileStack.Screen
+        name="ApartmentDetailsScreen"
+        component={ApartmentDetailsScreen}
       />
     </ProfileStack.Navigator>
   );

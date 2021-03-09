@@ -31,3 +31,23 @@ export const GET_APARTMENTS = gql`
     }
   }
 `;
+
+export const GET_MY_APARTMENTS = gql`
+  query {
+    myApartments {
+      id
+      title
+      details
+      ownerId
+      date
+      geolocation
+      address
+      city
+      price
+      type
+      photos
+      msquare
+      roomCount
+    }
+  }
+`;

@@ -4,14 +4,17 @@ import { ApartmentI, UserI } from "./interfaces";
 export class StoreImpl {
   user: UserI | null = null;
   apartments: ApartmentI[] = [];
+  myApartments: ApartmentI[] = [];
 
   constructor() {
     makeObservable(this, {
       user: observable,
       apartments: observable,
+      myApartments: observable,
       setUser: action,
       setApartments: action,
       addApartment: action,
+      setMyApartments: action,
     });
   }
 
@@ -25,6 +28,11 @@ export class StoreImpl {
 
   addApartment(apart: ApartmentI) {
     this.apartments.unshift(apart);
+    this.myApartments.unshift(apart);
+  }
+
+  setMyApartments(aparts: ApartmentI[]) {
+    this.myApartments = aparts;
   }
 }
 

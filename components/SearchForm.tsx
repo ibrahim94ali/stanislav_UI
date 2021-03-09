@@ -6,7 +6,7 @@ import { useQuery } from "@apollo/client";
 import { GET_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
 
-const SearchForm = () => {
+const SearchForm = ({ open }: { open: boolean }) => {
   const store = useStore();
 
   const [selectedOrder, setSelectedOrder] = useState(-1);
@@ -39,14 +39,14 @@ const SearchForm = () => {
   }, [data]);
 
   return (
-    <View style={styles.container}>
+    <View style={open ? styles.container : styles.hide}>
       <View style={styles.item}>
         <Text style={styles.itemText}>Sort Order: </Text>
         <Picker
           style={styles.picker}
           selectedValue={selectedOrder}
           onValueChange={(itemValue) => {
-            setSelectedOrder(itemValue);
+            setSelectedOrder(+itemValue);
           }}
         >
           <Picker.Item label={"High to Low"} value={-1} />
@@ -59,7 +59,7 @@ const SearchForm = () => {
           style={styles.picker}
           selectedValue={selectedSort}
           onValueChange={(itemValue) => {
-            setSelectedSort(itemValue);
+            setSelectedSort(itemValue.toString());
           }}
         >
           {sortFields.map((item, index) => (
@@ -72,7 +72,7 @@ const SearchForm = () => {
         <Picker
           selectedValue={selectedCity}
           style={styles.picker}
-          onValueChange={(itemValue) => setSelectedCity(itemValue)}
+          onValueChange={(itemValue) => setSelectedCity(itemValue.toString())}
         >
           {filterCities.map((item, index) => (
             <Picker.Item label={item} value={item} key={index} />
@@ -111,6 +111,9 @@ export default SearchForm;
 const styles = StyleSheet.create({
   container: {
     padding: 10,
+  },
+  hide: {
+    display: "none",
   },
   item: {
     flexDirection: "row",

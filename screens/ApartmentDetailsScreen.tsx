@@ -71,5 +71,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.primary,
     padding: 5,
     marginBottom: 5,
+    color: Colors.white,
   },
 });

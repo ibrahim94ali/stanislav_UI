@@ -9,7 +9,7 @@ export interface ApartmentI {
   city: string;
   price: number;
   type: string;
-  photos?: string[];
+  photos: string[];
   msquare: number;
   roomCount: number;
 }

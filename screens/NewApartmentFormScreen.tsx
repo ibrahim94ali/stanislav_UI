@@ -32,11 +32,6 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
-  const dummyPhotos = [
-    "https://i2.wp.com/www.discoveringmacedonia.com/wp-content/uploads/2019/06/skopje-city-mall.jpg?fit=1000%2C525&ssl=1",
-    "https://balkaninsight.com/wp-content/uploads/2012/10/skopje-city-mall-by-build-mk4x3.jpg",
-  ];
-
   const { width } = Dimensions.get("window");
   const height = width * 0.5;
 
@@ -72,7 +67,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   useEffect(() => {
     if (newApartment) {
       store.addApartment(newApartment.addApartment);
-      navigation.navigate("HomeScreen");
+      navigation.pop();
     }
     if (loadingNewApartment) {
       setUploading(true);
@@ -133,6 +128,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           <Button
             title={images.length < 1 ? "Add Photo *" : "Add More Photos"}
             disabled={uploading || images.length > 4}
+            color={Colors.primary}
             onPress={pickImage}
           />
         </View>
@@ -190,6 +186,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
       </ScrollView>
       <View style={{ marginTop: 20 }}>
         <Button
+          color={Colors.primary}
           title="Submit"
           onPress={handleSubmit}
           disabled={
@@ -201,8 +198,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !type ||
             !msquare ||
             !roomCount ||
-            !title ||
-            images.length < 1
+            !title
           }
         />
       </View>
