@@ -5,29 +5,53 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { useQuery } from "@apollo/client";
 import { GET_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
+import Colors from "../constants/Colors";
+import LoadingSpinner from "./LoadingSpinner";
 
 const SearchForm = ({ open }: { open: boolean }) => {
   const store = useStore();
 
+  const sortFields = [
+    { key: "date", value: "Date" },
+    { key: "price", value: "Price" },
+    { key: "msquare", value: "Area" },
+    { key: "roomCount", value: "Rooms" },
+  ];
+  const filterCities = ["All", "Skopje", "Gostivar"];
+
   const [selectedOrder, setSelectedOrder] = useState(-1);
 
-  const [selectedSort, setSelectedSort] = useState("date");
+  const [selectedSort, setSelectedSort] = useState(sortFields[0]);
   const [selectedCity, setSelectedCity] = useState("All");
 
+  //price
   const [minPrice, setMinPrice] = useState(0);
   const [minPriceText, setMinPriceText] = useState(0);
   const [maxPrice, setMaxPrice] = useState(1000);
   const [maxPriceText, setMaxPriceText] = useState(1000);
 
-  const sortFields = ["Date", "Price", "Msquare", "RoomCount"];
-  const filterCities = ["All", "Skopje", "Gostivar"];
+  //area
+  const [minArea, setMinArea] = useState(0);
+  const [minAreaText, setMinAreaText] = useState(0);
+  const [maxArea, setMaxArea] = useState(300);
+  const [maxAreaText, setMaxAreaText] = useState(300);
 
-  const { data } = useQuery(GET_APARTMENTS, {
+  // room
+  const [minRoom, setMinRoom] = useState(0);
+  const [minRoomText, setMinRoomText] = useState(0);
+  const [maxRoom, setMaxRoom] = useState(10);
+  const [maxRoomText, setMaxRoomText] = useState(10);
+
+  const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
     variables: {
-      sortBy: selectedSort?.toLowerCase(),
+      sortBy: selectedSort.key,
       city: selectedCity === "All" ? null : selectedCity,
       minPrice,
       maxPrice,
+      minArea,
+      maxArea,
+      minRoom,
+      maxRoom,
       sortOrder: selectedOrder,
     },
   });
@@ -40,6 +64,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
 
   return (
     <View style={open ? styles.container : styles.hide}>
+      {isDataLoading ? <LoadingSpinner /> : null}
       <View style={styles.item}>
         <Text style={styles.itemText}>Sort Order: </Text>
         <Picker
@@ -57,13 +82,13 @@ const SearchForm = ({ open }: { open: boolean }) => {
         <Text style={styles.itemText}>Sort By: </Text>
         <Picker
           style={styles.picker}
-          selectedValue={selectedSort}
-          onValueChange={(itemValue) => {
-            setSelectedSort(itemValue.toString());
+          selectedValue={selectedSort.value}
+          onValueChange={(_, i) => {
+            setSelectedSort(sortFields[i]);
           }}
         >
           {sortFields.map((item, index) => (
-            <Picker.Item label={item} value={item} key={index} />
+            <Picker.Item label={item.value} value={item.value} key={index} />
           ))}
         </Picker>
       </View>
@@ -79,12 +104,16 @@ const SearchForm = ({ open }: { open: boolean }) => {
           ))}
         </Picker>
       </View>
+
+      {/* price */}
       <View style={styles.item}>
-        <Text style={styles.itemText}>Price: </Text>
+        <Text style={styles.itemText}>Price (€): </Text>
         <View style={styles.sliderContainer}>
-          <Text style={styles.minPrice}>{minPriceText}</Text>
+          <Text style={styles.minSlider}>{minPriceText}</Text>
           <MultiSlider
-            isMarkersSeparated={true}
+            markerStyle={styles.slider}
+            selectedStyle={styles.slider}
+            isMarkersSeparated
             min={0}
             max={1000}
             step={50}
@@ -99,7 +128,61 @@ const SearchForm = ({ open }: { open: boolean }) => {
               setMaxPrice(max);
             }}
           />
-          <Text style={styles.maxPrice}>{maxPriceText}</Text>
+          <Text style={styles.maxSlider}>{maxPriceText}</Text>
+        </View>
+      </View>
+
+      {/* area */}
+      <View style={styles.item}>
+        <Text style={styles.itemText}>Area (ms2): </Text>
+        <View style={styles.sliderContainer}>
+          <Text style={styles.minSlider}>{minAreaText}</Text>
+          <MultiSlider
+            markerStyle={styles.slider}
+            selectedStyle={styles.slider}
+            isMarkersSeparated
+            min={0}
+            max={300}
+            step={10}
+            sliderLength={180}
+            values={[minArea, maxArea]}
+            onValuesChange={([min, max]) => {
+              setMinAreaText(min);
+              setMaxAreaText(max);
+            }}
+            onValuesChangeFinish={([min, max]) => {
+              setMinArea(min);
+              setMaxArea(max);
+            }}
+          />
+          <Text style={styles.maxSlider}>{maxAreaText}</Text>
+        </View>
+      </View>
+
+      {/* room */}
+      <View style={styles.item}>
+        <Text style={styles.itemText}>Rooms: </Text>
+        <View style={styles.sliderContainer}>
+          <Text style={styles.minSlider}>{minRoomText}</Text>
+          <MultiSlider
+            markerStyle={styles.slider}
+            selectedStyle={styles.slider}
+            isMarkersSeparated
+            min={0}
+            max={10}
+            step={1}
+            sliderLength={180}
+            values={[minRoom, maxRoom]}
+            onValuesChange={([min, max]) => {
+              setMinRoomText(min);
+              setMaxRoomText(max);
+            }}
+            onValuesChangeFinish={([min, max]) => {
+              setMinRoom(min);
+              setMaxRoom(max);
+            }}
+          />
+          <Text style={styles.maxSlider}>{maxRoomText}</Text>
         </View>
       </View>
     </View>
@@ -126,6 +209,7 @@ const styles = StyleSheet.create({
   },
   picker: {
     flex: 1,
+    color: Colors.black,
   },
   sliderContainer: {
     width: "70%",
@@ -133,13 +217,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   slider: {
-    // width: "70%",
+    backgroundColor: Colors.secondary,
   },
-  minPrice: {
+  minSlider: {
     marginRight: 10,
     width: 30,
   },
-  maxPrice: {
+  maxSlider: {
     marginLeft: 10,
   },
 });

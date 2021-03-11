@@ -5,6 +5,10 @@ export const GET_APARTMENTS = gql`
     $city: String
     $minPrice: Int
     $maxPrice: Int
+    $minArea: Int
+    $maxArea: Int
+    $minRoom: Int
+    $maxRoom: Int
     $sortBy: String
     $sortOrder: Int
   ) {
@@ -12,6 +16,10 @@ export const GET_APARTMENTS = gql`
       city: $city
       minPrice: $minPrice
       maxPrice: $maxPrice
+      minArea: $minArea
+      maxArea: $maxArea
+      minRoom: $minRoom
+      maxRoom: $maxRoom
       sortBy: $sortBy
       sortOrder: $sortOrder
     ) {

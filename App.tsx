@@ -7,7 +7,6 @@ import {
   ApolloProvider,
   InMemoryCache,
   from,
-  useQuery,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
@@ -18,7 +17,6 @@ import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
 import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { GET_APARTMENTS } from "./graphQL/Queries";
 import { Alert } from "react-native";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
@@ -86,7 +84,6 @@ export default function App() {
           <ActionSheetProvider>
             <SafeAreaProvider>
               <Navigation />
-              <GetInitialData />
               {/* <StatusBar /> */}
             </SafeAreaProvider>
           </ActionSheetProvider>
@@ -95,15 +92,3 @@ export default function App() {
     );
   }
 }
-
-const GetInitialData = () => {
-  const store = useStore();
-
-  const { data } = useQuery(GET_APARTMENTS);
-  useEffect(() => {
-    if (data) {
-      store.setApartments(data.apartments);
-    }
-  }, [data]);
-  return null;
-};

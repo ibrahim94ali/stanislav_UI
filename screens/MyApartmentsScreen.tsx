@@ -4,14 +4,18 @@ import { observer } from "mobx-react";
 import React, { useEffect, useLayoutEffect } from "react";
 import { StyleSheet, View } from "react-native";
 import ApartmentList from "../components/ApartmentList";
+import LoadingSpinner from "../components/LoadingSpinner";
 import { GET_MY_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
 
 const MyApartmentsScreen = ({ navigation }: any) => {
   const store = useStore();
-  const { data: myApartments } = useQuery(GET_MY_APARTMENTS, {
-    fetchPolicy: "no-cache",
-  });
+  const { data: myApartments, loading: loadingApartments } = useQuery(
+    GET_MY_APARTMENTS,
+    {
+      fetchPolicy: "no-cache",
+    }
+  );
 
   useEffect(() => {
     if (myApartments?.myApartments) {
@@ -33,6 +37,7 @@ const MyApartmentsScreen = ({ navigation }: any) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
+      {loadingApartments ? <LoadingSpinner /> : null}
       <ApartmentList data={store.myApartments} editable={true} />
     </View>
   );
