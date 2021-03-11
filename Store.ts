@@ -14,6 +14,7 @@ export class StoreImpl {
       setUser: action,
       setApartments: action,
       addApartment: action,
+      deleteApartment: action,
       setMyApartments: action,
     });
   }
@@ -29,6 +30,11 @@ export class StoreImpl {
   addApartment(apart: ApartmentI) {
     this.apartments.unshift(apart);
     this.myApartments.unshift(apart);
+  }
+
+  deleteApartment(id: string) {
+    this.apartments = this.apartments.filter((a) => a.id !== id);
+    this.myApartments = this.myApartments.filter((a) => a.id !== id);
   }
 
   setMyApartments(aparts: ApartmentI[]) {

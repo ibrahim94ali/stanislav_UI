@@ -6,7 +6,6 @@ import {
   ApolloClient,
   ApolloProvider,
   InMemoryCache,
-  HttpLink,
   from,
   useQuery,
 } from "@apollo/client";
@@ -21,6 +20,8 @@ import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GET_APARTMENTS } from "./graphQL/Queries";
 import { Alert } from "react-native";
+import { ActionSheetProvider } from "@expo/react-native-action-sheet";
+import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -73,7 +74,7 @@ export default function App() {
 
   const client = new ApolloClient({
     link: authLink.concat(link),
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache(inMemoryCacheConfig),
   });
 
   if (!isLoadingComplete) {
@@ -82,11 +83,13 @@ export default function App() {
     return (
       <ApolloProvider client={client}>
         <StoreContextProvider>
-          <SafeAreaProvider>
-            <Navigation />
-            <GetInitialData />
-            {/* <StatusBar /> */}
-          </SafeAreaProvider>
+          <ActionSheetProvider>
+            <SafeAreaProvider>
+              <Navigation />
+              <GetInitialData />
+              {/* <StatusBar /> */}
+            </SafeAreaProvider>
+          </ActionSheetProvider>
         </StoreContextProvider>
       </ApolloProvider>
     );

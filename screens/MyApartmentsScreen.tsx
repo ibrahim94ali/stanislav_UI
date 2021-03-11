@@ -10,7 +10,7 @@ import { useStore } from "../hooks/StoreContext";
 const MyApartmentsScreen = ({ navigation }: any) => {
   const store = useStore();
   const { data: myApartments } = useQuery(GET_MY_APARTMENTS, {
-    fetchPolicy: "cache-and-network",
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ const MyApartmentsScreen = ({ navigation }: any) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <ApartmentList data={store.myApartments} />
+      <ApartmentList data={store.myApartments} editable={true} />
     </View>
   );
 };
