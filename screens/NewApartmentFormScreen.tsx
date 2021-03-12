@@ -5,8 +5,8 @@ import {
   StyleSheet,
   View,
   Image,
-  Dimensions,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
@@ -15,6 +15,7 @@ import { useStore } from "../hooks/StoreContext";
 import * as ImagePicker from "expo-image-picker";
 import { Platform } from "react-native";
 import { ReactNativeFile } from "apollo-upload-client";
+import ImageView from "react-native-image-viewing";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -32,8 +33,8 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
 
-  const { width } = Dimensions.get("window");
-  const height = width * 0.5;
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
 
   useEffect(() => {
     (async () => {
@@ -111,20 +112,51 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={{ width, height }}>
-          <ScrollView pagingEnabled horizontal style={{ width, height }}>
+        <View
+          style={{
+            marginVertical: 30,
+            height: 130,
+            marginHorizontal: 10,
+            alignSelf: "center",
+          }}
+        >
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {images.map((photo, index) => (
-              <Image
-                key={index}
-                style={{ width, height }}
-                source={{
-                  uri: photo,
-                }}
-              />
+              <View style={{ marginRight: 10 }} key={photo}>
+                <TouchableOpacity
+                  onPress={() => {
+                    setFullScreenPhotoIndex(index);
+                    setIsFullScreen(true);
+                  }}
+                >
+                  <Image
+                    style={{
+                      height: 130,
+                      width: 130,
+                      borderRadius: 10,
+                      resizeMode: "cover",
+                    }}
+                    source={{
+                      uri: photo,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
             ))}
           </ScrollView>
+          <ImageView
+            images={images.map((img) => {
+              return {
+                uri: img,
+              };
+            })}
+            imageIndex={fullScreenPhotoIndex}
+            visible={isFullScreen}
+            swipeToCloseEnabled={false}
+            onRequestClose={() => setIsFullScreen(false)}
+          />
         </View>
-        <View style={{ marginVertical: 20 }}>
+        <View style={{ marginBottom: 20 }}>
           <Button
             title={images.length < 1 ? "Add Photo *" : "Add More Photos"}
             disabled={uploading || images.length > 4}

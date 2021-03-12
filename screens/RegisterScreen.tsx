@@ -100,6 +100,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
       <View style={styles.buttonContainer}>
         <Button
           title="Register"
+          color={Colors.primary}
           onPress={handleSubmit}
           disabled={
             !email ||
@@ -135,5 +136,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 30,
+    width: 150,
   },
 });

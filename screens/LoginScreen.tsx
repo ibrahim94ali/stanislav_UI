@@ -62,6 +62,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       <View style={styles.buttonContainer}>
         <Button
           title="Login"
+          color={Colors.primary}
           onPress={handleSubmit}
           disabled={!email || !password}
         />
@@ -91,5 +92,6 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: 30,
+    width: 150,
   },
 });

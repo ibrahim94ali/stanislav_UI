@@ -1,20 +1,21 @@
-import React, { useLayoutEffect } from "react";
-import {
-  Image,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import React, { useLayoutEffect, useState } from "react";
+import { Image, StyleSheet, ScrollView, Text, View } from "react-native";
 import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
+import ImageView from "react-native-image-viewing";
+import { TouchableOpacity } from "react-native";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const { apartment }: { apartment: ApartmentI } = route.params;
 
-  const { width } = Dimensions.get("window");
-  const height = width * 0.5;
+  let images = apartment.photos.map((a) => {
+    return {
+      uri: a,
+    };
+  });
+
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -23,18 +24,45 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   }, [navigation]);
   return (
     <View style={styles.container}>
-      <View style={{ marginBottom: 50, width, height }}>
-        <ScrollView pagingEnabled horizontal style={{ width, height }}>
-          {apartment.photos.map((photo, index) => (
-            <Image
-              key={index}
-              style={{ width, height }}
-              source={{
-                uri: photo,
-              }}
-            />
+      <View
+        style={{
+          marginVertical: 30,
+          height: 130,
+          marginHorizontal: 10,
+          alignSelf: "center",
+        }}
+      >
+        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          {apartment.photos.map((photo, i) => (
+            <View style={{ marginRight: 10 }} key={photo}>
+              <TouchableOpacity
+                onPress={() => {
+                  setFullScreenPhotoIndex(i);
+                  setIsFullScreen(true);
+                }}
+              >
+                <Image
+                  style={{
+                    height: 130,
+                    width: 130,
+                    borderRadius: 10,
+                    resizeMode: "cover",
+                  }}
+                  source={{
+                    uri: photo,
+                  }}
+                />
+              </TouchableOpacity>
+            </View>
           ))}
         </ScrollView>
+        <ImageView
+          images={images}
+          imageIndex={fullScreenPhotoIndex}
+          visible={isFullScreen}
+          swipeToCloseEnabled={false}
+          onRequestClose={() => setIsFullScreen(false)}
+        />
       </View>
       <View>
         <Text style={styles.item}>Info: {apartment.details}</Text>
