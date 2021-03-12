@@ -1,5 +1,13 @@
 import React, { useLayoutEffect, useState } from "react";
-import { Image, StyleSheet, ScrollView, Text, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  ScrollView,
+  Text,
+  View,
+  Button,
+  Linking,
+} from "react-native";
 import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
@@ -65,13 +73,24 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         />
       </View>
       <View>
+        <View style={{ marginBottom: 20, width: 150, alignSelf: "center" }}>
+          <Button
+            title="See in Maps"
+            color={Colors.secondary}
+            onPress={() =>
+              Linking.openURL(
+                `http://maps.google.com/maps?z=18&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+              )
+            }
+          />
+        </View>
         <Text style={styles.item}>Info: {apartment.details}</Text>
         <Text style={styles.item}>
           Date: {new Date(+apartment.date).toDateString()}
         </Text>
-        <Text style={styles.item}>
+        {/* <Text style={styles.item}>
           Lat: {apartment.geolocation[0]} Lon: {apartment.geolocation[1]}
-        </Text>
+        </Text> */}
         <Text style={styles.item}>Address: {apartment.address}</Text>
         <Text style={styles.item}>City: {apartment.city}</Text>
         <Text style={styles.item}>Price: {apartment.price} €</Text>

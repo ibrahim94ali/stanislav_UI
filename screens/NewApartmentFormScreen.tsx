@@ -7,6 +7,8 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
+  Linking,
+  Alert,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
@@ -16,6 +18,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Platform } from "react-native";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
+import * as Location from "expo-location";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -27,8 +30,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [type, setType] = useState("");
   const [msquare, setMsquare] = useState<number>();
   const [roomCount, setRoomCount] = useState<number>();
-  // const [geoLocation, setGeolocation] = useState<number[]>([]);
-  const geolocation = [41.99646, 21.43141];
+  const [geoLocation, setGeolocation] = useState<number[]>([0, 0]);
 
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -40,10 +42,18 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
     (async () => {
       if (Platform.OS !== "web") {
         const {
-          status,
+          status: statusImagePicker,
         } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== "granted") {
+
+        if (statusImagePicker !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
+        }
+        const {
+          status: statusLocation,
+        } = await Location.requestPermissionsAsync();
+
+        if (statusLocation !== "granted") {
+          alert("Sorry, we need location to find geocoding of the address!");
         }
       }
     })();
@@ -98,7 +108,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         title,
         details,
         date: `${+new Date()}`,
-        geolocation,
+        geolocation: geoLocation,
         address,
         city,
         price,
@@ -109,6 +119,17 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
       },
     });
   };
+
+  const attemptGeocodeAsync = async () => {
+    try {
+      const result = await Location.geocodeAsync(address);
+      const { latitude, longitude } = result[0];
+      setGeolocation([latitude, longitude]);
+    } catch (e) {
+      Alert.alert("Location error", "Please enter a valid address");
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -184,12 +205,6 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         />
         <TextInput
           style={styles.input}
-          value={address}
-          placeholder="Address *"
-          onChangeText={(value) => setAddress(value)}
-        />
-        <TextInput
-          style={styles.input}
           value={city}
           placeholder="City *"
           onChangeText={(value) => setCity(value)}
@@ -215,6 +230,46 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           onChangeText={(value) => setRoomCount(+value)}
           keyboardType="numeric"
         />
+
+        <TextInput
+          style={styles.input}
+          value={address}
+          placeholder="Address *"
+          onChangeText={(value) => setAddress(value)}
+        />
+        <View style={{ marginVertical: 20 }}>
+          <Button
+            title="Find geolocation based on address"
+            disabled={!address}
+            onPress={() => attemptGeocodeAsync()}
+          />
+        </View>
+        <TextInput
+          style={styles.input}
+          value={geoLocation[0] !== 0 ? geoLocation[0].toString() : ""}
+          placeholder="Latitude *"
+          keyboardType="numeric"
+          onChangeText={(value) => setGeolocation([+value, geoLocation[1]])}
+        />
+        <TextInput
+          style={styles.input}
+          value={geoLocation[1] !== 0 ? geoLocation[1].toString() : ""}
+          placeholder="Longitude *"
+          keyboardType="numeric"
+          onChangeText={(value) => setGeolocation([geoLocation[0], +value])}
+        />
+
+        <View style={{ marginVertical: 20 }}>
+          <Button
+            title="See Address in Maps"
+            disabled={geoLocation[0] == 1 || geoLocation[1] == 0}
+            onPress={() =>
+              Linking.openURL(
+                `http://maps.google.com/maps?z=18&q=${geoLocation[0]},${geoLocation[1]}`
+              )
+            }
+          />
+        </View>
       </ScrollView>
       <View style={{ marginTop: 20 }}>
         <Button
@@ -230,7 +285,9 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !type ||
             !msquare ||
             !roomCount ||
-            !title
+            geoLocation[0] == 0 ||
+            geoLocation[1] == 0
+            // !images
           }
         />
       </View>
