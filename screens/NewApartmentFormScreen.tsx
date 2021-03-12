@@ -19,6 +19,7 @@ import { Platform } from "react-native";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
+import { Ionicons } from "@expo/vector-icons";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -30,7 +31,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [type, setType] = useState("");
   const [msquare, setMsquare] = useState<number>();
   const [roomCount, setRoomCount] = useState<number>();
-  const [geoLocation, setGeolocation] = useState<number[]>([0, 0]);
+  const [geolocation, setGeolocation] = useState<number[]>([0, 0]);
 
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -96,24 +97,22 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   }
 
   const handleSubmit = () => {
-    //there is a bug in api for upload files.
-
-    // const photos: any = [];
-    // images.forEach((photo, i) => {
-    //   photos.push(generateRNFile(photo, `picture-${Date.now()}-${i + 1}`));
-    // });
+    const photos: any = [];
+    images.forEach((photo, i) => {
+      photos.push(generateRNFile(photo, `picture-${Date.now()}-${i + 1}`));
+    });
 
     addApartment({
       variables: {
         title,
         details,
         date: `${+new Date()}`,
-        geolocation: geoLocation,
+        geolocation,
         address,
         city,
         price,
         type,
-        // photos,
+        photos,
         msquare,
         roomCount,
       },
@@ -144,6 +143,25 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {images.map((photo, index) => (
               <View style={{ marginRight: 10 }} key={photo}>
+                <TouchableOpacity
+                  style={{
+                    position: "absolute",
+                    top: -5,
+                    right: -5,
+                    zIndex: 1,
+                    backgroundColor: Colors.white,
+                    borderRadius: 50,
+                    padding: 5,
+                  }}
+                  onPress={() =>
+                    setImages([
+                      ...images.slice(0, index),
+                      ...images.slice(index + 1),
+                    ])
+                  }
+                >
+                  <Ionicons name="remove-circle" size={25} color="#f00" />
+                </TouchableOpacity>
                 <TouchableOpacity
                   onPress={() => {
                     setFullScreenPhotoIndex(index);
@@ -189,30 +207,35 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           style={styles.input}
           value={title}
           placeholder="Title *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setTitle(value)}
         />
         <TextInput
           style={styles.input}
           value={details}
           placeholder="Details *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setDetails(value)}
         />
         <TextInput
           style={styles.input}
           value={type}
           placeholder="Type *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setType(value)}
         />
         <TextInput
           style={styles.input}
           value={city}
           placeholder="City *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setCity(value)}
         />
         <TextInput
           style={styles.input}
           value={price?.toString()}
           placeholder="Price *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setPrice(+value)}
           keyboardType="numeric"
         />
@@ -220,6 +243,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           style={styles.input}
           value={msquare?.toString()}
           placeholder="Meter Sqaure *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setMsquare(+value)}
           keyboardType="numeric"
         />
@@ -227,6 +251,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           style={styles.input}
           value={roomCount?.toString()}
           placeholder="Rooms Count *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setRoomCount(+value)}
           keyboardType="numeric"
         />
@@ -235,6 +260,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           style={styles.input}
           value={address}
           placeholder="Address *"
+          placeholderTextColor={Colors.gray}
           onChangeText={(value) => setAddress(value)}
         />
         <View style={{ marginVertical: 20 }}>
@@ -246,26 +272,32 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         </View>
         <TextInput
           style={styles.input}
-          value={geoLocation[0] !== 0 ? geoLocation[0].toString() : ""}
+          value={geolocation[0] !== 0 ? geolocation[0].toString() : ""}
           placeholder="Latitude *"
-          keyboardType="numeric"
-          onChangeText={(value) => setGeolocation([+value, geoLocation[1]])}
+          placeholderTextColor={Colors.gray}
+          keyboardType="decimal-pad"
+          onChangeText={(value) =>
+            setGeolocation([parseFloat(value), geolocation[1]])
+          }
         />
         <TextInput
           style={styles.input}
-          value={geoLocation[1] !== 0 ? geoLocation[1].toString() : ""}
+          value={geolocation[1] !== 0 ? geolocation[1].toString() : ""}
           placeholder="Longitude *"
-          keyboardType="numeric"
-          onChangeText={(value) => setGeolocation([geoLocation[0], +value])}
+          placeholderTextColor={Colors.gray}
+          keyboardType="decimal-pad"
+          onChangeText={(value) =>
+            setGeolocation([geolocation[0], parseFloat(value)])
+          }
         />
 
         <View style={{ marginVertical: 20 }}>
           <Button
             title="See Address in Maps"
-            disabled={geoLocation[0] == 1 || geoLocation[1] == 0}
+            disabled={geolocation[0] == 1 || geolocation[1] == 0}
             onPress={() =>
               Linking.openURL(
-                `http://maps.google.com/maps?z=18&q=${geoLocation[0]},${geoLocation[1]}`
+                `http://maps.google.com/maps?z=18&q=${geolocation[0]},${geolocation[1]}`
               )
             }
           />
@@ -285,9 +317,9 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !type ||
             !msquare ||
             !roomCount ||
-            geoLocation[0] == 0 ||
-            geoLocation[1] == 0
-            // !images
+            geolocation[0] == 0 ||
+            geolocation[1] == 0 ||
+            images.length < 1
           }
         />
       </View>

@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
   },
   sliderContainer: {
-    width: "70%",
+    width: "75%",
     flexDirection: "row",
     alignItems: "center",
   },
@@ -224,6 +224,6 @@ const styles = StyleSheet.create({
     width: 30,
   },
   maxSlider: {
-    marginLeft: 10,
+    marginLeft: 30,
   },
 });

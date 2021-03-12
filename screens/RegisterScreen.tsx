@@ -56,6 +56,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onEmailChange(text)}
         value={email}
         placeholder="Email *"
+        placeholderTextColor={Colors.gray}
         textContentType="emailAddress"
         keyboardType="email-address"
       ></TextInput>
@@ -64,6 +65,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onPasswordChange(text)}
         value={password}
         placeholder="Password *"
+        placeholderTextColor={Colors.gray}
         secureTextEntry
         textContentType="password"
       ></TextInput>
@@ -72,6 +74,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onConfirmPasswordChange(text)}
         value={confirmPassword}
         placeholder="Confirm Password *"
+        placeholderTextColor={Colors.gray}
         secureTextEntry
         textContentType="password"
       ></TextInput>
@@ -80,6 +83,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onNameChange(text)}
         value={name}
         placeholder="Name *"
+        placeholderTextColor={Colors.gray}
         textContentType="name"
       ></TextInput>
       <TextInput
@@ -87,6 +91,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onSurnameChange(text)}
         value={surname}
         placeholder="Surname *"
+        placeholderTextColor={Colors.gray}
         textContentType="name"
       ></TextInput>
       <TextInput
@@ -94,6 +99,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         onChangeText={(text) => onPhoneChange(text)}
         value={phone}
         placeholder="Phone"
+        placeholderTextColor={Colors.gray}
         textContentType="telephoneNumber"
         keyboardType="number-pad"
       ></TextInput>
@@ -130,9 +136,10 @@ const styles = StyleSheet.create({
   input: {
     width: "80%",
     borderColor: Colors.black,
-    borderWidth: 2,
+    borderWidth: 1,
     color: Colors.black,
     padding: 10,
+    marginBottom: 10,
   },
   buttonContainer: {
     marginTop: 30,
