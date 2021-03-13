@@ -26,4 +26,5 @@ export type ProfileParamList = {
 
 export type MapParamList = {
   MapScreen: undefined;
+  ApartmentDetailsScreen: undefined;
 };

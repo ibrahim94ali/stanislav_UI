@@ -58,7 +58,7 @@ export default function App() {
   const link = from([
     errorLink,
     createUploadLink({
-      uri: awsUri,
+      uri: herokuUri,
     }),
   ]);
 

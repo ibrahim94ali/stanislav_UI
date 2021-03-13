@@ -92,6 +92,10 @@ function MapNavigator() {
         component={MapScreen}
         options={{ headerTitle: "Map" }}
       />
+      <MapStack.Screen
+        name="ApartmentDetailsScreen"
+        component={ApartmentDetailsScreen}
+      />
     </MapStack.Navigator>
   );
 }

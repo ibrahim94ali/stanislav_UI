@@ -12,11 +12,6 @@ export default {
               ApartmentDetailsScreen: "apartmentDetails",
             },
           },
-          Search: {
-            screens: {
-              SearchScreen: "search",
-            },
-          },
           Map: {
             screens: {
               MapScreen: "map",
