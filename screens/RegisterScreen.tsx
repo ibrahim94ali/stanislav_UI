@@ -59,6 +59,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         placeholderTextColor={Colors.gray}
         textContentType="emailAddress"
         keyboardType="email-address"
+        autoCapitalize="none"
       ></TextInput>
       <TextInput
         style={styles.input}
@@ -68,6 +69,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         placeholderTextColor={Colors.gray}
         secureTextEntry
         textContentType="password"
+        autoCapitalize="none"
       ></TextInput>
       <TextInput
         style={styles.input}
@@ -77,6 +79,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         placeholderTextColor={Colors.gray}
         secureTextEntry
         textContentType="password"
+        autoCapitalize="none"
       ></TextInput>
       <TextInput
         style={styles.input}
@@ -102,6 +105,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         placeholderTextColor={Colors.gray}
         textContentType="telephoneNumber"
         keyboardType="number-pad"
+        returnKeyType="done"
       ></TextInput>
       <View style={styles.buttonContainer}>
         <Button

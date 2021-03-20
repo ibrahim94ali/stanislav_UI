@@ -238,6 +238,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setPrice(+value)}
           keyboardType="numeric"
+          returnKeyType="done"
         />
         <TextInput
           style={styles.input}
@@ -246,6 +247,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setMsquare(+value)}
           keyboardType="numeric"
+          returnKeyType="done"
         />
         <TextInput
           style={styles.input}
@@ -254,6 +256,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setRoomCount(+value)}
           keyboardType="numeric"
+          returnKeyType="done"
         />
 
         <TextInput
@@ -276,6 +279,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           placeholder="Latitude *"
           placeholderTextColor={Colors.gray}
           keyboardType="decimal-pad"
+          returnKeyType="done"
           onChangeText={(value) =>
             setGeolocation([parseFloat(value), geolocation[1]])
           }
@@ -286,6 +290,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           placeholder="Longitude *"
           placeholderTextColor={Colors.gray}
           keyboardType="decimal-pad"
+          returnKeyType="done"
           onChangeText={(value) =>
             setGeolocation([geolocation[0], parseFloat(value)])
           }
