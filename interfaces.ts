@@ -2,7 +2,6 @@ export interface ApartmentI {
   id: string;
   title: string;
   details: string;
-  ownerId: string;
   date: string;
   geolocation: number[];
   address: string;
@@ -12,6 +11,8 @@ export interface ApartmentI {
   photos: string[];
   msquare: number;
   roomCount: number;
+  ownerId?: string;
+  owner?: UserI;
 }
 
 export interface UserI {

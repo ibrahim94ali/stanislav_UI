@@ -26,7 +26,12 @@ export const GET_APARTMENTS = gql`
       id
       title
       details
-      ownerId
+      owner {
+        name
+        surname
+        email
+        phone
+      }
       date
       geolocation
       address
@@ -46,7 +51,6 @@ export const GET_MY_APARTMENTS = gql`
       id
       title
       details
-      ownerId
       date
       geolocation
       address

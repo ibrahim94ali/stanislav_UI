@@ -12,6 +12,7 @@ import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
+import { FontAwesome, Ionicons } from "@expo/vector-icons";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const { apartment }: { apartment: ApartmentI } = route.params;
@@ -72,18 +73,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           onRequestClose={() => setIsFullScreen(false)}
         />
       </View>
-      <View>
-        <View style={{ marginBottom: 20, width: 150, alignSelf: "center" }}>
-          <Button
-            title="See in Maps"
-            color={Colors.secondary}
-            onPress={() =>
-              Linking.openURL(
-                `http://maps.google.com/maps?z=18&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
-              )
-            }
-          />
-        </View>
+      <View style={{ marginBottom: 20, width: 150, alignSelf: "center" }}>
+        <Button
+          title="See in Maps"
+          color={Colors.secondary}
+          onPress={() =>
+            Linking.openURL(
+              `http://maps.google.com/maps?z=18&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+            )
+          }
+        />
+      </View>
+      <ScrollView>
         <Text style={styles.item}>Info: {apartment.details}</Text>
         <Text style={styles.item}>
           Date: {new Date(+apartment.date).toDateString()}
@@ -97,7 +98,43 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         <Text style={styles.item}>Type: {apartment.type}</Text>
         <Text style={styles.item}>Area: {apartment.msquare} meter square</Text>
         <Text style={styles.item}>Rooms: {apartment.roomCount}</Text>
-      </View>
+        {apartment.owner ? (
+          <View style={{ marginTop: 20 }}>
+            <Text
+              style={{ alignSelf: "center", fontSize: 15, marginBottom: 10 }}
+            >
+              Owner details:{" "}
+            </Text>
+            <Text
+              style={styles.title}
+            >{`${apartment.owner.name} ${apartment.owner.surname}`}</Text>
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() =>
+                Linking.openURL(
+                  `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
+                )
+              }
+            >
+              <Ionicons name="mail" size={18} color={Colors.white} />
+              <Text style={{ marginLeft: 10, color: Colors.white }}>
+                {apartment.owner.email}{" "}
+              </Text>
+            </TouchableOpacity>
+            {apartment.owner.phone ? (
+              <TouchableOpacity
+                style={[styles.button, { marginTop: 10 }]}
+                onPress={() => Linking.openURL(`tel:${apartment.owner?.phone}`)}
+              >
+                <FontAwesome name="phone" size={20} color={Colors.white} />
+                <Text style={{ marginLeft: 10, color: Colors.white }}>
+                  {apartment.owner.phone}
+                </Text>
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        ) : null}
+      </ScrollView>
     </View>
   );
 };
@@ -119,5 +156,12 @@ const styles = StyleSheet.create({
     padding: 5,
     marginBottom: 5,
     color: Colors.white,
+  },
+  button: {
+    backgroundColor: Colors.secondary,
+    padding: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });

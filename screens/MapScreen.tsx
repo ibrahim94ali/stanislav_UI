@@ -1,10 +1,12 @@
 import { Ionicons } from "@expo/vector-icons";
+import { observer } from "mobx-react";
 import React from "react";
-import { StyleSheet, View, Text, Dimensions } from "react-native";
+import { StyleSheet, View, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import Colors from "../constants/Colors";
 import { useStore } from "../hooks/StoreContext";
-export default function MapScreen({ navigation }: any) {
+
+const MapScreen = ({ navigation }: any) => {
   const store = useStore();
   return (
     <View style={styles.container}>
@@ -37,7 +39,9 @@ export default function MapScreen({ navigation }: any) {
       </MapView>
     </View>
   );
-}
+};
+
+export default observer(MapScreen);
 
 const styles = StyleSheet.create({
   container: {
