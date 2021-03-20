@@ -76,42 +76,48 @@ const SearchForm = ({ open }: { open: boolean }) => {
       <View style={open ? styles.container : styles.hide}>
         <View style={styles.item}>
           <Text style={styles.itemText}>Sort Order: </Text>
-          <RNPickerSelect
-            style={styles.picker}
-            value={selectedOrder}
-            onValueChange={(itemValue) => {
-              setSelectedOrder(+itemValue);
-            }}
-            itemKey="value"
-            items={[
-              { label: "High to Low", value: -1 },
-              { label: "Low to High", value: 1 },
-            ]}
-          />
+          <View style={styles.picker}>
+            <RNPickerSelect
+              placeholder={{}}
+              value={selectedOrder}
+              onValueChange={(itemValue) => {
+                setSelectedOrder(+itemValue);
+              }}
+              itemKey="value"
+              items={[
+                { label: "High to Low", value: -1 },
+                { label: "Low to High", value: 1 },
+              ]}
+            />
+          </View>
         </View>
         <View style={styles.item}>
           <Text style={styles.itemText}>Sort By: </Text>
-          <RNPickerSelect
-            style={styles.picker}
-            value={selectedSort}
-            onValueChange={(itemValue) => {
-              setSelectedSort(itemValue);
-            }}
-            itemKey="value"
-            items={sortFields}
-          />
+          <View style={styles.picker}>
+            <RNPickerSelect
+              placeholder={{}}
+              value={selectedSort}
+              onValueChange={(itemValue) => {
+                setSelectedSort(itemValue);
+              }}
+              itemKey="value"
+              items={sortFields}
+            />
+          </View>
         </View>
         <View style={styles.item}>
           <Text style={styles.itemText}>Cities: </Text>
-          <RNPickerSelect
-            style={styles.picker}
-            value={selectedCity}
-            onValueChange={(itemValue) => {
-              setSelectedCity(itemValue);
-            }}
-            itemKey="value"
-            items={filterCities}
-          />
+          <View style={styles.picker}>
+            <RNPickerSelect
+              placeholder={{}}
+              value={selectedCity}
+              onValueChange={(itemValue) => {
+                setSelectedCity(itemValue);
+              }}
+              itemKey="value"
+              items={filterCities}
+            />
+          </View>
           {/* <Picker
             selectedValue={selectedCity}
             style={styles.picker}
