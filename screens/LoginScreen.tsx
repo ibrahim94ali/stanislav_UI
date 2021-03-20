@@ -51,6 +51,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         placeholderTextColor={Colors.gray}
         textContentType="emailAddress"
         keyboardType="email-address"
+        autoCapitalize="none"
       ></TextInput>
       <TextInput
         style={styles.input}

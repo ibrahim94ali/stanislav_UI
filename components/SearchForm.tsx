@@ -8,21 +8,27 @@ import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
 import LoadingSpinner from "./LoadingSpinner";
 import { observer } from "mobx-react";
+import RNPickerSelect from "react-native-picker-select";
+import { dpx } from "../constants/Spacings";
 
 const SearchForm = ({ open }: { open: boolean }) => {
   const store = useStore();
 
   const sortFields = [
-    { key: "date", value: "Date" },
-    { key: "price", value: "Price" },
-    { key: "msquare", value: "Area" },
-    { key: "roomCount", value: "Rooms" },
+    { value: "date", label: "Date" },
+    { value: "price", label: "Price" },
+    { value: "msquare", label: "Area" },
+    { value: "roomCount", label: "Rooms" },
   ];
-  const filterCities = ["All", "Skopje", "Gostivar"];
+  const filterCities = [
+    { value: "All", label: "All" },
+    { value: "Skopje", label: "Skopje" },
+    { value: "Gostivar", label: "Gostivar" },
+  ];
 
   const [selectedOrder, setSelectedOrder] = useState(-1);
 
-  const [selectedSort, setSelectedSort] = useState(sortFields[0]);
+  const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
   const [selectedCity, setSelectedCity] = useState("All");
 
   //price
@@ -45,7 +51,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
 
   const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
     variables: {
-      sortBy: selectedSort.key,
+      sortBy: selectedSort,
       city: selectedCity === "All" ? null : selectedCity,
       minPrice,
       maxPrice,
@@ -70,34 +76,43 @@ const SearchForm = ({ open }: { open: boolean }) => {
       <View style={open ? styles.container : styles.hide}>
         <View style={styles.item}>
           <Text style={styles.itemText}>Sort Order: </Text>
-          <Picker
+          <RNPickerSelect
             style={styles.picker}
-            selectedValue={selectedOrder}
+            value={selectedOrder}
             onValueChange={(itemValue) => {
               setSelectedOrder(+itemValue);
             }}
-          >
-            <Picker.Item label={"High to Low"} value={-1} />
-            <Picker.Item label={"Low to High"} value={1} />
-          </Picker>
+            itemKey="value"
+            items={[
+              { label: "High to Low", value: -1 },
+              { label: "Low to High", value: 1 },
+            ]}
+          />
         </View>
         <View style={styles.item}>
           <Text style={styles.itemText}>Sort By: </Text>
-          <Picker
+          <RNPickerSelect
             style={styles.picker}
-            selectedValue={selectedSort.value}
-            onValueChange={(_, i) => {
-              setSelectedSort(sortFields[i]);
+            value={selectedSort}
+            onValueChange={(itemValue) => {
+              setSelectedSort(itemValue);
             }}
-          >
-            {sortFields.map((item, index) => (
-              <Picker.Item label={item.value} value={item.value} key={index} />
-            ))}
-          </Picker>
+            itemKey="value"
+            items={sortFields}
+          />
         </View>
         <View style={styles.item}>
           <Text style={styles.itemText}>Cities: </Text>
-          <Picker
+          <RNPickerSelect
+            style={styles.picker}
+            value={selectedCity}
+            onValueChange={(itemValue) => {
+              setSelectedCity(itemValue);
+            }}
+            itemKey="value"
+            items={filterCities}
+          />
+          {/* <Picker
             selectedValue={selectedCity}
             style={styles.picker}
             onValueChange={(itemValue) => setSelectedCity(itemValue.toString())}
@@ -105,7 +120,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
             {filterCities.map((item, index) => (
               <Picker.Item label={item} value={item} key={index} />
             ))}
-          </Picker>
+          </Picker> */}
         </View>
 
         {/* price */}
@@ -120,7 +135,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
               min={0}
               max={1000}
               step={50}
-              sliderLength={180}
+              sliderLength={dpx(170)}
               values={[minPrice, maxPrice]}
               onValuesChange={([min, max]) => {
                 setMinPriceText(min);
@@ -147,7 +162,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
               min={0}
               max={300}
               step={10}
-              sliderLength={180}
+              sliderLength={dpx(170)}
               values={[minArea, maxArea]}
               onValuesChange={([min, max]) => {
                 setMinAreaText(min);
@@ -174,7 +189,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
               min={0}
               max={10}
               step={1}
-              sliderLength={180}
+              sliderLength={dpx(170)}
               values={[minRoom, maxRoom]}
               onValuesChange={([min, max]) => {
                 setMinRoomText(min);
@@ -197,7 +212,7 @@ export default observer(SearchForm);
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    padding: dpx(10),
   },
   hide: {
     display: "none",
@@ -206,7 +221,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    height: 50,
+    paddingVertical: dpx(10),
+    paddingHorizontal: dpx(5),
   },
   itemText: {
     flex: 1,
