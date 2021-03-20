@@ -21,6 +21,7 @@ export type ProfileParamList = {
   LoginScreen: undefined;
   NewApartmentFormScreen: undefined;
   MyApartmentsScreen: undefined;
+  MyFavoriteApartmentsScreen: undefined;
   ApartmentDetailsScreen: undefined;
 };
 

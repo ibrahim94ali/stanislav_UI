@@ -93,3 +93,55 @@ export const DELETE_APARTMENT = gql`
     }
   }
 `;
+
+export const ADD_FAV_APARTMENT = gql`
+  mutation addFavorite($id: ID!) {
+    addFavorite(id: $id) {
+      id
+      title
+      details
+      owner {
+        name
+        surname
+        email
+        phone
+      }
+      date
+      geolocation
+      address
+      city
+      price
+      type
+      photos
+      msquare
+      roomCount
+      isFavorite
+    }
+  }
+`;
+
+export const REMOVE_FAV_APARTMENT = gql`
+  mutation removeFavorite($id: ID!) {
+    removeFavorite(id: $id) {
+      id
+      title
+      details
+      owner {
+        name
+        surname
+        email
+        phone
+      }
+      date
+      geolocation
+      address
+      city
+      price
+      type
+      photos
+      msquare
+      roomCount
+      isFavorite
+    }
+  }
+`;

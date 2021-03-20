@@ -24,6 +24,7 @@ export default {
               LoginScreen: "login",
               NewApartmentFormScreen: "newApartment",
               MyApartmentsScreen: "myApartments",
+              MyFavoriteApartmentsScreen: "myFavoriteApartments",
             },
           },
         },

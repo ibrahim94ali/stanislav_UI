@@ -13,6 +13,7 @@ export interface ApartmentI {
   roomCount: number;
   ownerId?: string;
   owner?: UserI;
+  isFavorite?: boolean;
 }
 
 export interface UserI {

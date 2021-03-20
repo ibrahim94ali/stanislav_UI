@@ -45,6 +45,14 @@ function ProfileScreen({ navigation }: any) {
             color={Colors.primary}
             onPress={() => navigation.push("MyApartmentsScreen")}
           />
+          <Text style={[styles.title, { marginTop: 50 }]}>
+            See Your Favorite Apartments
+          </Text>
+          <Button
+            title="Favorite Apartments"
+            color={Colors.primary}
+            onPress={() => navigation.push("MyFavoriteApartmentsScreen")}
+          />
         </View>
       ) : (
         <View>

@@ -41,6 +41,7 @@ export const GET_APARTMENTS = gql`
       photos
       msquare
       roomCount
+      isFavorite
     }
   }
 `;
@@ -60,6 +61,31 @@ export const GET_MY_APARTMENTS = gql`
       photos
       msquare
       roomCount
+    }
+  }
+`;
+
+export const GET_FAV_APARTMENTS = gql`
+  query {
+    favorites {
+      id
+      title
+      details
+      date
+      geolocation
+      address
+      city
+      price
+      type
+      photos
+      msquare
+      roomCount
+      owner {
+        name
+        surname
+        email
+        phone
+      }
     }
   }
 `;

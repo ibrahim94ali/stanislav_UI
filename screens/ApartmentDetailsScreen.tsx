@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -13,9 +13,15 @@ import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import { observer } from "mobx-react";
+import { useMutation } from "@apollo/client";
+import { ADD_FAV_APARTMENT, REMOVE_FAV_APARTMENT } from "../graphQL/Mutations";
+import { useStore } from "../hooks/StoreContext";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const { apartment }: { apartment: ApartmentI } = route.params;
+
+  const [isFav, setIsFav] = useState(apartment.isFavorite);
 
   let images = apartment.photos.map((a) => {
     return {
@@ -23,14 +29,67 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     };
   });
 
+  const store = useStore();
+
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
+
+  const [addFavorite, { data: isNowFavorite }] = useMutation(
+    ADD_FAV_APARTMENT,
+    {
+      variables: {
+        id: apartment.id,
+      },
+    }
+  );
+  const [removeFavorite, { data: isNowUnfavorite }] = useMutation(
+    REMOVE_FAV_APARTMENT,
+    {
+      variables: {
+        id: apartment.id,
+      },
+    }
+  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: apartment.title,
+      headerRight: () =>
+        store.user ? (
+          <TouchableOpacity onPress={() => handleFavorite()}>
+            <Ionicons
+              size={30}
+              style={{ marginRight: 15 }}
+              color={Colors.primary}
+              name={isFav ? "heart" : "heart-outline"}
+            />
+          </TouchableOpacity>
+        ) : null,
     });
-  }, [navigation]);
+  }, [navigation, isFav]);
+
+  const handleFavorite = () => {
+    if (isFav) {
+      removeFavorite();
+    } else {
+      addFavorite();
+    }
+  };
+
+  useEffect(() => {
+    if (isNowFavorite?.addFavorite) {
+      store.setFavoriteApartments(isNowFavorite.addFavorite);
+      setIsFav(true);
+    }
+  }, [isNowFavorite]);
+
+  useEffect(() => {
+    if (isNowUnfavorite?.removeFavorite) {
+      store.setFavoriteApartments(isNowUnfavorite.removeFavorite);
+      setIsFav(false);
+    }
+  }, [isNowUnfavorite]);
+
   return (
     <View style={styles.container}>
       <View
@@ -139,7 +198,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   );
 };
 
-export default ApartmentDetailsScreen;
+export default observer(ApartmentDetailsScreen);
 
 const styles = StyleSheet.create({
   container: {

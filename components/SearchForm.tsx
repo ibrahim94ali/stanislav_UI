@@ -55,6 +55,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
       maxRoom,
       sortOrder: selectedOrder,
     },
+    fetchPolicy: "no-cache",
   });
 
   useEffect(() => {
