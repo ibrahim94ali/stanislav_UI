@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Linking,
   Alert,
+  Text,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
@@ -20,15 +21,23 @@ import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
+import { AdType, BuildingType, CityType } from "../interfaces";
+import RNPickerSelect from "react-native-picker-select";
+import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
   const [title, setTitle] = useState<string>("");
   const [details, setDetails] = useState<string>("");
   const [address, setAddress] = useState<string>("");
-  const [city, setCity] = useState<string>("");
   const [price, setPrice] = useState<number>();
-  const [type, setType] = useState("");
+  const [city, setCity] = useState<CityType>(CityType.SKOPJE);
+  const [buildingType, setBuildingType] = useState<BuildingType>(
+    BuildingType.FLAT
+  );
+  const [adType, setAdType] = useState<AdType>(AdType.RENT);
+  const [floor, setFloor] = useState<number>();
+
   const [msquare, setMsquare] = useState<number>();
   const [roomCount, setRoomCount] = useState<number>();
   const [geolocation, setGeolocation] = useState<number[]>([0, 0]);
@@ -111,10 +120,12 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         address,
         city,
         price,
-        type,
+        buildingType,
+        adType,
         photos,
         msquare,
         roomCount,
+        floor,
       },
     });
   };
@@ -203,6 +214,39 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             onPress={pickImage}
           />
         </View>
+        <View>
+          <RNPickerSelect
+            placeholder={{}}
+            value={buildingType}
+            onValueChange={(itemValue) => {
+              setBuildingType(itemValue);
+            }}
+            itemKey="value"
+            items={buildingTypes}
+          />
+        </View>
+        <View>
+          <RNPickerSelect
+            placeholder={{}}
+            value={adType}
+            onValueChange={(itemValue) => {
+              setAdType(itemValue);
+            }}
+            itemKey="value"
+            items={adTypes}
+          />
+        </View>
+        <View>
+          <RNPickerSelect
+            placeholder={{}}
+            value={city}
+            onValueChange={(itemValue) => {
+              setCity(itemValue);
+            }}
+            itemKey="value"
+            items={cityTypes}
+          />
+        </View>
         <TextInput
           style={styles.input}
           value={title}
@@ -219,46 +263,64 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         />
         <TextInput
           style={styles.input}
-          value={type}
-          placeholder="Type *"
+          value={price?.toString() || ""}
+          placeholder="Price (euro) *"
           placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setType(value)}
-        />
-        <TextInput
-          style={styles.input}
-          value={city}
-          placeholder="City *"
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setCity(value)}
-        />
-        <TextInput
-          style={styles.input}
-          value={price?.toString()}
-          placeholder="Price *"
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setPrice(+value)}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setPrice(parseInt(value));
+            } else {
+              setPrice(undefined);
+            }
+          }}
           keyboardType="numeric"
           returnKeyType="done"
         />
         <TextInput
           style={styles.input}
-          value={msquare?.toString()}
+          value={msquare?.toString() || ""}
           placeholder="Meter Sqaure *"
           placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setMsquare(+value)}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setMsquare(parseInt(value));
+            } else {
+              setMsquare(undefined);
+            }
+          }}
           keyboardType="numeric"
           returnKeyType="done"
         />
         <TextInput
           style={styles.input}
-          value={roomCount?.toString()}
-          placeholder="Rooms Count *"
+          value={roomCount?.toString() || ""}
+          placeholder="Room Count *"
           placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setRoomCount(+value)}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setRoomCount(parseInt(value));
+            } else {
+              setRoomCount(undefined);
+            }
+          }}
           keyboardType="numeric"
           returnKeyType="done"
         />
-
+        <TextInput
+          style={styles.input}
+          value={floor?.toString() || ""}
+          placeholder="Floor *"
+          placeholderTextColor={Colors.gray}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setFloor(parseInt(value));
+            } else {
+              setFloor(undefined);
+            }
+          }}
+          keyboardType="numeric"
+          returnKeyType="done"
+        />
         <TextInput
           style={styles.input}
           value={address}
@@ -273,28 +335,12 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             onPress={() => attemptGeocodeAsync()}
           />
         </View>
-        <TextInput
-          style={styles.input}
-          value={geolocation[0] !== 0 ? geolocation[0].toString() : ""}
-          placeholder="Latitude *"
-          placeholderTextColor={Colors.gray}
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          onChangeText={(value) =>
-            setGeolocation([parseFloat(value), geolocation[1]])
-          }
-        />
-        <TextInput
-          style={styles.input}
-          value={geolocation[1] !== 0 ? geolocation[1].toString() : ""}
-          placeholder="Longitude *"
-          placeholderTextColor={Colors.gray}
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          onChangeText={(value) =>
-            setGeolocation([geolocation[0], parseFloat(value)])
-          }
-        />
+        <Text style={styles.input}>
+          {geolocation[0] !== 0 ? geolocation[0].toString() : "Latitude *"}
+        </Text>
+        <Text style={styles.input}>
+          {geolocation[1] !== 0 ? geolocation[1].toString() : "Longitude *"}
+        </Text>
 
         <View style={{ marginVertical: 20 }}>
           <Button
@@ -319,9 +365,9 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !details ||
             !address ||
             !price ||
-            !type ||
             !msquare ||
             !roomCount ||
+            !floor ||
             geolocation[0] == 0 ||
             geolocation[1] == 0 ||
             images.length < 1

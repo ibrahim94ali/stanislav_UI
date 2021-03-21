@@ -144,6 +144,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         />
       </View>
       <ScrollView>
+        <Text style={styles.item}>Building Type: {apartment.buildingType}</Text>
+        <Text style={styles.item}>Ad Type: {apartment.adType}</Text>
         <Text style={styles.item}>Info: {apartment.details}</Text>
         <Text style={styles.item}>
           Date: {new Date(+apartment.date).toDateString()}
@@ -154,9 +156,9 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         <Text style={styles.item}>Address: {apartment.address}</Text>
         <Text style={styles.item}>City: {apartment.city}</Text>
         <Text style={styles.item}>Price: {apartment.price} €</Text>
-        <Text style={styles.item}>Type: {apartment.type}</Text>
         <Text style={styles.item}>Area: {apartment.msquare} meter square</Text>
         <Text style={styles.item}>Rooms: {apartment.roomCount}</Text>
+        <Text style={styles.item}>Floor: {apartment.floor}</Text>
         {apartment.owner ? (
           <View style={{ marginTop: 20 }}>
             <Text

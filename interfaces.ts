@@ -7,22 +7,42 @@ export interface ApartmentI {
   address: string;
   city: string;
   price: number;
-  type: string;
+  buildingType: BuildingType;
+  adType: AdType;
   photos: string[];
   msquare: number;
   roomCount: number;
-  ownerId?: string;
+  ownerId: string;
+  floor: number;
   owner?: UserI;
   isFavorite?: boolean;
 }
 
 export interface UserI {
-  id?: string;
+  id: string;
   email: string;
-  token?: string;
-  phone?: string;
   name: string;
   surname: string;
+  phone?: string;
+  token?: string;
+  verified?: boolean;
   roles?: string[];
-  verified: boolean;
+}
+
+export enum BuildingType {
+  HOUSE = "house",
+  FLAT = "flat",
+}
+
+export enum AdType {
+  RENT = "rent",
+  PURCHASE = "purchase",
+}
+
+export enum CityType {
+  SKOPJE = "skopje",
+  GOSTIVAR = "gostivar",
+  TETOVO = "tetovo",
+  OHRID = "ohrid",
+  BITOLA = "bitola",
 }

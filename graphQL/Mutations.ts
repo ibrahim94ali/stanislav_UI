@@ -51,10 +51,12 @@ export const ADD_APARTMENT = gql`
     $address: String!
     $city: String!
     $price: Int!
-    $type: String!
+    $buildingType: String!
+    $adType: String!
     $photos: [Upload]
     $msquare: Int!
     $roomCount: Int!
+    $floor: Int!
   ) {
     addApartment(
       title: $title
@@ -64,10 +66,12 @@ export const ADD_APARTMENT = gql`
       address: $address
       city: $city
       price: $price
-      type: $type
+      buildingType: $buildingType
+      adType: $adType
       photos: $photos
       msquare: $msquare
       roomCount: $roomCount
+      floor: $floor
     ) {
       id
       ownerId
@@ -78,10 +82,18 @@ export const ADD_APARTMENT = gql`
       address
       city
       price
-      type
+      buildingType
+      adType
       photos
       msquare
       roomCount
+      floor
+      owner {
+        name
+        surname
+        phone
+        email
+      }
     }
   }
 `;
@@ -111,11 +123,13 @@ export const ADD_FAV_APARTMENT = gql`
       address
       city
       price
-      type
+      buildingType
+      adType
       photos
       msquare
       roomCount
       isFavorite
+      floor
     }
   }
 `;
@@ -137,11 +151,13 @@ export const REMOVE_FAV_APARTMENT = gql`
       address
       city
       price
-      type
+      buildingType
+      adType
       photos
       msquare
       roomCount
       isFavorite
+      floor
     }
   }
 `;

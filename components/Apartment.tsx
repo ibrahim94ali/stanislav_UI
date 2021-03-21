@@ -7,10 +7,15 @@ export default function Apartment({ apartment }: { apartment: ApartmentI }) {
   return (
     <View style={styles.container}>
       <Text style={[styles.field, styles.title]}>{apartment.title}</Text>
+      <Text style={styles.field}>Building: {apartment.buildingType}</Text>
+      <Text style={styles.field}>Ad: {apartment.adType}</Text>
       <Text style={styles.field}>City: {apartment.city}</Text>
       <Text style={styles.field}>Price: {apartment.price} €</Text>
       <Text style={styles.field}>Area: {apartment.msquare} ms2</Text>
-      <Text style={styles.field}>Rooms:{apartment.roomCount}</Text>
+      <Text style={styles.field}>Rooms: {apartment.roomCount}</Text>
+      {apartment.floor ? (
+        <Text style={styles.field}>Floor: {apartment.floor}</Text>
+      ) : null}
     </View>
   );
 }

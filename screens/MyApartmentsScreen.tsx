@@ -3,6 +3,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import React, { useEffect, useLayoutEffect } from "react";
 import { StyleSheet, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import ApartmentList from "../components/ApartmentList";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { GET_MY_APARTMENTS } from "../graphQL/Queries";
@@ -26,12 +27,11 @@ const MyApartmentsScreen = ({ navigation }: any) => {
   useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Ionicons
-          size={30}
-          style={{ marginRight: 15 }}
-          name="add"
+        <TouchableOpacity
           onPress={() => navigation.push("NewApartmentFormScreen")}
-        />
+        >
+          <Ionicons size={30} style={{ marginRight: 15 }} name="add" />
+        </TouchableOpacity>
       ),
     });
   }, [navigation]);

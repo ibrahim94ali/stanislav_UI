@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { useQuery } from "@apollo/client";
 import { GET_APARTMENTS } from "../graphQL/Queries";
@@ -10,55 +9,66 @@ import LoadingSpinner from "./LoadingSpinner";
 import { observer } from "mobx-react";
 import RNPickerSelect from "react-native-picker-select";
 import { dpx } from "../constants/Spacings";
+import { AdType, BuildingType, CityType } from "../interfaces";
+import { ScrollView } from "react-native-gesture-handler";
+import {
+  sortFields,
+  adTypes,
+  buildingTypes,
+  cityTypes,
+} from "../constants/Selectable";
 
 const SearchForm = ({ open }: { open: boolean }) => {
   const store = useStore();
 
-  const sortFields = [
-    { value: "date", label: "Date" },
-    { value: "price", label: "Price" },
-    { value: "msquare", label: "Area" },
-    { value: "roomCount", label: "Rooms" },
-  ];
-  const filterCities = [
-    { value: "All", label: "All" },
-    { value: "Skopje", label: "Skopje" },
-    { value: "Gostivar", label: "Gostivar" },
-  ];
+  const placeholder = {
+    label: "All",
+    color: Colors.gray,
+    value: null,
+  };
+
+  const { width: viewportWidth } = Dimensions.get("window");
 
   const [selectedOrder, setSelectedOrder] = useState(-1);
 
   const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
-  const [selectedCity, setSelectedCity] = useState("All");
+  const [selectedCity, setSelectedCity] = useState<CityType>();
+  const [
+    selectedBuildingType,
+    setSelectedBuildingType,
+  ] = useState<BuildingType>();
+  const [selectedAdType, setSelectedAdType] = useState<AdType>();
 
   //price
   const [minPrice, setMinPrice] = useState(0);
-  const [minPriceText, setMinPriceText] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000);
-  const [maxPriceText, setMaxPriceText] = useState(1000);
+  const [maxPrice, setMaxPrice] = useState(1000000);
 
   //area
   const [minArea, setMinArea] = useState(0);
-  const [minAreaText, setMinAreaText] = useState(0);
   const [maxArea, setMaxArea] = useState(300);
-  const [maxAreaText, setMaxAreaText] = useState(300);
 
   // room
   const [minRoom, setMinRoom] = useState(0);
-  const [minRoomText, setMinRoomText] = useState(0);
   const [maxRoom, setMaxRoom] = useState(10);
-  const [maxRoomText, setMaxRoomText] = useState(10);
+
+  // floor
+  const [minFloor, setMinFloor] = useState(0);
+  const [maxFloor, setMaxFloor] = useState(30);
 
   const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
     variables: {
       sortBy: selectedSort,
-      city: selectedCity === "All" ? null : selectedCity,
+      city: selectedCity,
+      buildingType: selectedBuildingType,
+      adType: selectedAdType,
       minPrice,
       maxPrice,
       minArea,
       maxArea,
       minRoom,
       maxRoom,
+      minFloor,
+      maxFloor,
       sortOrder: selectedOrder,
     },
     fetchPolicy: "no-cache",
@@ -70,145 +80,186 @@ const SearchForm = ({ open }: { open: boolean }) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (selectedAdType === AdType.RENT) {
+      setMaxPrice(1000);
+    }
+
+    if (selectedAdType === AdType.PURCHASE) {
+      setMaxPrice(1000000);
+    }
+  }, [selectedAdType]);
+
   return (
     <View>
       {isDataLoading ? <LoadingSpinner /> : null}
       <View style={open ? styles.container : styles.hide}>
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Sort Order: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={{}}
-              value={selectedOrder}
-              onValueChange={(itemValue) => {
-                setSelectedOrder(+itemValue);
-              }}
-              itemKey="value"
-              items={[
-                { label: "High to Low", value: -1 },
-                { label: "Low to High", value: 1 },
-              ]}
-            />
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* adtype */}
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Ad Type: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={placeholder}
+                value={selectedAdType}
+                onValueChange={(itemValue) => {
+                  setSelectedAdType(itemValue);
+                }}
+                itemKey="value"
+                items={adTypes}
+                style={pickerSelectStyles}
+              />
+            </View>
           </View>
-        </View>
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Sort By: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={{}}
-              value={selectedSort}
-              onValueChange={(itemValue) => {
-                setSelectedSort(itemValue);
-              }}
-              itemKey="value"
-              items={sortFields}
-            />
-          </View>
-        </View>
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Cities: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={{}}
-              value={selectedCity}
-              onValueChange={(itemValue) => {
-                setSelectedCity(itemValue);
-              }}
-              itemKey="value"
-              items={filterCities}
-            />
-          </View>
-          {/* <Picker
-            selectedValue={selectedCity}
-            style={styles.picker}
-            onValueChange={(itemValue) => setSelectedCity(itemValue.toString())}
-          >
-            {filterCities.map((item, index) => (
-              <Picker.Item label={item} value={item} key={index} />
-            ))}
-          </Picker> */}
-        </View>
 
-        {/* price */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Price (€): </Text>
-          <View style={styles.sliderContainer}>
-            <Text style={styles.minSlider}>{minPriceText}</Text>
+          {/* building type */}
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Building Type: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={placeholder}
+                value={selectedBuildingType}
+                onValueChange={(itemValue) => {
+                  setSelectedBuildingType(itemValue);
+                }}
+                itemKey="value"
+                items={buildingTypes}
+                style={pickerSelectStyles}
+              />
+            </View>
+          </View>
+
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Sort Order: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={{}}
+                value={selectedOrder}
+                onValueChange={(itemValue) => {
+                  setSelectedOrder(+itemValue);
+                }}
+                itemKey="value"
+                items={[
+                  { label: "High to Low", value: -1 },
+                  { label: "Low to High", value: 1 },
+                ]}
+                style={pickerSelectStyles}
+              />
+            </View>
+          </View>
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Sort By: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={{}}
+                value={selectedSort}
+                onValueChange={(itemValue) => {
+                  setSelectedSort(itemValue);
+                }}
+                itemKey="value"
+                items={sortFields}
+                style={pickerSelectStyles}
+              />
+            </View>
+          </View>
+
+          {/* Cities */}
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Cities: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={placeholder}
+                value={selectedCity}
+                onValueChange={(itemValue) => {
+                  setSelectedCity(itemValue);
+                }}
+                itemKey="value"
+                items={cityTypes}
+                style={pickerSelectStyles}
+              />
+            </View>
+          </View>
+
+          {/* price */}
+          <View style={styles.sliderFilters}>
+            <Text style={styles.itemText}>Price (€): </Text>
             <MultiSlider
               markerStyle={styles.slider}
               selectedStyle={styles.slider}
               isMarkersSeparated
+              enableLabel
               min={0}
-              max={1000}
-              step={50}
-              sliderLength={dpx(170)}
+              max={selectedAdType === AdType.RENT ? 1000 : 1000000}
+              step={selectedAdType === AdType.RENT ? 50 : 50000}
+              sliderLength={viewportWidth * 0.7}
               values={[minPrice, maxPrice]}
-              onValuesChange={([min, max]) => {
-                setMinPriceText(min);
-                setMaxPriceText(max);
-              }}
               onValuesChangeFinish={([min, max]) => {
                 setMinPrice(min);
                 setMaxPrice(max);
               }}
             />
-            <Text style={styles.maxSlider}>{maxPriceText}</Text>
           </View>
-        </View>
 
-        {/* area */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Area (ms2): </Text>
-          <View style={styles.sliderContainer}>
-            <Text style={styles.minSlider}>{minAreaText}</Text>
+          {/* area */}
+          <View style={styles.sliderFilters}>
+            <Text style={styles.itemText}>Area (ms2): </Text>
             <MultiSlider
               markerStyle={styles.slider}
               selectedStyle={styles.slider}
               isMarkersSeparated
+              enableLabel
               min={0}
               max={300}
-              step={10}
-              sliderLength={dpx(170)}
+              step={20}
+              sliderLength={viewportWidth * 0.7}
               values={[minArea, maxArea]}
-              onValuesChange={([min, max]) => {
-                setMinAreaText(min);
-                setMaxAreaText(max);
-              }}
               onValuesChangeFinish={([min, max]) => {
                 setMinArea(min);
                 setMaxArea(max);
               }}
             />
-            <Text style={styles.maxSlider}>{maxAreaText}</Text>
           </View>
-        </View>
 
-        {/* room */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Rooms: </Text>
-          <View style={styles.sliderContainer}>
-            <Text style={styles.minSlider}>{minRoomText}</Text>
+          {/* room */}
+          <View style={styles.sliderFilters}>
+            <Text style={styles.itemText}>Rooms: </Text>
             <MultiSlider
               markerStyle={styles.slider}
               selectedStyle={styles.slider}
               isMarkersSeparated
+              enableLabel
               min={0}
               max={10}
               step={1}
-              sliderLength={dpx(170)}
+              sliderLength={viewportWidth * 0.7}
               values={[minRoom, maxRoom]}
-              onValuesChange={([min, max]) => {
-                setMinRoomText(min);
-                setMaxRoomText(max);
-              }}
               onValuesChangeFinish={([min, max]) => {
                 setMinRoom(min);
                 setMaxRoom(max);
               }}
             />
-            <Text style={styles.maxSlider}>{maxRoomText}</Text>
           </View>
-        </View>
+
+          {/* floor */}
+          <View style={styles.sliderFilters}>
+            <Text style={styles.itemText}>Floor: </Text>
+            <MultiSlider
+              markerStyle={styles.slider}
+              selectedStyle={styles.slider}
+              isMarkersSeparated
+              enableLabel
+              min={0}
+              max={30}
+              step={1}
+              sliderLength={viewportWidth * 0.7}
+              values={[minFloor, maxFloor]}
+              onValuesChangeFinish={([min, max]) => {
+                setMinFloor(min);
+                setMaxFloor(max);
+              }}
+            />
+          </View>
+        </ScrollView>
       </View>
     </View>
   );
@@ -242,14 +293,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
+  sliderFilters: {
+    alignItems: "center",
+  },
   slider: {
     backgroundColor: Colors.secondary,
   },
   minSlider: {
     marginRight: 10,
-    width: 30,
+    width: 70,
   },
   maxSlider: {
     marginLeft: 30,
+    width: 70,
+  },
+});
+
+const pickerSelectStyles = StyleSheet.create({
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 4,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 0.5,
+    borderColor: "purple",
+    borderRadius: 8,
+    color: "black",
+    paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
