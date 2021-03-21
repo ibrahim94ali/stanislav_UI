@@ -16,7 +16,6 @@ import Colors from "../constants/Colors";
 import { ADD_APARTMENT } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
 import * as ImagePicker from "expo-image-picker";
-import { Platform } from "react-native";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
@@ -24,6 +23,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { AdType, BuildingType, CityType } from "../interfaces";
 import RNPickerSelect from "react-native-picker-select";
 import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
+import * as ImageManipulator from "expo-image-manipulator";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const NewApartmentFormScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -48,36 +49,36 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
 
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== "web") {
-        const {
-          status: statusImagePicker,
-        } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
-        if (statusImagePicker !== "granted") {
-          alert("Sorry, we need camera roll permissions to make this work!");
-        }
-        const {
-          status: statusLocation,
-        } = await Location.requestPermissionsAsync();
-
-        if (statusLocation !== "granted") {
-          alert("Sorry, we need location to find geocoding of the address!");
-        }
-      }
-    })();
-  }, []);
-
   const pickImage = async () => {
+    const {
+      status: statusImagePicker,
+    } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (statusImagePicker !== "granted") {
+      alert("Sorry, we need camera roll permissions to make this work!");
+      return;
+    }
+
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
+      quality: 0.5,
     });
 
-    if (!result.cancelled) {
-      setImages([...images, result.uri]);
+    if (result.cancelled) {
+      return;
     }
+
+    const RESIZE_RATIO = result.width > 800 ? 800 / result.width : 1;
+
+    const manipResult = await ImageManipulator.manipulateAsync(result.uri, [
+      {
+        resize: {
+          width: result.width * RESIZE_RATIO,
+          height: result.height * RESIZE_RATIO,
+        },
+      },
+    ]);
+    setImages([...images, manipResult.uri]);
   };
 
   const [
@@ -131,6 +132,13 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   };
 
   const attemptGeocodeAsync = async () => {
+    const { status: statusLocation } = await Location.requestPermissionsAsync();
+
+    if (statusLocation !== "granted") {
+      alert("Sorry, we need location to find geocoding of the address!");
+      return;
+    }
+
     try {
       const result = await Location.geocodeAsync(address);
       const { latitude, longitude } = result[0];
@@ -142,6 +150,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
+      {loadingNewApartment ? <LoadingSpinner /> : null}
       <ScrollView>
         <View
           style={{

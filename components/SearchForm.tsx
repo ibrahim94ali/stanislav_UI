@@ -83,9 +83,7 @@ const SearchForm = ({ open }: { open: boolean }) => {
   useEffect(() => {
     if (selectedAdType === AdType.RENT) {
       setMaxPrice(1000);
-    }
-
-    if (selectedAdType === AdType.PURCHASE) {
+    } else {
       setMaxPrice(1000000);
     }
   }, [selectedAdType]);
@@ -95,6 +93,23 @@ const SearchForm = ({ open }: { open: boolean }) => {
       {isDataLoading ? <LoadingSpinner /> : null}
       <View style={open ? styles.container : styles.hide}>
         <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Cities */}
+          <View style={styles.item}>
+            <Text style={styles.itemText}>Cities: </Text>
+            <View style={styles.picker}>
+              <RNPickerSelect
+                placeholder={placeholder}
+                value={selectedCity}
+                onValueChange={(itemValue) => {
+                  setSelectedCity(itemValue);
+                }}
+                itemKey="value"
+                items={cityTypes}
+                style={pickerSelectStyles}
+              />
+            </View>
+          </View>
+
           {/* adtype */}
           <View style={styles.item}>
             <Text style={styles.itemText}>Ad Type: </Text>
@@ -158,23 +173,6 @@ const SearchForm = ({ open }: { open: boolean }) => {
                 }}
                 itemKey="value"
                 items={sortFields}
-                style={pickerSelectStyles}
-              />
-            </View>
-          </View>
-
-          {/* Cities */}
-          <View style={styles.item}>
-            <Text style={styles.itemText}>Cities: </Text>
-            <View style={styles.picker}>
-              <RNPickerSelect
-                placeholder={placeholder}
-                value={selectedCity}
-                onValueChange={(itemValue) => {
-                  setSelectedCity(itemValue);
-                }}
-                itemKey="value"
-                items={cityTypes}
                 style={pickerSelectStyles}
               />
             </View>
@@ -278,7 +276,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: dpx(10),
+    paddingVertical: dpx(5),
     paddingHorizontal: dpx(5),
   },
   itemText: {
@@ -295,17 +293,11 @@ const styles = StyleSheet.create({
   },
   sliderFilters: {
     alignItems: "center",
+    paddingVertical: dpx(5),
+    paddingHorizontal: dpx(5),
   },
   slider: {
     backgroundColor: Colors.secondary,
-  },
-  minSlider: {
-    marginRight: 10,
-    width: 70,
-  },
-  maxSlider: {
-    marginLeft: 30,
-    width: 70,
   },
 });
 
@@ -315,9 +307,9 @@ const pickerSelectStyles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 10,
     borderWidth: 1,
-    borderColor: "gray",
+    borderColor: Colors.gray,
     borderRadius: 4,
-    color: "black",
+    color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
@@ -325,9 +317,8 @@ const pickerSelectStyles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 8,
     borderWidth: 0.5,
-    borderColor: "purple",
     borderRadius: 8,
-    color: "black",
+    color: Colors.black,
     paddingRight: 30, // to ensure the text is never behind the icon
   },
 });
