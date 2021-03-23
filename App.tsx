@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
+import "./i18n";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

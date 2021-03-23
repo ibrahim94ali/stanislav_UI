@@ -4,8 +4,13 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
 import Colors from "../constants/Colors";
+import { useTranslation } from "react-i18next";
+import RNPickerSelect from "react-native-picker-select";
+import { pickerSelectStyles } from "../constants/PickerStyle";
+import { dpx } from "../constants/Spacings";
 
 function ProfileScreen({ navigation }: any) {
+  const { t, i18n } = useTranslation();
   const store = useStore();
 
   const handleRegister = () => {
@@ -27,43 +32,64 @@ function ProfileScreen({ navigation }: any) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.langContainer}>
+        <RNPickerSelect
+          placeholder={{}}
+          value={i18n.language}
+          onValueChange={(lng) => {
+            i18n.changeLanguage(lng);
+          }}
+          itemKey="value"
+          items={[
+            { label: "English", value: "en" },
+            { label: "Türkçe", value: "tr" },
+            { label: "Shqip", value: "al" },
+            { label: "Македонски", value: "mk" },
+          ]}
+          style={pickerSelectStyles}
+        />
+      </View>
       {store.user ? (
         <View>
           <Text style={styles.title}>
-            Hello, {store.user.name} {store.user.surname}
+            {t("PROFILE.HELLO")}, {store.user.name} {store.user.surname}
           </Text>
           <Button
-            title="Logout"
+            title={t("PROFILE.LOGOUT")}
             onPress={handleLogout}
             color={Colors.secondary}
           />
           <Text style={[styles.title, { marginTop: 50 }]}>
-            Manage Your Apartments
+            {t("PROFILE.MANAGE_YOUR_APT")}
           </Text>
           <Button
-            title="Your Apartments"
+            title={t("PROFILE.YOUR_APT")}
             color={Colors.primary}
             onPress={() => navigation.push("MyApartmentsScreen")}
           />
           <Text style={[styles.title, { marginTop: 50 }]}>
-            See Your Favorite Apartments
+            {t("PROFILE.SEE_FAV_APT")}
           </Text>
           <Button
-            title="Favorite Apartments"
+            title={t("PROFILE.FAV_APT")}
             color={Colors.primary}
             onPress={() => navigation.push("MyFavoriteApartmentsScreen")}
           />
         </View>
       ) : (
         <View>
-          <Text style={styles.title}>You are not logged in</Text>
-          <Button color={Colors.primary} title="Login" onPress={handleLogin} />
+          <Text style={styles.title}>{t("PROFILE.YOU_NOT_LOGGIN_IN")}</Text>
+          <Button
+            color={Colors.primary}
+            title={t("PROFILE.LOGIN")}
+            onPress={handleLogin}
+          />
           <Text style={[styles.title, styles.register]}>
-            Please register here
+            {t("PROFILE.REGISTER_HERE")}
           </Text>
           <Button
             color={Colors.secondary}
-            title="Register"
+            title={t("PROFILE.REGISTER")}
             onPress={handleRegister}
           />
         </View>
@@ -88,5 +114,9 @@ const styles = StyleSheet.create({
   },
   register: {
     marginTop: 30,
+  },
+  langContainer: {
+    marginBottom: dpx(30),
+    width: dpx(200),
   },
 });
