@@ -7,6 +7,7 @@ import {
   View,
   Button,
   Linking,
+  Alert,
 } from "react-native";
 import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
@@ -15,11 +16,19 @@ import { TouchableOpacity } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import { useMutation } from "@apollo/client";
-import { ADD_FAV_APARTMENT, REMOVE_FAV_APARTMENT } from "../graphQL/Mutations";
+import {
+  ADD_FAV_APARTMENT,
+  DELETE_APARTMENT,
+  REMOVE_FAV_APARTMENT,
+} from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
+import { dpx } from "../constants/Spacings";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
-  const { apartment }: { apartment: ApartmentI } = route.params;
+  const {
+    apartment,
+    showActions,
+  }: { apartment: ApartmentI; showActions: Boolean } = route.params;
 
   const [isFav, setIsFav] = useState(apartment.isFavorite);
 
@@ -51,19 +60,39 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     }
   );
 
+  const [deleteApartment, { data: deletedApartment }] = useMutation(
+    DELETE_APARTMENT
+  );
+
   useLayoutEffect(() => {
     navigation.setOptions({
       headerTitle: apartment.title,
       headerRight: () =>
         store.user ? (
-          <TouchableOpacity onPress={() => handleFavorite()}>
-            <Ionicons
-              size={30}
-              style={{ marginRight: 15 }}
-              color={Colors.primary}
-              name={isFav ? "heart" : "heart-outline"}
-            />
-          </TouchableOpacity>
+          showActions ? (
+            <View style={{ flexDirection: "row", marginRight: dpx(20) }}>
+              <TouchableOpacity onPress={() => handleEdit()}>
+                <FontAwesome
+                  size={30}
+                  style={{ marginRight: dpx(20) }}
+                  color={Colors.black}
+                  name="edit"
+                />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={() => handleDelete()}>
+                <FontAwesome size={30} color={Colors.red} name="trash" />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <TouchableOpacity onPress={() => handleFavorite()}>
+              <Ionicons
+                size={30}
+                style={{ marginRight: 15 }}
+                color={Colors.primary}
+                name={isFav ? "heart" : "heart-outline"}
+              />
+            </TouchableOpacity>
+          )
         ) : null,
     });
   }, [navigation, isFav]);
@@ -74,6 +103,28 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     } else {
       addFavorite();
     }
+  };
+
+  const handleEdit = () => {
+    navigation.navigate("AddEditApartmentScreen", { itemOnEdit: apartment });
+  };
+
+  const handleDelete = () => {
+    Alert.alert("Are you sure", "This apartment will be deleted permenantely", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "OK",
+        onPress: () => {
+          deleteApartment({
+            variables: {
+              id: apartment.id,
+            },
+          });
+        },
+      },
+    ]);
   };
 
   useEffect(() => {
@@ -89,6 +140,13 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       setIsFav(false);
     }
   }, [isNowUnfavorite]);
+
+  useEffect(() => {
+    if (deletedApartment) {
+      store.deleteApartment(deletedApartment.deleteApartment.id);
+      navigation.pop();
+    }
+  }, [deletedApartment]);
 
   return (
     <View style={styles.container}>

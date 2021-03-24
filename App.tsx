@@ -18,7 +18,6 @@ import Navigation from "./navigation";
 import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
-import { ActionSheetProvider } from "@expo/react-native-action-sheet";
 import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 import "./i18n";
 
@@ -84,12 +83,10 @@ export default function App() {
     return (
       <ApolloProvider client={client}>
         <StoreContextProvider>
-          <ActionSheetProvider>
-            <SafeAreaProvider>
-              <Navigation />
-              {/* <StatusBar /> */}
-            </SafeAreaProvider>
-          </ActionSheetProvider>
+          <SafeAreaProvider>
+            <Navigation />
+            <StatusBar style="inverted" />
+          </SafeAreaProvider>
         </StoreContextProvider>
       </ApolloProvider>
     );
