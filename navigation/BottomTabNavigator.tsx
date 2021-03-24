@@ -16,7 +16,7 @@ import MapScreen from "../screens/MapScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
 import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
-import NewApartmentFormScreen from "../screens/NewApartmentFormScreen";
+import AddEditApartmentScreen from "../screens/AddEditApartmentScreen";
 import MyApartmentsScreen from "../screens/MyApartmentsScreen";
 import MyFavoriteApartmentsScreen from "../screens/MyFavoriteApartmentsScreen";
 
@@ -122,8 +122,8 @@ function ProfileNavigator() {
         options={{ headerTitle: "Login" }}
       />
       <ProfileStack.Screen
-        name="NewApartmentFormScreen"
-        component={NewApartmentFormScreen}
+        name="AddEditApartmentScreen"
+        component={AddEditApartmentScreen}
         options={{ headerTitle: "Create New Apartment" }}
       />
       <ProfileStack.Screen

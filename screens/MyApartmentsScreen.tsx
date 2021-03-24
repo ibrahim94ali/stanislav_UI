@@ -28,7 +28,7 @@ const MyApartmentsScreen = ({ navigation }: any) => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
-          onPress={() => navigation.push("NewApartmentFormScreen")}
+          onPress={() => navigation.push("AddEditApartmentScreen")}
         >
           <Ionicons size={30} style={{ marginRight: 15 }} name="add" />
         </TouchableOpacity>

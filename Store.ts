@@ -18,6 +18,7 @@ export class StoreImpl {
       setMyApartments: action,
       setFavoriteApartments: action,
       addApartment: action,
+      updateApartment: action,
       deleteApartment: action,
     });
   }
@@ -48,6 +49,16 @@ export class StoreImpl {
   addApartment(apart: ApartmentI) {
     this.apartments.unshift(apart);
     this.myApartments.unshift(apart);
+  }
+
+  updateApartment(apart: ApartmentI) {
+    let editedApIndex = this.apartments.findIndex((ap) => ap.id === apart.id);
+    this.apartments[editedApIndex] = apart;
+
+    let editedMyApIndex = this.myApartments.findIndex(
+      (ap) => ap.id === apart.id
+    );
+    this.myApartments[editedMyApIndex] = apart;
   }
 
   deleteApartment(id: string) {

@@ -38,7 +38,7 @@ const ApartmentList = ({ data, editable = false }: any) => {
   const handleActionSheetActions = (index: number, item: ApartmentI) => {
     switch (index) {
       case 0:
-        // setIsEditingApartment(item);
+        navigation.navigate("AddEditApartmentScreen", { itemOnEdit: item });
         break;
       case 1:
         Alert.alert(

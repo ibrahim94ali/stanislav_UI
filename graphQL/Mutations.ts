@@ -98,6 +98,66 @@ export const ADD_APARTMENT = gql`
   }
 `;
 
+export const UPDATE_APARTMENT = gql`
+  mutation updateApartment(
+    $id: ID!
+    $title: String
+    $details: String
+    $date: String
+    $geolocation: [Float]
+    $address: String
+    $city: String
+    $price: Int
+    $buildingType: String
+    $adType: String
+    $oldPhotosLinks: [String]
+    $newPhotos: [Upload]
+    $msquare: Int
+    $roomCount: Int
+    $floor: Int
+  ) {
+    updateApartment(
+      id: $id
+      title: $title
+      details: $details
+      date: $date
+      geolocation: $geolocation
+      address: $address
+      city: $city
+      price: $price
+      buildingType: $buildingType
+      adType: $adType
+      oldPhotosLinks: $oldPhotosLinks
+      newPhotos: $newPhotos
+      msquare: $msquare
+      roomCount: $roomCount
+      floor: $floor
+    ) {
+      id
+      ownerId
+      title
+      details
+      date
+      geolocation
+      address
+      city
+      price
+      buildingType
+      adType
+      photos
+      msquare
+      roomCount
+      floor
+      owner {
+        name
+        surname
+        phone
+        email
+      }
+    }
+  }
+`;
+
 export const DELETE_APARTMENT = gql`
   mutation deleteApartment($id: ID!) {
     deleteApartment(id: $id) {

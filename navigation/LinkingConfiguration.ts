@@ -22,7 +22,7 @@ export default {
               ProfileScreen: "profile",
               RegisterScreen: "register",
               LoginScreen: "login",
-              NewApartmentFormScreen: "newApartment",
+              AddEditApartmentScreen: "addEditApartment",
               MyApartmentsScreen: "myApartments",
               MyFavoriteApartmentsScreen: "myFavoriteApartments",
             },

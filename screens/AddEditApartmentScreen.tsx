@@ -1,5 +1,5 @@
 import { useMutation } from "@apollo/client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Button,
   StyleSheet,
@@ -13,38 +13,65 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
-import { ADD_APARTMENT } from "../graphQL/Mutations";
+import { ADD_APARTMENT, UPDATE_APARTMENT } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
 import * as ImagePicker from "expo-image-picker";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
 import { Ionicons } from "@expo/vector-icons";
-import { AdType, BuildingType, CityType } from "../interfaces";
+import { AdType, ApartmentI, BuildingType, CityType } from "../interfaces";
 import RNPickerSelect from "react-native-picker-select";
 import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
 
-const NewApartmentFormScreen = ({ navigation }: any) => {
+const AddEditApartmenScreen = ({ navigation, route }: any) => {
+  const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
+  useLayoutEffect(() => {
+    if (itemOnEdit) {
+      navigation.setOptions({
+        headerTitle: itemOnEdit.title,
+      });
+    }
+  }, [navigation]);
   const store = useStore();
-  const [title, setTitle] = useState<string>("");
-  const [details, setDetails] = useState<string>("");
-  const [address, setAddress] = useState<string>("");
-  const [price, setPrice] = useState<number>();
-  const [city, setCity] = useState<CityType>(CityType.SKOPJE);
-  const [buildingType, setBuildingType] = useState<BuildingType>(
-    BuildingType.FLAT
+  const [title, setTitle] = useState<string>(
+    itemOnEdit ? itemOnEdit.title : ""
   );
-  const [adType, setAdType] = useState<AdType>(AdType.RENT);
-  const [floor, setFloor] = useState<number>();
+  const [details, setDetails] = useState<string>(
+    itemOnEdit ? itemOnEdit.details : ""
+  );
+  const [address, setAddress] = useState<string>(
+    itemOnEdit ? itemOnEdit.address : ""
+  );
+  const [price, setPrice] = useState(itemOnEdit ? itemOnEdit.price : undefined);
+  const [city, setCity] = useState<string>(
+    itemOnEdit ? itemOnEdit.city : CityType.SKOPJE
+  );
+  const [buildingType, setBuildingType] = useState<BuildingType>(
+    itemOnEdit ? itemOnEdit.buildingType : BuildingType.FLAT
+  );
+  const [adType, setAdType] = useState<AdType>(
+    itemOnEdit ? itemOnEdit.adType : AdType.RENT
+  );
+  const [floor, setFloor] = useState(itemOnEdit ? itemOnEdit.floor : undefined);
 
-  const [msquare, setMsquare] = useState<number>();
-  const [roomCount, setRoomCount] = useState<number>();
-  const [geolocation, setGeolocation] = useState<number[]>([0, 0]);
+  const [msquare, setMsquare] = useState(
+    itemOnEdit ? itemOnEdit.msquare : undefined
+  );
+  const [roomCount, setRoomCount] = useState(
+    itemOnEdit ? itemOnEdit.roomCount : undefined
+  );
+  const [geolocation, setGeolocation] = useState<number[]>(
+    itemOnEdit ? itemOnEdit.geolocation : [0, 0]
+  );
 
-  const [images, setImages] = useState<string[]>([]);
-  const [uploading, setUploading] = useState(false);
+  const [uploadImages, setUploadImages] = useState<string[]>([]);
+
+  const [oldImages, setOldImages] = useState<string[]>(
+    itemOnEdit ? itemOnEdit.photos : []
+  );
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
@@ -61,7 +88,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
 
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 0.5,
+      quality: 0.3,
     });
 
     if (result.cancelled) {
@@ -78,7 +105,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         },
       },
     ]);
-    setImages([...images, manipResult.uri]);
+    setUploadImages([...uploadImages, manipResult.uri]);
   };
 
   const [
@@ -86,15 +113,24 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
     { data: newApartment, loading: loadingNewApartment },
   ] = useMutation(ADD_APARTMENT);
 
+  const [
+    updateApartment,
+    { data: updatedApartment, loading: loadingUpatedApartment },
+  ] = useMutation(UPDATE_APARTMENT);
+
   useEffect(() => {
     if (newApartment) {
       store.addApartment(newApartment.addApartment);
       navigation.pop();
     }
-    if (loadingNewApartment) {
-      setUploading(true);
+  }, [newApartment]);
+
+  useEffect(() => {
+    if (updatedApartment) {
+      store.updateApartment(updatedApartment.updateApartment);
+      navigation.pop();
     }
-  }, [newApartment, loadingNewApartment]);
+  }, [updatedApartment]);
 
   function generateRNFile(uri: string, name: string) {
     return uri
@@ -108,9 +144,32 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
 
   const handleSubmit = () => {
     const photos: any = [];
-    images.forEach((photo, i) => {
+    uploadImages.forEach((photo, i) => {
       photos.push(generateRNFile(photo, `picture-${Date.now()}-${i + 1}`));
     });
+
+    if (itemOnEdit) {
+      updateApartment({
+        variables: {
+          id: itemOnEdit.id,
+          title,
+          details,
+          date: `${+new Date()}`,
+          geolocation,
+          address,
+          city,
+          price,
+          buildingType,
+          adType,
+          oldPhotosLinks: oldImages,
+          newPhotos: photos,
+          msquare,
+          roomCount,
+          floor,
+        },
+      });
+      return;
+    }
 
     addApartment({
       variables: {
@@ -148,9 +207,48 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
     }
   };
 
+  const PhotoViewer = ({ photo, index, handlePress }: any) => (
+    <View style={{ marginRight: 10 }}>
+      <TouchableOpacity
+        style={{
+          position: "absolute",
+          top: -5,
+          right: -5,
+          zIndex: 1,
+          backgroundColor: Colors.white,
+          borderRadius: 50,
+          padding: 5,
+        }}
+        onPress={() => handlePress()}
+      >
+        <Ionicons name="remove-circle" size={25} color="#f00" />
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setFullScreenPhotoIndex(index);
+          setIsFullScreen(true);
+        }}
+      >
+        <Image
+          style={{
+            height: 130,
+            width: 130,
+            borderRadius: 10,
+            resizeMode: "cover",
+          }}
+          source={{
+            uri: photo,
+          }}
+        />
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <View style={styles.container}>
-      {loadingNewApartment ? <LoadingSpinner /> : null}
+      {loadingNewApartment || loadingUpatedApartment ? (
+        <LoadingSpinner />
+      ) : null}
       <ScrollView>
         <View
           style={{
@@ -161,54 +259,43 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           }}
         >
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            {images.map((photo, index) => (
-              <View style={{ marginRight: 10 }} key={photo}>
-                <TouchableOpacity
-                  style={{
-                    position: "absolute",
-                    top: -5,
-                    right: -5,
-                    zIndex: 1,
-                    backgroundColor: Colors.white,
-                    borderRadius: 50,
-                    padding: 5,
-                  }}
-                  onPress={() =>
-                    setImages([
-                      ...images.slice(0, index),
-                      ...images.slice(index + 1),
-                    ])
-                  }
-                >
-                  <Ionicons name="remove-circle" size={25} color="#f00" />
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setFullScreenPhotoIndex(index);
-                    setIsFullScreen(true);
-                  }}
-                >
-                  <Image
-                    style={{
-                      height: 130,
-                      width: 130,
-                      borderRadius: 10,
-                      resizeMode: "cover",
-                    }}
-                    source={{
-                      uri: photo,
-                    }}
-                  />
-                </TouchableOpacity>
-              </View>
+            {oldImages.map((photo, index) => (
+              <PhotoViewer
+                key={photo}
+                photo={photo}
+                index={index}
+                handlePress={() =>
+                  setOldImages([
+                    ...oldImages.slice(0, index),
+                    ...oldImages.slice(index + 1),
+                  ])
+                }
+              />
+            ))}
+            {uploadImages.map((photo, index) => (
+              <PhotoViewer
+                key={photo}
+                photo={photo}
+                index={index}
+                handlePress={() =>
+                  setUploadImages([
+                    ...uploadImages.slice(0, index),
+                    ...uploadImages.slice(index + 1),
+                  ])
+                }
+              />
             ))}
           </ScrollView>
           <ImageView
-            images={images.map((img) => {
-              return {
-                uri: img,
-              };
-            })}
+            images={
+              itemOnEdit
+                ? oldImages.concat(uploadImages).map((img) => ({
+                    uri: img,
+                  }))
+                : uploadImages.map((img) => ({
+                    uri: img,
+                  }))
+            }
             imageIndex={fullScreenPhotoIndex}
             visible={isFullScreen}
             swipeToCloseEnabled={false}
@@ -217,8 +304,12 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
         </View>
         <View style={{ marginBottom: 20 }}>
           <Button
-            title={images.length < 1 ? "Add Photo *" : "Add More Photos"}
-            disabled={uploading || images.length > 4}
+            title={
+              uploadImages.length + oldImages.length < 1
+                ? "Add Photo *"
+                : "Add More Photos"
+            }
+            disabled={uploadImages.length + oldImages.length > 4}
             color={Colors.primary}
             onPress={pickImage}
           />
@@ -369,7 +460,6 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
           title="Submit"
           onPress={handleSubmit}
           disabled={
-            uploading ||
             !title ||
             !details ||
             !address ||
@@ -379,7 +469,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
             !floor ||
             geolocation[0] == 0 ||
             geolocation[1] == 0 ||
-            images.length < 1
+            uploadImages.length + oldImages.length < 1
           }
         />
       </View>
@@ -387,7 +477,7 @@ const NewApartmentFormScreen = ({ navigation }: any) => {
   );
 };
 
-export default NewApartmentFormScreen;
+export default AddEditApartmenScreen;
 
 const styles = StyleSheet.create({
   container: {
