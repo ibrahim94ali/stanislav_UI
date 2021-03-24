@@ -129,6 +129,7 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
     if (updatedApartment) {
       store.updateApartment(updatedApartment.updateApartment);
       navigation.pop();
+      navigation.pop();
     }
   }, [updatedApartment]);
 
