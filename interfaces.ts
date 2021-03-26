@@ -29,6 +29,22 @@ export interface UserI {
   roles?: string[];
 }
 
+export interface SearchFiltersI {
+  sortBy?: string;
+  city?: string;
+  buildingType?: string;
+  adType?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  minArea?: number;
+  maxArea?: number;
+  minRoom?: number;
+  maxRoom?: number;
+  minFloor?: number;
+  maxFloor?: number;
+  sortOrder?: number;
+}
+
 export enum BuildingType {
   HOUSE = "house",
   FLAT = "flat",

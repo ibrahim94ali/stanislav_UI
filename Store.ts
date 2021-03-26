@@ -1,25 +1,16 @@
 import { action, makeObservable, observable } from "mobx";
-import { ApartmentI, UserI } from "./interfaces";
+import { SearchFiltersI, UserI } from "./interfaces";
 
 export class StoreImpl {
   user: UserI | null = null;
-  apartments: ApartmentI[] = [];
-  myApartments: ApartmentI[] = [];
-  favApartments: ApartmentI[] = [];
+  filters: SearchFiltersI = {};
 
   constructor() {
     makeObservable(this, {
       user: observable,
-      apartments: observable,
-      myApartments: observable,
-      favApartments: observable,
+      filters: observable,
       setUser: action,
-      setApartments: action,
-      setMyApartments: action,
-      setFavoriteApartments: action,
-      addApartment: action,
-      updateApartment: action,
-      deleteApartment: action,
+      setFilters: action,
     });
   }
 
@@ -27,43 +18,8 @@ export class StoreImpl {
     this.user = user;
   }
 
-  setApartments(aparts: ApartmentI[]) {
-    this.apartments = aparts;
-    const favs = aparts.filter((ap) => ap.isFavorite);
-    this.setFavoriteApartments(favs);
-  }
-
-  setMyApartments(aparts: ApartmentI[]) {
-    this.myApartments = aparts;
-  }
-
-  setFavoriteApartments(aparts: ApartmentI[]) {
-    this.favApartments = aparts.map((ap) => ({ ...ap, isFavorite: true }));
-    const favAptIds = this.favApartments.map((ap) => ap.id);
-    this.apartments = this.apartments.map((ap) => ({
-      ...ap,
-      isFavorite: favAptIds.includes(ap.id),
-    }));
-  }
-
-  addApartment(apart: ApartmentI) {
-    this.apartments.unshift(apart);
-    this.myApartments.unshift(apart);
-  }
-
-  updateApartment(apart: ApartmentI) {
-    let editedApIndex = this.apartments.findIndex((ap) => ap.id === apart.id);
-    this.apartments[editedApIndex] = apart;
-
-    let editedMyApIndex = this.myApartments.findIndex(
-      (ap) => ap.id === apart.id
-    );
-    this.myApartments[editedMyApIndex] = apart;
-  }
-
-  deleteApartment(id: string) {
-    this.apartments = this.apartments.filter((a) => a.id !== id);
-    this.myApartments = this.myApartments.filter((a) => a.id !== id);
+  setFilters(filters: SearchFiltersI) {
+    this.filters = filters;
   }
 }
 

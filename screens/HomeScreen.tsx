@@ -1,18 +1,26 @@
+import { useQuery } from "@apollo/client";
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import ApartmentList from "../components/ApartmentList";
+import LoadingSpinner from "../components/LoadingSpinner";
 import SearchForm from "../components/SearchForm";
 import Colors from "../constants/Colors";
+import { GET_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
 
 function HomeScreen() {
   const store = useStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
+  const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
+    variables: store.filters,
+  });
+
   return (
     <View style={styles.container}>
+      {isDataLoading ? <LoadingSpinner /> : null}
       <TouchableOpacity
         style={styles.button}
         onPress={() => setIsFiltersOpen(!isFiltersOpen)}
@@ -23,7 +31,7 @@ function HomeScreen() {
       </TouchableOpacity>
       <SearchForm open={isFiltersOpen} />
 
-      <ApartmentList data={store.apartments} />
+      <ApartmentList data={data?.apartments || []} />
     </View>
   );
 }

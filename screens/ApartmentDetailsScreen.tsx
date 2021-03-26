@@ -15,7 +15,7 @@ import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
 import { FontAwesome, Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
-import { useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import {
   ADD_FAV_APARTMENT,
   DELETE_APARTMENT,
@@ -23,6 +23,7 @@ import {
 } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
 import { dpx } from "../constants/Spacings";
+import { GET_FAV_APARTMENTS, GET_MY_APARTMENTS } from "../graphQL/Queries";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -49,6 +50,37 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       variables: {
         id: apartment.id,
       },
+      update(cache, { data }) {
+        const favoriteApartment: ApartmentI = data?.addFavorite;
+        if (!favoriteApartment) return;
+
+        cache.writeFragment({
+          id: `Apartment:${favoriteApartment.id}`,
+          fragment: gql`
+            fragment apartments on Apartment {
+              isFavorite
+            }
+          `,
+          data: {
+            isFavorite: true,
+          },
+        });
+
+        const favoritesCache = cache.readQuery<{
+          favorites: ApartmentI[];
+        }>({
+          query: GET_FAV_APARTMENTS,
+        });
+
+        if (favoritesCache) {
+          cache.writeQuery({
+            query: GET_FAV_APARTMENTS,
+            data: {
+              favorites: [favoriteApartment, ...favoritesCache?.favorites],
+            },
+          });
+        }
+      },
     }
   );
   const [removeFavorite, { data: isNowUnfavorite }] = useMutation(
@@ -57,11 +89,70 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       variables: {
         id: apartment.id,
       },
+      update(cache, { data }) {
+        const favoriteApartmentId: string = data?.removeFavorite.id;
+        if (!favoriteApartmentId) return;
+
+        cache.writeFragment({
+          id: `Apartment:${favoriteApartmentId}`,
+          fragment: gql`
+            fragment apartments on Apartment {
+              isFavorite
+            }
+          `,
+          data: {
+            isFavorite: false,
+          },
+        });
+
+        const favoritesCache = cache.readQuery<{
+          favorites: ApartmentI[];
+        }>({
+          query: GET_FAV_APARTMENTS,
+        });
+
+        if (favoritesCache) {
+          cache.modify({
+            fields: {
+              favorites(existingRefs, { readField }) {
+                return existingRefs.filter(
+                  (existingRefs: any) =>
+                    favoriteApartmentId !== readField("id", existingRefs)
+                );
+              },
+            },
+          });
+        }
+      },
     }
   );
 
   const [deleteApartment, { data: deletedApartment }] = useMutation(
-    DELETE_APARTMENT
+    DELETE_APARTMENT,
+    {
+      // refetchQueries: [{ query: GET_MY_APARTMENTS }],
+      update(cache, { data }) {
+        const myDeletedApartmentId: string = data?.deleteApartment.id;
+        const myApartmentsCache = cache.readQuery<{
+          myApartments: ApartmentI[];
+        }>({
+          query: GET_MY_APARTMENTS,
+        });
+
+        if (myDeletedApartmentId && myApartmentsCache) {
+          cache.modify({
+            fields: {
+              myApartments(existingRefs, { readField }) {
+                return existingRefs.filter(
+                  (existingRefs: any) =>
+                    myDeletedApartmentId !== readField("id", existingRefs)
+                );
+              },
+            },
+          });
+        }
+      },
+    }
   );
 
   useLayoutEffect(() => {
@@ -129,21 +220,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   useEffect(() => {
     if (isNowFavorite?.addFavorite) {
-      store.setFavoriteApartments(isNowFavorite.addFavorite);
       setIsFav(true);
     }
   }, [isNowFavorite]);
 
   useEffect(() => {
     if (isNowUnfavorite?.removeFavorite) {
-      store.setFavoriteApartments(isNowUnfavorite.removeFavorite);
       setIsFav(false);
     }
   }, [isNowUnfavorite]);
 
   useEffect(() => {
     if (deletedApartment) {
-      store.deleteApartment(deletedApartment.deleteApartment.id);
       navigation.pop();
     }
   }, [deletedApartment]);

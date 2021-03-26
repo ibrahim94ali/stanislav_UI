@@ -1,13 +1,21 @@
+import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import React from "react";
 import { StyleSheet, View, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import Colors from "../constants/Colors";
+import { GET_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
+import { ApartmentI } from "../interfaces";
 
 const MapScreen = ({ navigation }: any) => {
   const store = useStore();
+
+  const { data } = useQuery(GET_APARTMENTS, {
+    variables: store.filters,
+  });
+
   return (
     <View style={styles.container}>
       <MapView
@@ -20,7 +28,7 @@ const MapScreen = ({ navigation }: any) => {
           longitudeDelta: 1,
         }}
       >
-        {store.apartments.map((apartment) => (
+        {data?.apartments.map((apartment: ApartmentI) => (
           <Marker
             key={apartment.id}
             coordinate={{

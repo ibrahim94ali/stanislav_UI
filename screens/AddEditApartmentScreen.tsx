@@ -14,7 +14,6 @@ import {
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { ADD_APARTMENT, UPDATE_APARTMENT } from "../graphQL/Mutations";
-import { useStore } from "../hooks/StoreContext";
 import * as ImagePicker from "expo-image-picker";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
@@ -25,6 +24,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { GET_MY_APARTMENTS } from "../graphQL/Queries";
 
 const AddEditApartmenScreen = ({ navigation, route }: any) => {
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
@@ -35,7 +35,6 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
       });
     }
   }, [navigation]);
-  const store = useStore();
   const [title, setTitle] = useState<string>(
     itemOnEdit ? itemOnEdit.title : ""
   );
@@ -111,23 +110,64 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
   const [
     addApartment,
     { data: newApartment, loading: loadingNewApartment },
-  ] = useMutation(ADD_APARTMENT);
+  ] = useMutation(ADD_APARTMENT, {
+    // refetchQueries: [{ query: GET_MY_APARTMENTS }],
+    update(cache, { data }) {
+      const myNewApartment: ApartmentI = data?.addApartment;
+      const myApartmentsCache = cache.readQuery<{ myApartments: ApartmentI[] }>(
+        {
+          query: GET_MY_APARTMENTS,
+        }
+      );
+
+      if (myNewApartment && myApartmentsCache) {
+        cache.writeQuery({
+          query: GET_MY_APARTMENTS,
+          data: {
+            myApartments: [myNewApartment, ...myApartmentsCache?.myApartments],
+          },
+        });
+      }
+    },
+  });
 
   const [
     updateApartment,
     { data: updatedApartment, loading: loadingUpatedApartment },
-  ] = useMutation(UPDATE_APARTMENT);
+  ] = useMutation(UPDATE_APARTMENT, {
+    // refetchQueries: [{ query: GET_MY_APARTMENTS }],
+    update(cache, { data }) {
+      const myUpdatedApartment: ApartmentI = data?.updateApartment;
+      const myApartmentsCache = cache.readQuery<{ myApartments: ApartmentI[] }>(
+        {
+          query: GET_MY_APARTMENTS,
+        }
+      );
+
+      if (myUpdatedApartment && myApartmentsCache) {
+        cache.writeQuery({
+          query: GET_MY_APARTMENTS,
+          data: {
+            myApartments: [
+              myUpdatedApartment,
+              ...myApartmentsCache?.myApartments.filter(
+                (ap) => ap.id !== myUpdatedApartment.id
+              ),
+            ],
+          },
+        });
+      }
+    },
+  });
 
   useEffect(() => {
     if (newApartment) {
-      store.addApartment(newApartment.addApartment);
       navigation.pop();
     }
   }, [newApartment]);
 
   useEffect(() => {
     if (updatedApartment) {
-      store.updateApartment(updatedApartment.updateApartment);
       navigation.pop();
       navigation.pop();
     }
