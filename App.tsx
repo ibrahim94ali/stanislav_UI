@@ -20,9 +20,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 import "./i18n";
+import { useTranslation } from "react-i18next";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
+
+  const { i18n } = useTranslation();
 
   const store = useStore();
 
@@ -37,9 +40,23 @@ export default function App() {
     }
   };
 
+  const getStoredLanguage = async () => {
+    try {
+      const lang = await AsyncStorage.getItem("lang");
+      if (lang) {
+        i18n.changeLanguage(lang);
+      } else {
+        await AsyncStorage.setItem("lang", i18n.language);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getStoredUserData();
-  });
+    getStoredLanguage();
+  }, []);
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (graphQLErrors) {

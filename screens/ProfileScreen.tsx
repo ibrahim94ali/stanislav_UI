@@ -30,15 +30,18 @@ function ProfileScreen({ navigation }: any) {
     }
   };
 
+  const handleLanguageChange = async (lang: string) => {
+    i18n.changeLanguage(lang);
+    await AsyncStorage.setItem("lang", lang);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.langContainer}>
         <RNPickerSelect
           placeholder={{}}
           value={i18n.language}
-          onValueChange={(lng) => {
-            i18n.changeLanguage(lng);
-          }}
+          onValueChange={handleLanguageChange}
           itemKey="value"
           items={[
             { label: "English", value: "en" },
