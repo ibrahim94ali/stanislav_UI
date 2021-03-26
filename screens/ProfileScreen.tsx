@@ -8,10 +8,12 @@ import { useTranslation } from "react-i18next";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { dpx } from "../constants/Spacings";
+import { useApolloClient } from "@apollo/client";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
   const store = useStore();
+  const client = useApolloClient();
 
   const handleRegister = () => {
     navigation.navigate("RegisterScreen");
@@ -25,6 +27,7 @@ function ProfileScreen({ navigation }: any) {
     try {
       await AsyncStorage.clear();
       store.setUser(null);
+      client.resetStore();
     } catch (e) {
       console.log(e);
     }
