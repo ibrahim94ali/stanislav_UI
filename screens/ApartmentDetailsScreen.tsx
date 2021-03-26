@@ -23,7 +23,8 @@ import {
 } from "../graphQL/Mutations";
 import { useStore } from "../hooks/StoreContext";
 import { dpx } from "../constants/Spacings";
-import { GET_FAV_APARTMENTS, GET_MY_APARTMENTS } from "../graphQL/Queries";
+import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -44,116 +45,104 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
 
-  const [addFavorite, { data: isNowFavorite }] = useMutation(
-    ADD_FAV_APARTMENT,
-    {
-      variables: {
-        id: apartment.id,
-      },
-      update(cache, { data }) {
-        const favoriteApartment: ApartmentI = data?.addFavorite;
-        if (!favoriteApartment) return;
+  const [
+    addFavorite,
+    { data: isNowFavorite, loading: loadingFavorite },
+  ] = useMutation(ADD_FAV_APARTMENT, {
+    variables: {
+      id: apartment.id,
+    },
+    update(cache, { data }) {
+      const favoriteApartment: ApartmentI = data?.addFavorite;
+      if (!favoriteApartment) return;
 
-        cache.writeFragment({
-          id: `Apartment:${favoriteApartment.id}`,
-          fragment: gql`
-            fragment apartments on Apartment {
-              isFavorite
-            }
-          `,
+      cache.writeFragment({
+        id: `Apartment:${favoriteApartment.id}`,
+        fragment: gql`
+          fragment apartments on Apartment {
+            isFavorite
+          }
+        `,
+        data: {
+          isFavorite: true,
+        },
+      });
+
+      const favoritesCache = cache.readQuery<{
+        favorites: ApartmentI[];
+      }>({
+        query: GET_FAV_APARTMENTS,
+      });
+
+      if (favoritesCache) {
+        cache.writeQuery({
+          query: GET_FAV_APARTMENTS,
           data: {
-            isFavorite: true,
+            favorites: [favoriteApartment, ...favoritesCache?.favorites],
           },
         });
+      }
+    },
+  });
+  const [
+    removeFavorite,
+    { data: isNowUnfavorite, loading: loadingUnfavorite },
+  ] = useMutation(REMOVE_FAV_APARTMENT, {
+    variables: {
+      id: apartment.id,
+    },
+    update(cache, { data }) {
+      const favoriteApartmentId: string = data?.removeFavorite.id;
+      if (!favoriteApartmentId) return;
 
-        const favoritesCache = cache.readQuery<{
-          favorites: ApartmentI[];
-        }>({
-          query: GET_FAV_APARTMENTS,
-        });
+      cache.writeFragment({
+        id: `Apartment:${favoriteApartmentId}`,
+        fragment: gql`
+          fragment apartments on Apartment {
+            isFavorite
+          }
+        `,
+        data: {
+          isFavorite: false,
+        },
+      });
 
-        if (favoritesCache) {
-          cache.writeQuery({
-            query: GET_FAV_APARTMENTS,
-            data: {
-              favorites: [favoriteApartment, ...favoritesCache?.favorites],
+      const favoritesCache = cache.readQuery<{
+        favorites: ApartmentI[];
+      }>({
+        query: GET_FAV_APARTMENTS,
+      });
+
+      if (favoritesCache) {
+        cache.modify({
+          fields: {
+            favorites(existingRefs, { readField }) {
+              return existingRefs.filter(
+                (existingRefs: any) =>
+                  favoriteApartmentId !== readField("id", existingRefs)
+              );
             },
-          });
-        }
-      },
-    }
-  );
-  const [removeFavorite, { data: isNowUnfavorite }] = useMutation(
-    REMOVE_FAV_APARTMENT,
-    {
-      variables: {
-        id: apartment.id,
-      },
-      update(cache, { data }) {
-        const favoriteApartmentId: string = data?.removeFavorite.id;
-        if (!favoriteApartmentId) return;
-
-        cache.writeFragment({
-          id: `Apartment:${favoriteApartmentId}`,
-          fragment: gql`
-            fragment apartments on Apartment {
-              isFavorite
-            }
-          `,
-          data: {
-            isFavorite: false,
           },
         });
+      }
+    },
+  });
 
-        const favoritesCache = cache.readQuery<{
-          favorites: ApartmentI[];
-        }>({
-          query: GET_FAV_APARTMENTS,
-        });
+  const [
+    deleteApartment,
+    { data: deletedApartment, loading: loadingDelete },
+  ] = useMutation(DELETE_APARTMENT, {
+    update(cache, { data }) {
+      const myDeletedApartmentId: string = data?.deleteApartment.id;
 
-        if (favoritesCache) {
-          cache.modify({
-            fields: {
-              favorites(existingRefs, { readField }) {
-                return existingRefs.filter(
-                  (existingRefs: any) =>
-                    favoriteApartmentId !== readField("id", existingRefs)
-                );
-              },
-            },
-          });
-        }
-      },
-    }
-  );
+      if (!myDeletedApartmentId) return;
 
-  const [deleteApartment, { data: deletedApartment }] = useMutation(
-    DELETE_APARTMENT,
-    {
-      // refetchQueries: [{ query: GET_MY_APARTMENTS }],
-      update(cache, { data }) {
-        const myDeletedApartmentId: string = data?.deleteApartment.id;
-        const myApartmentsCache = cache.readQuery<{
-          myApartments: ApartmentI[];
-        }>({
-          query: GET_MY_APARTMENTS,
-        });
-
-        if (myDeletedApartmentId && myApartmentsCache) {
-          cache.modify({
-            fields: {
-              myApartments(existingRefs, { readField }) {
-                return existingRefs.filter(
-                  (existingRefs: any) =>
-                    myDeletedApartmentId !== readField("id", existingRefs)
-                );
-              },
-            },
-          });
-        }
-      },
-    }
-  );
+      cache.evict({
+        id: `Apartment:${myDeletedApartmentId}`,
+      });
+      cache.gc();
+    },
+  });
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -238,6 +227,9 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   return (
     <View style={styles.container}>
+      {loadingFavorite || loadingUnfavorite || loadingDelete ? (
+        <LoadingSpinner />
+      ) : null}
       <View
         style={{
           marginVertical: 30,

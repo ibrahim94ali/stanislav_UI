@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client";
+import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import {
   Button,
@@ -111,22 +111,9 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
     addApartment,
     { data: newApartment, loading: loadingNewApartment },
   ] = useMutation(ADD_APARTMENT, {
-    // refetchQueries: [{ query: GET_MY_APARTMENTS }],
     update(cache, { data }) {
-      const myNewApartment: ApartmentI = data?.addApartment;
-      const myApartmentsCache = cache.readQuery<{ myApartments: ApartmentI[] }>(
-        {
-          query: GET_MY_APARTMENTS,
-        }
-      );
-
-      if (myNewApartment && myApartmentsCache) {
-        cache.writeQuery({
-          query: GET_MY_APARTMENTS,
-          data: {
-            myApartments: [myNewApartment, ...myApartmentsCache?.myApartments],
-          },
-        });
+      if (data) {
+        cache.reset();
       }
     },
   });
@@ -135,28 +122,22 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
     updateApartment,
     { data: updatedApartment, loading: loadingUpatedApartment },
   ] = useMutation(UPDATE_APARTMENT, {
-    // refetchQueries: [{ query: GET_MY_APARTMENTS }],
     update(cache, { data }) {
       const myUpdatedApartment: ApartmentI = data?.updateApartment;
-      const myApartmentsCache = cache.readQuery<{ myApartments: ApartmentI[] }>(
-        {
-          query: GET_MY_APARTMENTS,
-        }
-      );
 
-      if (myUpdatedApartment && myApartmentsCache) {
-        cache.writeQuery({
-          query: GET_MY_APARTMENTS,
-          data: {
-            myApartments: [
-              myUpdatedApartment,
-              ...myApartmentsCache?.myApartments.filter(
-                (ap) => ap.id !== myUpdatedApartment.id
-              ),
-            ],
-          },
-        });
-      }
+      if (!myUpdatedApartment) return;
+
+      cache.writeFragment({
+        id: `Apartment:${myUpdatedApartment.id}`,
+        fragment: gql`
+          fragment id on Apartment {
+            id
+          }
+        `,
+        data: {
+          ...myUpdatedApartment,
+        },
+      });
     },
   });
 
