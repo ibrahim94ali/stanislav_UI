@@ -24,10 +24,7 @@ const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabNavigator() {
   return (
-    <BottomTab.Navigator
-      initialRouteName="Home"
-      tabBarOptions={{ activeTintColor: Colors.primary }}
-    >
+    <BottomTab.Navigator initialRouteName="Home">
       <BottomTab.Screen
         name="Home"
         component={HomeNavigator}
@@ -69,7 +66,7 @@ const HomeStack = createStackNavigator<HomeParamList>();
 
 function HomeNavigator() {
   return (
-    <HomeStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen
         name="HomeScreen"
         component={HomeScreen}
