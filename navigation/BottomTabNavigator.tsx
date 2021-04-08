@@ -19,6 +19,7 @@ import ApartmentDetailsScreen from "../screens/ApartmentDetailsScreen";
 import AddEditApartmentScreen from "../screens/AddEditApartmentScreen";
 import MyApartmentsScreen from "../screens/MyApartmentsScreen";
 import MyFavoriteApartmentsScreen from "../screens/MyFavoriteApartmentsScreen";
+import ApartmentListScreen from "../screens/ApartmentListScreen";
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
@@ -67,10 +68,10 @@ const HomeStack = createStackNavigator<HomeParamList>();
 function HomeNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
       <HomeStack.Screen
-        name="HomeScreen"
-        component={HomeScreen}
-        options={{ headerTitle: "Home" }}
+        name="ApartmentListScreen"
+        component={ApartmentListScreen}
       />
       <HomeStack.Screen
         name="ApartmentDetailsScreen"

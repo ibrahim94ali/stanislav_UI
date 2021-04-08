@@ -25,8 +25,9 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Property from "../components/Property";
 import Sponsor from "../components/Sponsor";
 import { ApartmentI } from "../interfaces";
+import Header from "../components/Header";
 
-function HomeScreen() {
+function HomeScreen({ navigation }: any) {
   const store = useStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
@@ -47,14 +48,14 @@ function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
-      <View style={styles.headerContainer}>
+      <Header>
         <View style={styles.searchField}>
           <SearchBox />
         </View>
         <IconButton handlePress={() => console.log("click")}>
           <Ionicons name="options" color={Colors.black} size={dpx(24)} />
         </IconButton>
-      </View>
+      </Header>
       <ScrollView showsVerticalScrollIndicator={false}>
         <View>
           <Text style={styles.header}>Cities</Text>
@@ -72,20 +73,25 @@ function HomeScreen() {
         <View style={styles.propertiesContainer}>
           <View style={styles.propertiesHeaders}>
             <Text style={styles.header}>Featured Properties</Text>
-            <TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => navigation.push("ApartmentListScreen")}
+            >
               <Text style={styles.propertiesHeaderBtn}>See all</Text>
             </TouchableOpacity>
           </View>
           <ScrollView
             style={styles.propertyContainer}
-            contentContainerStyle={{ paddingBottom: 10 }}
+            contentContainerStyle={{
+              paddingBottom: dpx(10),
+              marginLeft: dpx(20),
+            }}
             horizontal
             showsHorizontalScrollIndicator={false}
           >
             {data
               ? data.apartments.map((apart: ApartmentI) => (
-                  <View style={{ width: dpx(270), height: dpx(270) }}>
-                    <Property key={apart.id} apartment={apart} />
+                  <View key={apart.id} style={styles.property}>
+                    <Property apartment={apart} />
                   </View>
                 ))
               : null}
@@ -114,12 +120,6 @@ export default observer(HomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    margin: dpx(20),
   },
 
   searchField: {
@@ -153,6 +153,12 @@ const styles = StyleSheet.create({
   propertyContainer: {
     marginTop: dpx(10),
     overflow: "visible",
+  },
+
+  property: {
+    width: dpx(270),
+    height: dpx(270),
+    marginRight: dpx(20),
   },
   sponsorContainer: {
     marginTop: dpx(10),

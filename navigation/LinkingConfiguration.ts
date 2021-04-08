@@ -9,6 +9,7 @@ export default {
           Home: {
             screens: {
               HomeScreen: "home",
+              ApartmentListScreen: "apartmentList",
               ApartmentDetailsScreen: "apartmentDetails",
             },
           },
