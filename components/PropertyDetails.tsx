@@ -23,7 +23,7 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
       {apartment.adType === AdType.RENT ? (
         <Text style={styles.price}>{apartment.price} € / Month</Text>
       ) : (
-        <Text style={styles.price}>{apartment.price} € / Month</Text>
+        <Text style={styles.price}>{apartment.price} €</Text>
       )}
       <Text style={styles.address}>{apartment.address}</Text>
       <View style={styles.iconsContainer}>
