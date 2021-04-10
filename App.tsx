@@ -21,11 +21,23 @@ import { Alert } from "react-native";
 import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 import "./i18n";
 import { useTranslation } from "react-i18next";
+import {
+  useFonts,
+  Montserrat_400Regular,
+  Montserrat_500Medium,
+  Montserrat_700Bold,
+} from "@expo-google-fonts/montserrat";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
 
   const { i18n } = useTranslation();
+
+  const [fontsLoaded] = useFonts({
+    Montserrat_400Regular,
+    Montserrat_500Medium,
+    Montserrat_700Bold,
+  });
 
   const store = useStore();
 

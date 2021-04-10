@@ -3,19 +3,10 @@ import React, { useState } from "react";
 import { StyleSheet, TextInput, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
-import { useFonts, Montserrat_400Regular } from "@expo-google-fonts/montserrat";
-import AppLoading from "expo-app-loading";
 
 const SearchBox = () => {
-  const [fontsLoaded] = useFonts({
-    Montserrat_400Regular,
-  });
-
   const [search, setSearch] = useState("");
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
   return (
     <View style={styles.container}>
       <Ionicons name="search" color={Colors.black} size={dpx(22)} />

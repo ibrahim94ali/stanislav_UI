@@ -1,19 +1,25 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
   ScrollView,
   Text,
   View,
-  Button,
   Linking,
   Alert,
+  Share,
 } from "react-native";
 import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
-import { FontAwesome, Ionicons } from "@expo/vector-icons";
+import {
+  AntDesign,
+  Entypo,
+  FontAwesome,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import { gql, useMutation } from "@apollo/client";
 import {
@@ -25,6 +31,10 @@ import { useStore } from "../hooks/StoreContext";
 import { dpx } from "../constants/Spacings";
 import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { SafeAreaView } from "react-native-safe-area-context";
+import PropertyDetails from "../components/PropertyDetails";
+import IconButton from "../components/IconButton";
+import MapView, { Marker } from "react-native-maps";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -44,6 +54,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
+
+  const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
   const [
     addFavorite,
@@ -144,45 +156,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     },
   });
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: apartment.title,
-      headerRight: () =>
-        store.user ? (
-          showActions ? (
-            <View style={{ flexDirection: "row", marginRight: dpx(20) }}>
-              <TouchableOpacity onPress={() => handleEdit()}>
-                <FontAwesome
-                  size={30}
-                  style={{ marginRight: dpx(20) }}
-                  color={Colors.black}
-                  name="edit"
-                />
-              </TouchableOpacity>
-              <TouchableOpacity onPress={() => handleDelete()}>
-                <FontAwesome size={30} color={Colors.red} name="trash" />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <TouchableOpacity onPress={() => handleFavorite()}>
-              <Ionicons
-                size={30}
-                style={{ marginRight: 15 }}
-                color={Colors.primary}
-                name={isFav ? "heart" : "heart-outline"}
-              />
-            </TouchableOpacity>
-          )
-        ) : null,
-    });
-  }, [navigation, isFav]);
-
   const handleFavorite = () => {
     if (isFav) {
       removeFavorite();
     } else {
       addFavorite();
     }
+  };
+
+  const handleShare = async () => {
+    await Share.share({
+      message: `${await Linking.getInitialURL()} - ${apartment.id}`,
+    });
   };
 
   const handleEdit = () => {
@@ -225,22 +210,30 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     }
   }, [deletedApartment]);
 
+  const handlePhotosOnScroll = (event: any) => {
+    const activeIndex = parseInt(
+      (event.nativeEvent.contentOffset.x / dpx(375)).toFixed(0)
+    );
+
+    if (activeIndex !== activePhotoIndex) {
+      setActivePhotoIndex(activeIndex);
+    }
+  };
+
   return (
-    <View style={styles.container}>
-      {loadingFavorite || loadingUnfavorite || loadingDelete ? (
+    <SafeAreaView style={styles.container}>
+      {(loadingFavorite || loadingUnfavorite || loadingDelete) && (
         <LoadingSpinner />
-      ) : null}
-      <View
-        style={{
-          marginVertical: 30,
-          height: 130,
-          marginHorizontal: 10,
-          alignSelf: "center",
-        }}
-      >
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+      )}
+      <ScrollView>
+        <ScrollView
+          horizontal
+          pagingEnabled
+          onScroll={(e) => handlePhotosOnScroll(e)}
+          showsHorizontalScrollIndicator={false}
+        >
           {apartment.photos.map((photo, i) => (
-            <View style={{ marginRight: 10 }} key={photo}>
+            <View key={photo}>
               <TouchableOpacity
                 onPress={() => {
                   setFullScreenPhotoIndex(i);
@@ -248,12 +241,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                 }}
               >
                 <Image
-                  style={{
-                    height: 130,
-                    width: 130,
-                    borderRadius: 10,
-                    resizeMode: "cover",
-                  }}
+                  style={styles.photo}
                   source={{
                     uri: photo,
                   }}
@@ -262,6 +250,71 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </View>
           ))}
         </ScrollView>
+
+        <View style={styles.headerContainer}>
+          <TouchableOpacity
+            style={styles.actionBtnContainer}
+            onPress={() => navigation.goBack()}
+          >
+            <Ionicons name="arrow-back" color={Colors.white} size={dpx(25)} />
+          </TouchableOpacity>
+          {showActions ? (
+            <View style={styles.actionBtns}>
+              <TouchableOpacity
+                style={[styles.actionBtnContainer, { marginRight: dpx(10) }]}
+                onPress={() => handleEdit()}
+              >
+                <AntDesign name="edit" color={Colors.white} size={dpx(25)} />
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.actionBtnContainer,
+                  { backgroundColor: "rgba(255,61,0,0.3)" },
+                ]}
+                onPress={() => handleDelete()}
+              >
+                <AntDesign name="delete" color={Colors.white} size={dpx(25)} />
+              </TouchableOpacity>
+            </View>
+          ) : (
+            <View style={styles.actionBtns}>
+              {store.user && (
+                <TouchableOpacity
+                  style={[styles.actionBtnContainer, { marginRight: dpx(10) }]}
+                  onPress={() => handleFavorite()}
+                >
+                  <Ionicons
+                    name="heart"
+                    color={isFav ? Colors.secondary : Colors.white}
+                    size={dpx(25)}
+                  />
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                style={styles.actionBtnContainer}
+                onPress={handleShare}
+              >
+                <FontAwesome name="share" color={Colors.white} size={dpx(25)} />
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.photoIndexIndicatorContainer}>
+          {apartment.photos.map((photo, i) => (
+            <View
+              key={photo}
+              style={[
+                styles.photoIndexIndicator,
+                i == activePhotoIndex
+                  ? styles.photoIndexIndicatorActive
+                  : styles.photoIndexIndicatorPassive,
+              ]}
+            ></View>
+          ))}
+        </View>
         <ImageView
           images={images}
           imageIndex={fullScreenPhotoIndex}
@@ -269,72 +322,97 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           swipeToCloseEnabled={false}
           onRequestClose={() => setIsFullScreen(false)}
         />
-      </View>
-      <View style={{ marginBottom: 20, width: 150, alignSelf: "center" }}>
-        <Button
-          title="See in Maps"
-          color={Colors.secondary}
+        <View style={styles.propertyDetailsContainer}>
+          <PropertyDetails apartment={apartment} />
+        </View>
+        <TouchableOpacity
           onPress={() =>
             Linking.openURL(
               `http://maps.google.com/maps?z=18&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
             )
           }
-        />
-      </View>
-      <ScrollView>
-        <Text style={styles.item}>Building Type: {apartment.buildingType}</Text>
-        <Text style={styles.item}>Ad Type: {apartment.adType}</Text>
-        <Text style={styles.item}>Info: {apartment.details}</Text>
-        <Text style={styles.item}>
-          Date: {new Date(+apartment.date).toDateString()}
-        </Text>
-        {/* <Text style={styles.item}>
-          Lat: {apartment.geolocation[0]} Lon: {apartment.geolocation[1]}
-        </Text> */}
-        <Text style={styles.item}>Address: {apartment.address}</Text>
-        <Text style={styles.item}>City: {apartment.city}</Text>
-        <Text style={styles.item}>Price: {apartment.price} €</Text>
-        <Text style={styles.item}>Area: {apartment.msquare} meter square</Text>
-        <Text style={styles.item}>Rooms: {apartment.roomCount}</Text>
-        <Text style={styles.item}>Floor: {apartment.floor}</Text>
-        {apartment.owner ? (
-          <View style={{ marginTop: 20 }}>
-            <Text
-              style={{ alignSelf: "center", fontSize: 15, marginBottom: 10 }}
+        >
+          <MapView
+            style={styles.map}
+            loadingEnabled={false}
+            pitchEnabled={false}
+            rotateEnabled={false}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            region={{
+              latitude: apartment.geolocation[0],
+              longitude: apartment.geolocation[1],
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
+            }}
+          >
+            <Marker
+              coordinate={{
+                latitude: apartment.geolocation[0],
+                longitude: apartment.geolocation[1],
+              }}
             >
-              Owner details:{" "}
-            </Text>
-            <Text
-              style={styles.title}
-            >{`${apartment.owner.name} ${apartment.owner.surname}`}</Text>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={() =>
-                Linking.openURL(
-                  `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
-                )
-              }
-            >
-              <Ionicons name="mail" size={18} color={Colors.white} />
-              <Text style={{ marginLeft: 10, color: Colors.white }}>
-                {apartment.owner.email}{" "}
-              </Text>
-            </TouchableOpacity>
-            {apartment.owner.phone ? (
-              <TouchableOpacity
-                style={[styles.button, { marginTop: 10 }]}
-                onPress={() => Linking.openURL(`tel:${apartment.owner?.phone}`)}
-              >
-                <FontAwesome name="phone" size={20} color={Colors.white} />
-                <Text style={{ marginLeft: 10, color: Colors.white }}>
-                  {apartment.owner.phone}
-                </Text>
-              </TouchableOpacity>
-            ) : null}
+              <Ionicons name="home" size={30} color={Colors.primary} />
+            </Marker>
+          </MapView>
+        </TouchableOpacity>
+        <View style={styles.descContainer}>
+          <Text style={styles.title}>Description</Text>
+          <Text style={styles.details}>{apartment.details}</Text>
+        </View>
+        <View style={styles.amenitiesContainer}>
+          <Text style={styles.title}>Amenities</Text>
+          <View style={styles.amenityRow}>
+            <View style={styles.amenityContainer}>
+              <MaterialCommunityIcons name="parking" size={dpx(18)} />
+              <Text style={styles.amenity}>Parking</Text>
+            </View>
+            <View style={styles.amenityContainer}>
+              <MaterialCommunityIcons name="parking" size={dpx(18)} />
+              <Text style={styles.amenity}>Parking</Text>
+            </View>
           </View>
-        ) : null}
+          <View style={styles.amenityRow}>
+            <View style={styles.amenityContainer}>
+              <MaterialCommunityIcons name="parking" size={dpx(18)} />
+              <Text style={styles.amenity}>Parking</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.agentContainer}>
+          <Text style={styles.title}>Listing Agent</Text>
+          <View style={styles.personContainer}>
+            <Text
+              style={styles.person}
+            >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
+            <View style={styles.personIcons}>
+              <IconButton
+                handlePress={() =>
+                  Linking.openURL(`tel:${apartment.owner?.phone}`)
+                }
+              >
+                <Entypo name="phone" color={Colors.black} size={dpx(22)} />
+              </IconButton>
+              <View style={{ marginLeft: dpx(10) }}>
+                <IconButton
+                  handlePress={() =>
+                    Linking.openURL(
+                      `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
+                    )
+                  }
+                >
+                  <MaterialCommunityIcons
+                    name="email"
+                    color={Colors.black}
+                    size={dpx(22)}
+                  />
+                </IconButton>
+              </View>
+            </View>
+          </View>
+        </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -344,10 +422,119 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
+  photo: {
+    resizeMode: "cover",
+    height: dpx(230),
+    width: dpx(375),
+  },
+  headerContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingHorizontal: dpx(20),
+    position: "absolute",
+    top: dpx(20),
+    right: 0,
+    left: 0,
+  },
+  actionBtnContainer: {
+    width: dpx(40),
+    height: dpx(40),
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(51,51,51,0.3)",
+    borderRadius: dpx(10),
+  },
+  actionBtns: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  photoIndexIndicatorContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    position: "absolute",
+    top: dpx(210),
+    left: 0,
+    right: 0,
+    alignItems: "center",
+  },
+  photoIndexIndicator: {
+    width: dpx(10),
+    height: dpx(10),
+    borderRadius: dpx(20),
+    marginRight: dpx(10),
+  },
+  photoIndexIndicatorPassive: {
+    backgroundColor: Colors.gray,
+  },
+  photoIndexIndicatorActive: {
+    backgroundColor: Colors.white,
+  },
+
+  propertyDetailsContainer: {
+    flex: 1,
+    padding: dpx(10),
+  },
+  map: {
+    height: dpx(140),
+    width: dpx(335),
+    marginHorizontal: dpx(20),
     alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: dpx(40),
+  },
+  descContainer: {
+    padding: dpx(20),
+    paddingBottom: 0,
+  },
+  amenitiesContainer: {
+    padding: dpx(20),
+    paddingBottom: 0,
+  },
+  amenityRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: dpx(10),
+  },
+
+  amenityContainer: {
+    flexDirection: "row",
+    flex: 1,
+    paddingBottom: dpx(10),
+    borderBottomColor: Colors.lightGray,
+    borderBottomWidth: 1,
+  },
+  amenity: {
+    marginLeft: dpx(5),
+    fontSize: dpx(12),
+    fontFamily: "Montserrat_400Regular",
+  },
+  agentContainer: {
+    padding: dpx(20),
+  },
+  personContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  person: {
+    fontFamily: "Montserrat_700Bold",
+    fontSize: dpx(16),
+  },
+  personIcons: {
+    flexDirection: "row",
+  },
+  title: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
+    color: Colors.black,
+    marginBottom: dpx(10),
+  },
+  details: {
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
+    color: Colors.black,
   },
   item: {
     fontSize: 18,

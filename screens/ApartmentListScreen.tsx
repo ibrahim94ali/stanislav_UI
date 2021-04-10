@@ -6,12 +6,6 @@ import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
-import {
-  useFonts,
-  Montserrat_400Regular,
-  Montserrat_500Medium,
-  Montserrat_700Bold,
-} from "@expo-google-fonts/montserrat";
 import ActiveFilterBadge from "../components/ActiveFilterBadge";
 import { useQuery } from "@apollo/client";
 import { GET_APARTMENTS } from "../graphQL/Queries";
@@ -19,25 +13,15 @@ import { observer } from "mobx-react";
 import { useStore } from "../hooks/StoreContext";
 import { ApartmentI } from "../interfaces";
 import Property from "../components/Property";
-import AppLoading from "expo-app-loading";
 import LoadingSpinner from "../components/LoadingSpinner";
 
 const ApartmentListScreen = ({ navigation }: any) => {
   const store = useStore();
 
-  const [fontsLoaded] = useFonts({
-    Montserrat_400Regular,
-    Montserrat_500Medium,
-    Montserrat_700Bold,
-  });
-
   const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
     variables: store.filters,
   });
 
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
   return (
     <SafeAreaView style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
@@ -58,13 +42,24 @@ const ApartmentListScreen = ({ navigation }: any) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ marginLeft: dpx(20) }}
-        style={styles.activeFilters}
+        contentContainerStyle={{
+          paddingBottom: dpx(10),
+          paddingRight: dpx(10),
+          paddingLeft: dpx(20),
+        }}
       >
-        <ActiveFilterBadge name="Rent" />
-        <ActiveFilterBadge name="Apartment" />
-        <ActiveFilterBadge name="Furnished" />
-        <ActiveFilterBadge name="Furnished" />
+        <View style={styles.activeFilter}>
+          <ActiveFilterBadge name="Rent" />
+        </View>
+        <View style={styles.activeFilter}>
+          <ActiveFilterBadge name="Apartment" />
+        </View>
+        <View style={styles.activeFilter}>
+          <ActiveFilterBadge name="Furnished" />
+        </View>
+        <View style={styles.activeFilter}>
+          <ActiveFilterBadge name="Furnished" />
+        </View>
       </ScrollView>
 
       <ScrollView
@@ -72,13 +67,12 @@ const ApartmentListScreen = ({ navigation }: any) => {
         contentContainerStyle={{ alignItems: "center" }}
         showsVerticalScrollIndicator={false}
       >
-        {data
-          ? data.apartments.map((apart: ApartmentI) => (
-              <View key={apart.id} style={styles.property}>
-                <Property apartment={apart} />
-              </View>
-            ))
-          : null}
+        {data &&
+          data.apartments.map((apart: ApartmentI) => (
+            <View key={apart.id} style={styles.property}>
+              <Property apartment={apart} />
+            </View>
+          ))}
       </ScrollView>
     </SafeAreaView>
   );
@@ -96,8 +90,8 @@ const styles = StyleSheet.create({
     color: Colors.black,
     marginLeft: dpx(20),
   },
-  activeFilters: {
-    flexGrow: 0,
+  activeFilter: {
+    marginRight: dpx(10),
   },
   propertyContainer: {
     marginTop: dpx(10),
