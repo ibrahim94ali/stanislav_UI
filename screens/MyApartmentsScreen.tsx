@@ -58,7 +58,6 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_500Medium",
     fontSize: dpx(16),
     color: Colors.black,
-    marginLeft: dpx(20),
   },
   propertyContainer: {
     marginTop: dpx(10),

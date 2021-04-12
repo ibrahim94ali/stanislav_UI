@@ -40,9 +40,14 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
     apartment,
     showActions,
-  }: { apartment: ApartmentI; showActions: Boolean } = route.params;
+    isFavorite,
+  }: {
+    apartment: ApartmentI;
+    showActions: Boolean;
+    isFavorite: Boolean;
+  } = route.params;
 
-  const [isFav, setIsFav] = useState(apartment.isFavorite);
+  const [isFav, setIsFav] = useState(isFavorite || apartment.isFavorite);
 
   let images = apartment.photos.map((a) => {
     return {

@@ -36,7 +36,7 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
         {myFavApartments &&
           myFavApartments.favorites.map((apart: ApartmentI) => (
             <View key={apart.id} style={styles.property}>
-              <Property apartment={apart} />
+              <Property apartment={apart} isFavorite />
             </View>
           ))}
       </ScrollView>
@@ -54,7 +54,6 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_500Medium",
     fontSize: dpx(16),
     color: Colors.black,
-    marginLeft: dpx(20),
   },
   propertyContainer: {
     marginTop: dpx(10),

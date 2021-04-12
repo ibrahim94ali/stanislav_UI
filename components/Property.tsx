@@ -14,9 +14,11 @@ import PropertyDetails from "./PropertyDetails";
 const Property = ({
   apartment,
   showActions = false,
+  isFavorite = false,
 }: {
   apartment: ApartmentI;
-  showActions?: boolean;
+  showActions?: Boolean;
+  isFavorite?: Boolean;
 }) => {
   const navigation = useNavigation();
   return (
@@ -26,6 +28,7 @@ const Property = ({
         navigation.navigate("ApartmentDetailsScreen", {
           apartment,
           showActions,
+          isFavorite,
         })
       }
     >

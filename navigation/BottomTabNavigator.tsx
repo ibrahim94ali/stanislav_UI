@@ -34,10 +34,12 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Map"
+        name="Explore"
         component={MapNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="map" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="compass" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
