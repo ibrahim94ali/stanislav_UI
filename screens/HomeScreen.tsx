@@ -4,11 +4,9 @@ import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import ApartmentList from "../components/ApartmentList";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SearchBox from "../components/SearchBox";
-import SearchForm from "../components/SearchForm";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { GET_APARTMENTS } from "../graphQL/Queries";
@@ -29,7 +27,7 @@ function HomeScreen({ navigation }: any) {
   });
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} edges={["top"]}>
       {isDataLoading ? <LoadingSpinner /> : null}
       <Header>
         <View style={styles.searchField}>

@@ -85,7 +85,7 @@ const MapStack = createStackNavigator<MapParamList>();
 
 function MapNavigator() {
   return (
-    <MapStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
+    <MapStack.Navigator screenOptions={{ headerShown: false }}>
       <MapStack.Screen
         name="MapScreen"
         component={MapScreen}
@@ -103,36 +103,21 @@ const ProfileStack = createStackNavigator<ProfileParamList>();
 
 function ProfileNavigator() {
   return (
-    <ProfileStack.Navigator screenOptions={{ headerTitleAlign: "center" }}>
-      <ProfileStack.Screen
-        name="ProfileScreen"
-        component={ProfileScreen}
-        options={{ headerTitle: "Profile" }}
-      />
-      <ProfileStack.Screen
-        name="RegisterScreen"
-        component={RegisterScreen}
-        options={{ headerTitle: "Register" }}
-      />
-      <ProfileStack.Screen
-        name="LoginScreen"
-        component={LoginScreen}
-        options={{ headerTitle: "Login" }}
-      />
+    <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+      <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <ProfileStack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <ProfileStack.Screen name="LoginScreen" component={LoginScreen} />
       <ProfileStack.Screen
         name="AddEditApartmentScreen"
         component={AddEditApartmentScreen}
-        options={{ headerTitle: "Create New Apartment" }}
       />
       <ProfileStack.Screen
         name="MyApartmentsScreen"
         component={MyApartmentsScreen}
-        options={{ headerTitle: "My Apartments" }}
       />
       <ProfileStack.Screen
         name="MyFavoriteApartmentsScreen"
         component={MyFavoriteApartmentsScreen}
-        options={{ headerTitle: "My Favorite Apartments" }}
       />
       <ProfileStack.Screen
         name="ApartmentDetailsScreen"

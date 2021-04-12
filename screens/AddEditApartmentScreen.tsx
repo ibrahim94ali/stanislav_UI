@@ -26,7 +26,7 @@ import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { GET_MY_APARTMENTS } from "../graphQL/Queries";
 
-const AddEditApartmenScreen = ({ navigation, route }: any) => {
+const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
   useLayoutEffect(() => {
     if (itemOnEdit) {
@@ -499,7 +499,7 @@ const AddEditApartmenScreen = ({ navigation, route }: any) => {
   );
 };
 
-export default AddEditApartmenScreen;
+export default AddEditApartmentScreen;
 
 const styles = StyleSheet.create({
   container: {

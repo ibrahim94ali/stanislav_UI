@@ -11,13 +11,22 @@ import { ApartmentI } from "../interfaces";
 import { useNavigation } from "@react-navigation/core";
 import PropertyDetails from "./PropertyDetails";
 
-const Property = ({ apartment }: { apartment: ApartmentI }) => {
+const Property = ({
+  apartment,
+  showActions = false,
+}: {
+  apartment: ApartmentI;
+  showActions?: boolean;
+}) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity
       style={styles.container}
       onPress={() =>
-        navigation.navigate("ApartmentDetailsScreen", { apartment })
+        navigation.navigate("ApartmentDetailsScreen", {
+          apartment,
+          showActions,
+        })
       }
     >
       <View style={styles.photo}>

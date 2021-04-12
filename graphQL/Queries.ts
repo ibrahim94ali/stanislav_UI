@@ -94,6 +94,7 @@ export const GET_FAV_APARTMENTS = gql`
       msquare
       roomCount
       floor
+      isFavorite
       owner {
         name
         surname
