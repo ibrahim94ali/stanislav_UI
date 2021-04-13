@@ -4,9 +4,13 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 
-const IconButton = ({ children, handlePress }: any) => {
+const IconButton = ({ children, handlePress, disabled }: any) => {
   return (
-    <TouchableOpacity onPress={handlePress} style={styles.container}>
+    <TouchableOpacity
+      onPress={handlePress}
+      style={styles.container}
+      disabled={disabled}
+    >
       {children}
     </TouchableOpacity>
   );

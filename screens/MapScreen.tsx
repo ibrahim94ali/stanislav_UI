@@ -7,7 +7,7 @@ import MapView, { Marker } from "react-native-maps";
 import Colors from "../constants/Colors";
 import { GET_APARTMENTS } from "../graphQL/Queries";
 import { useStore } from "../hooks/StoreContext";
-import { ApartmentI } from "../interfaces";
+import { AdType, ApartmentI } from "../interfaces";
 
 const MapScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -36,7 +36,9 @@ const MapScreen = ({ navigation }: any) => {
               longitude: apartment.geolocation[1],
             }}
             title={apartment.title}
-            description={`Price: ${apartment.price} €`}
+            description={`${apartment.price} € ${
+              apartment.adType === AdType.RENT ? "/ Month" : ""
+            }`}
             onCalloutPress={() =>
               navigation.push("ApartmentDetailsScreen", { apartment })
             }

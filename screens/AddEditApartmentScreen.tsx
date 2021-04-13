@@ -1,13 +1,11 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Button,
   StyleSheet,
   View,
   Image,
   ScrollView,
   TouchableOpacity,
-  Linking,
   Alert,
   Text,
 } from "react-native";
@@ -18,23 +16,21 @@ import * as ImagePicker from "expo-image-picker";
 import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { AdType, ApartmentI, BuildingType, CityType } from "../interfaces";
 import RNPickerSelect from "react-native-picker-select";
 import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { GET_MY_APARTMENTS } from "../graphQL/Queries";
+import { dpx } from "../constants/Spacings";
+import Button from "../components/Button";
+import Header from "../components/Header";
+import IconButton from "../components/IconButton";
+import { SafeAreaView } from "react-native-safe-area-context";
+import LocationPicker from "../components/LocationPicker";
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
-  useLayoutEffect(() => {
-    if (itemOnEdit) {
-      navigation.setOptions({
-        headerTitle: itemOnEdit.title,
-      });
-    }
-  }, [navigation]);
   const [title, setTitle] = useState<string>(
     itemOnEdit ? itemOnEdit.title : ""
   );
@@ -81,7 +77,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     } = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (statusImagePicker !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+      Alert.alert("Sorry, we need camera roll permissions to make this work!");
       return;
     }
 
@@ -154,6 +150,25 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     }
   }, [updatedApartment]);
 
+  //setting user location as default location
+  useEffect(() => {
+    (async () => {
+      if (itemOnEdit) return;
+      let { status } = await Location.requestPermissionsAsync();
+      if (status !== "granted") {
+        Alert.alert(
+          "Sorry, we need location to find geocoding of the address!"
+        );
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      if (location?.coords) {
+        setGeolocation([location.coords.latitude, location.coords.longitude]);
+      }
+    })();
+  }, []);
+
   function generateRNFile(uri: string, name: string) {
     return uri
       ? new ReactNativeFile({
@@ -216,7 +231,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     const { status: statusLocation } = await Location.requestPermissionsAsync();
 
     if (statusLocation !== "granted") {
-      alert("Sorry, we need location to find geocoding of the address!");
+      Alert.alert("Sorry, we need location to find geocoding of the address!");
       return;
     }
 
@@ -267,20 +282,50 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
 
   return (
-    <View style={styles.container}>
-      {loadingNewApartment || loadingUpatedApartment ? (
-        <LoadingSpinner />
-      ) : null}
-      <ScrollView>
-        <View
-          style={{
-            marginVertical: 30,
-            height: 130,
-            marginHorizontal: 10,
-            alignSelf: "center",
-          }}
+    <SafeAreaView edges={["top"]} style={styles.container}>
+      {(loadingNewApartment || loadingUpatedApartment) && <LoadingSpinner />}
+      <Header>
+        <IconButton handlePress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
+        </IconButton>
+        <Text style={styles.header}>
+          {itemOnEdit ? "Edit Apartment" : "Add Apartment"}
+        </Text>
+        <IconButton
+          handlePress={pickImage}
+          disabled={uploadImages.length + oldImages.length > 4}
         >
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+          <MaterialIcons
+            name="add-photo-alternate"
+            size={dpx(24)}
+            color={
+              uploadImages.length + oldImages.length > 4
+                ? Colors.lightGray
+                : Colors.primary
+            }
+          />
+        </IconButton>
+      </Header>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.pickerContainer}>
+          <RNPickerSelect
+            placeholder={{}}
+            value={city}
+            onValueChange={(itemValue) => {
+              setCity(itemValue);
+            }}
+            itemKey="value"
+            items={cityTypes}
+          />
+        </View>
+        <View style={styles.imagesContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingHorizontal: dpx(20),
+            }}
+          >
             {oldImages.map((photo, index) => (
               <PhotoViewer
                 key={photo}
@@ -324,51 +369,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             onRequestClose={() => setIsFullScreen(false)}
           />
         </View>
-        <View style={{ marginBottom: 20 }}>
-          <Button
-            title={
-              uploadImages.length + oldImages.length < 1
-                ? "Add Photo *"
-                : "Add More Photos"
-            }
-            disabled={uploadImages.length + oldImages.length > 4}
-            color={Colors.primary}
-            onPress={pickImage}
-          />
-        </View>
-        <View>
-          <RNPickerSelect
-            placeholder={{}}
-            value={buildingType}
-            onValueChange={(itemValue) => {
-              setBuildingType(itemValue);
-            }}
-            itemKey="value"
-            items={buildingTypes}
-          />
-        </View>
-        <View>
-          <RNPickerSelect
-            placeholder={{}}
-            value={adType}
-            onValueChange={(itemValue) => {
-              setAdType(itemValue);
-            }}
-            itemKey="value"
-            items={adTypes}
-          />
-        </View>
-        <View>
-          <RNPickerSelect
-            placeholder={{}}
-            value={city}
-            onValueChange={(itemValue) => {
-              setCity(itemValue);
-            }}
-            itemKey="value"
-            items={cityTypes}
-          />
-        </View>
+
         <TextInput
           style={styles.input}
           value={title}
@@ -379,7 +380,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={details}
-          placeholder="Details *"
+          placeholder="Description *"
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setDetails(value)}
         />
@@ -401,7 +402,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={msquare?.toString() || ""}
-          placeholder="Meter Sqaure *"
+          placeholder="Area (ms2) *"
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -416,7 +417,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={roomCount?.toString() || ""}
-          placeholder="Room Count *"
+          placeholder="Rooms *"
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -449,38 +450,42 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           placeholder="Address *"
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setAddress(value)}
+          onEndEditing={attemptGeocodeAsync}
         />
-        <View style={{ marginVertical: 20 }}>
-          <Button
-            title="Find geolocation based on address"
-            disabled={!address}
-            onPress={() => attemptGeocodeAsync()}
-          />
-        </View>
-        <Text style={styles.input}>
-          {geolocation[0] !== 0 ? geolocation[0].toString() : "Latitude *"}
-        </Text>
-        <Text style={styles.input}>
-          {geolocation[1] !== 0 ? geolocation[1].toString() : "Longitude *"}
-        </Text>
 
-        <View style={{ marginVertical: 20 }}>
-          <Button
-            title="See Address in Maps"
-            disabled={geolocation[0] == 1 || geolocation[1] == 0}
-            onPress={() =>
-              Linking.openURL(
-                `http://maps.google.com/maps?z=18&q=${geolocation[0]},${geolocation[1]}`
-              )
-            }
+        <LocationPicker
+          addressGeoCode={geolocation}
+          onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
+        />
+
+        <View style={styles.pickerContainer}>
+          <RNPickerSelect
+            placeholder={{}}
+            value={buildingType}
+            onValueChange={(itemValue) => {
+              setBuildingType(itemValue);
+            }}
+            itemKey="value"
+            items={buildingTypes}
           />
         </View>
-      </ScrollView>
-      <View style={{ marginTop: 20 }}>
+        <View style={[styles.pickerContainer, { marginVertical: dpx(10) }]}>
+          <RNPickerSelect
+            placeholder={{}}
+            value={adType}
+            onValueChange={(itemValue) => {
+              setAdType(itemValue);
+            }}
+            itemKey="value"
+            items={adTypes}
+          />
+        </View>
+
         <Button
           color={Colors.primary}
           title="Submit"
           onPress={handleSubmit}
+          full
           disabled={
             !title ||
             !details ||
@@ -494,8 +499,8 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             uploadImages.length + oldImages.length < 1
           }
         />
-      </View>
-    </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -505,12 +510,35 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  input: {
-    padding: 10,
-    borderColor: Colors.black,
-    borderWidth: 1,
-    marginBottom: 10,
+  header: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
     color: Colors.black,
-    fontSize: 18,
+  },
+  scrollContainer: {
+    alignItems: "center",
+  },
+  pickerContainer: {
+    width: dpx(170),
+    borderRadius: dpx(10),
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+    alignSelf: "center",
+  },
+  imagesContainer: {
+    marginVertical: dpx(20),
+    height: dpx(130),
+    alignSelf: "center",
+  },
+  input: {
+    width: "90%",
+    borderColor: Colors.lightGray,
+    borderWidth: 1,
+    borderRadius: dpx(10),
+    color: Colors.black,
+    padding: dpx(10),
+    marginBottom: dpx(10),
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
   },
 });

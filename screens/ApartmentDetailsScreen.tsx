@@ -384,38 +384,41 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </View>
           </View>
         </View>
-        <View style={styles.agentContainer}>
-          <Text style={styles.title}>Listing Agent</Text>
-          <View style={styles.personContainer}>
-            <Text
-              style={styles.person}
-            >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
-            <View style={styles.personIcons}>
-              <IconButton
-                handlePress={() =>
-                  Linking.openURL(`tel:${apartment.owner?.phone}`)
-                }
-              >
-                <Entypo name="phone" color={Colors.black} size={dpx(22)} />
-              </IconButton>
-              <View style={{ marginLeft: dpx(10) }}>
+        {!showActions && (
+          <View style={styles.agentContainer}>
+            <Text style={styles.title}>Listing Agent</Text>
+
+            <View style={styles.personContainer}>
+              <Text
+                style={styles.person}
+              >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
+              <View style={styles.personIcons}>
                 <IconButton
                   handlePress={() =>
-                    Linking.openURL(
-                      `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
-                    )
+                    Linking.openURL(`tel:${apartment.owner?.phone}`)
                   }
                 >
-                  <MaterialCommunityIcons
-                    name="email"
-                    color={Colors.black}
-                    size={dpx(22)}
-                  />
+                  <Entypo name="phone" color={Colors.black} size={dpx(22)} />
                 </IconButton>
+                <View style={{ marginLeft: dpx(10) }}>
+                  <IconButton
+                    handlePress={() =>
+                      Linking.openURL(
+                        `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
+                      )
+                    }
+                  >
+                    <MaterialCommunityIcons
+                      name="email"
+                      color={Colors.black}
+                      size={dpx(22)}
+                    />
+                  </IconButton>
+                </View>
               </View>
             </View>
           </View>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
