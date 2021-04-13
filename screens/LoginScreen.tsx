@@ -1,18 +1,21 @@
 import { useMutation } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState, useEffect } from "react";
-import { Button, StyleSheet, TextInput, View, Text } from "react-native";
+import { StyleSheet, TextInput, View, Text } from "react-native";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
 import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
+import { dpx } from "../constants/Spacings";
+import Button from "../components/Button";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const store = useStore();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
 
-  const [loginUser, { data }] = useMutation(LOGIN_USER);
+  const [loginUser, { data, loading }] = useMutation(LOGIN_USER);
 
   useEffect(() => {
     if (data) {
@@ -42,33 +45,36 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 
   return (
     <View style={styles.container}>
+      {loading && <LoadingSpinner />}
       <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => onEmailChange(text)}
-        value={email}
-        placeholder="Email"
-        placeholderTextColor={Colors.gray}
-        textContentType="emailAddress"
-        keyboardType="email-address"
-        autoCapitalize="none"
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => onPasswordChange(text)}
-        value={password}
-        placeholder="Password"
-        placeholderTextColor={Colors.gray}
-        secureTextEntry
-        textContentType="password"
-      ></TextInput>
-      <View style={styles.buttonContainer}>
-        <Button
-          title="Login"
-          color={Colors.primary}
-          onPress={handleSubmit}
-          disabled={!email || !password}
-        />
+      <View style={styles.actions}>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => onEmailChange(text)}
+          value={email}
+          placeholder="Email"
+          placeholderTextColor={Colors.gray}
+          textContentType="emailAddress"
+          keyboardType="email-address"
+          autoCapitalize="none"
+        ></TextInput>
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => onPasswordChange(text)}
+          value={password}
+          placeholder="Password"
+          placeholderTextColor={Colors.gray}
+          secureTextEntry
+          textContentType="password"
+        ></TextInput>
+        <View style={styles.buttonContainer}>
+          <Button
+            title="Login"
+            color={Colors.primary}
+            onPress={handleSubmit}
+            disabled={!email || !password}
+          />
+        </View>
       </View>
     </View>
   );
@@ -77,25 +83,30 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    alignSelf: "center",
-    marginBottom: 50,
+    fontSize: dpx(16),
+    fontFamily: "Montserrat_500Medium",
+    marginTop: dpx(40),
+    textAlign: "center",
+  },
+  actions: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   input: {
-    width: "80%",
-    borderColor: Colors.black,
+    width: "90%",
+    borderColor: Colors.lightGray,
     borderWidth: 1,
+    borderRadius: dpx(10),
     color: Colors.black,
-    padding: 10,
-    marginBottom: 10,
+    padding: dpx(10),
+    marginBottom: dpx(10),
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
   },
   buttonContainer: {
     marginTop: 30,
-    width: 150,
   },
 });

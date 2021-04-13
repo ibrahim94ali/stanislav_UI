@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Button, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
@@ -9,6 +9,11 @@ import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { dpx } from "../constants/Spacings";
 import { useApolloClient } from "@apollo/client";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Button from "../components/Button";
+import { MaterialIcons } from "@expo/vector-icons";
+import IconButton from "../components/IconButton";
+import Header from "../components/Header";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
@@ -39,32 +44,37 @@ function ProfileScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.langContainer}>
-        <RNPickerSelect
-          placeholder={{}}
-          value={i18n.language}
-          onValueChange={handleLanguageChange}
-          itemKey="value"
-          items={[
-            { label: "English", value: "en" },
-            { label: "Türkçe", value: "tr" },
-            { label: "Shqip", value: "al" },
-            { label: "Македонски", value: "mk" },
-          ]}
-          style={pickerSelectStyles}
-        />
-      </View>
-      {store.user ? (
-        <View>
-          <Text style={styles.title}>
-            {t("PROFILE.HELLO")}, {store.user.name} {store.user.surname}
-          </Text>
-          <Button
-            title={t("PROFILE.LOGOUT")}
-            onPress={handleLogout}
-            color={Colors.secondary}
+    <SafeAreaView edges={["top"]} style={styles.container}>
+      <Header>
+        <View style={styles.langContainer}>
+          <RNPickerSelect
+            placeholder={{}}
+            value={i18n.language}
+            onValueChange={handleLanguageChange}
+            itemKey="value"
+            items={[
+              { label: "English", value: "en" },
+              { label: "Türkçe", value: "tr" },
+              { label: "Shqip", value: "al" },
+              { label: "Македонски", value: "mk" },
+            ]}
+            style={pickerSelectStyles}
           />
+        </View>
+        {store.user && (
+          <IconButton handlePress={handleLogout}>
+            <MaterialIcons name="logout" color={Colors.black} size={dpx(20)} />
+          </IconButton>
+        )}
+      </Header>
+      {store.user ? (
+        <View style={styles.actions}>
+          <View style={styles.nameContainer}>
+            <Text style={styles.title}>{t("PROFILE.HELLO")},</Text>
+            <Text style={styles.name}>
+              {store.user.name} {store.user.surname}
+            </Text>
+          </View>
           <Text style={[styles.title, { marginTop: 50 }]}>
             {t("PROFILE.MANAGE_YOUR_APT")}
           </Text>
@@ -83,24 +93,24 @@ function ProfileScreen({ navigation }: any) {
           />
         </View>
       ) : (
-        <View>
-          <Text style={styles.title}>{t("PROFILE.YOU_NOT_LOGGIN_IN")}</Text>
-          <Button
-            color={Colors.primary}
-            title={t("PROFILE.LOGIN")}
-            onPress={handleLogin}
-          />
-          <Text style={[styles.title, styles.register]}>
-            {t("PROFILE.REGISTER_HERE")}
-          </Text>
+        <View style={styles.actions}>
+          <Text style={styles.title}>{t("PROFILE.REGISTER_HERE")}</Text>
           <Button
             color={Colors.secondary}
             title={t("PROFILE.REGISTER")}
             onPress={handleRegister}
           />
+          <Text style={[styles.title, styles.login]}>
+            {t("PROFILE.YOU_NOT_LOGGIN_IN")}
+          </Text>
+          <Button
+            color={Colors.primary}
+            title={t("PROFILE.LOGIN")}
+            onPress={handleLogin}
+          />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -109,20 +119,33 @@ export default observer(ProfileScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+  },
+  nameContainer: {
+    flexDirection: "row",
+  },
+  name: {
+    fontSize: dpx(16),
+    fontFamily: "Montserrat_700Bold",
+    marginLeft: dpx(10),
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
-    alignSelf: "center",
-    marginBottom: 10,
+    fontSize: dpx(16),
+    textAlign: "center",
+    marginBottom: dpx(10),
+    fontFamily: "Montserrat_500Medium",
   },
-  register: {
-    marginTop: 30,
+  login: {
+    marginTop: dpx(30),
   },
   langContainer: {
-    marginBottom: dpx(30),
-    width: dpx(200),
+    width: dpx(170),
+    borderRadius: dpx(10),
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+  },
+  actions: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
