@@ -16,15 +16,19 @@ import Button from "./Button";
 const LocationPicker = ({ addressGeoCode, onSave }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [geolocation, setGeolocation] = useState<number[]>(addressGeoCode);
+  const [newGeolocation, setNewGeolocation] = useState<number[]>(
+    addressGeoCode
+  );
 
   useEffect(() => {
     setGeolocation(addressGeoCode);
+    setNewGeolocation(addressGeoCode);
   }, [addressGeoCode]);
 
   const addMarker = (e: any) => {
     const coords = e.nativeEvent.coordinate;
     if (coords) {
-      setGeolocation([coords.latitude, coords.longitude]);
+      setNewGeolocation([coords.latitude, coords.longitude]);
     }
   };
   return (
@@ -56,7 +60,6 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
       </TouchableOpacity>
       <Modal
         animationType="slide"
-        transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
@@ -66,16 +69,16 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
           rotateEnabled={false}
           onPress={(e) => addMarker(e)}
           initialRegion={{
-            latitude: geolocation[0],
-            longitude: geolocation[1],
+            latitude: newGeolocation[0],
+            longitude: newGeolocation[1],
             latitudeDelta: 0.005,
             longitudeDelta: 0.005,
           }}
         >
           <Marker
             coordinate={{
-              latitude: geolocation[0],
-              longitude: geolocation[1],
+              latitude: newGeolocation[0],
+              longitude: newGeolocation[1],
             }}
           >
             <Ionicons name="home" size={30} color={Colors.primary} />
@@ -87,7 +90,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
         <Pressable
           style={styles.btn}
           onPress={() => {
-            onSave(geolocation[0], geolocation[1]);
+            onSave(newGeolocation[0], newGeolocation[1]);
             setModalVisible(false);
           }}
         >
