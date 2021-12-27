@@ -30,15 +30,23 @@ export default function BottomTabNavigator() {
         name="Home"
         component={HomeNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              name="home"
+              color={focused ? Colors.primary : Colors.gray}
+            />
+          ),
         }}
       />
       <BottomTab.Screen
         name="Explore"
         component={MapNavigator}
         options={{
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="compass" color={color} />
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              name="compass"
+              color={focused ? Colors.primary : Colors.gray}
+            />
           ),
         }}
       />
@@ -46,7 +54,12 @@ export default function BottomTabNavigator() {
         name="Profile"
         component={ProfileNavigator}
         options={{
-          tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
+          tabBarIcon: ({ focused }) => (
+            <TabBarIcon
+              name="person"
+              color={focused ? Colors.primary : Colors.gray}
+            />
+          ),
         }}
       />
     </BottomTab.Navigator>
