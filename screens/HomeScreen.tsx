@@ -17,6 +17,7 @@ import Property from "../components/Property";
 import Sponsor from "../components/Sponsor";
 import { ApartmentI } from "../interfaces";
 import Header from "../components/Header";
+import SearchForm from "../components/SearchForm";
 
 function HomeScreen({ navigation }: any) {
   const store = useStore();
@@ -29,74 +30,83 @@ function HomeScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
       {isDataLoading ? <LoadingSpinner /> : null}
-      <Header>
-        <View style={styles.searchField}>
-          <SearchBox />
-        </View>
-        <IconButton handlePress={() => console.log("click")}>
-          <Ionicons name="options" color={Colors.black} size={dpx(24)} />
-        </IconButton>
-      </Header>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      {isFiltersOpen ? (
+        <SearchForm
+          closeFilters={() => setIsFiltersOpen(false)}
+          goToProperties={() => navigation.push("ApartmentListScreen")}
+        />
+      ) : (
         <View>
-          <Text style={styles.header}>Cities</Text>
-          <ScrollView
-            style={styles.cityContainer}
-            contentContainerStyle={{
-              paddingRight: dpx(20),
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <City />
-            <City />
-            <City />
-            <City />
+          <Header>
+            <View style={styles.searchField}>
+              <SearchBox />
+            </View>
+            <IconButton handlePress={() => setIsFiltersOpen(!isFiltersOpen)}>
+              <Ionicons name="options" color={Colors.black} size={dpx(24)} />
+            </IconButton>
+          </Header>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <View>
+              <Text style={styles.header}>Cities</Text>
+              <ScrollView
+                style={styles.cityContainer}
+                contentContainerStyle={{
+                  paddingRight: dpx(20),
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              >
+                <City />
+                <City />
+                <City />
+                <City />
+              </ScrollView>
+            </View>
+            <View style={styles.propertiesContainer}>
+              <View style={styles.propertiesHeaders}>
+                <Text style={styles.header}>Featured Properties</Text>
+                <TouchableOpacity
+                  onPress={() => navigation.push("ApartmentListScreen")}
+                >
+                  <Text style={styles.propertiesHeaderBtn}>See all</Text>
+                </TouchableOpacity>
+              </View>
+              <ScrollView
+                style={styles.propertyContainer}
+                contentContainerStyle={{
+                  paddingBottom: dpx(10),
+                  paddingRight: dpx(20),
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              >
+                {data &&
+                  data.apartments.map((apart: ApartmentI) => (
+                    <View key={apart.id} style={styles.property}>
+                      <Property apartment={apart} />
+                    </View>
+                  ))}
+              </ScrollView>
+            </View>
+            <View style={styles.sponsorContainer}>
+              <Text style={styles.header}>Sponsors</Text>
+              <ScrollView
+                style={styles.propertyContainer}
+                contentContainerStyle={{
+                  paddingRight: dpx(20),
+                }}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+              >
+                <Sponsor />
+                <Sponsor />
+                <Sponsor />
+                <Sponsor />
+              </ScrollView>
+            </View>
           </ScrollView>
         </View>
-        <View style={styles.propertiesContainer}>
-          <View style={styles.propertiesHeaders}>
-            <Text style={styles.header}>Featured Properties</Text>
-            <TouchableOpacity
-              onPress={() => navigation.push("ApartmentListScreen")}
-            >
-              <Text style={styles.propertiesHeaderBtn}>See all</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView
-            style={styles.propertyContainer}
-            contentContainerStyle={{
-              paddingBottom: dpx(10),
-              paddingRight: dpx(20),
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            {data &&
-              data.apartments.map((apart: ApartmentI) => (
-                <View key={apart.id} style={styles.property}>
-                  <Property apartment={apart} />
-                </View>
-              ))}
-          </ScrollView>
-        </View>
-        <View style={styles.sponsorContainer}>
-          <Text style={styles.header}>Sponsors</Text>
-          <ScrollView
-            style={styles.propertyContainer}
-            contentContainerStyle={{
-              paddingRight: dpx(20),
-            }}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-          >
-            <Sponsor />
-            <Sponsor />
-            <Sponsor />
-            <Sponsor />
-          </ScrollView>
-        </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

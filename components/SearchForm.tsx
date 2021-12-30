@@ -14,8 +14,12 @@ import {
   cityTypes,
 } from "../constants/Selectable";
 import { pickerSelectStyles } from "../constants/PickerStyle";
+import Header from "./Header";
+import IconButton from "./IconButton";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import Button from "./Button";
 
-const SearchForm = ({ open }: { open: boolean }) => {
+const SearchForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
 
   const placeholder = {
@@ -30,10 +34,8 @@ const SearchForm = ({ open }: { open: boolean }) => {
 
   const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
   const [selectedCity, setSelectedCity] = useState<CityType>();
-  const [
-    selectedBuildingType,
-    setSelectedBuildingType,
-  ] = useState<BuildingType>();
+  const [selectedBuildingType, setSelectedBuildingType] =
+    useState<BuildingType>();
   const [selectedAdType, setSelectedAdType] = useState<AdType>();
 
   //price
@@ -94,8 +96,17 @@ const SearchForm = ({ open }: { open: boolean }) => {
   ]);
 
   return (
-    <View style={open ? styles.container : styles.hide}>
+    <View>
       <ScrollView showsVerticalScrollIndicator={false}>
+        <Header>
+          <IconButton handlePress={() => null}>
+            <MaterialCommunityIcons name="restart" size={24} color="black" />
+          </IconButton>
+          <Text style={styles.header}>Filters</Text>
+          <IconButton handlePress={() => closeFilters()}>
+            <Ionicons name="close" color={Colors.black} size={dpx(24)} />
+          </IconButton>
+        </Header>
         {/* Cities */}
         <View style={styles.item}>
           <Text style={styles.itemText}>Cities: </Text>
@@ -261,6 +272,11 @@ const SearchForm = ({ open }: { open: boolean }) => {
           />
         </View>
       </ScrollView>
+      <Button
+        title="Show Properties"
+        full
+        onPress={() => goToProperties()}
+      ></Button>
     </View>
   );
 };
@@ -268,11 +284,10 @@ const SearchForm = ({ open }: { open: boolean }) => {
 export default SearchForm;
 
 const styles = StyleSheet.create({
-  container: {
-    padding: dpx(10),
-  },
-  hide: {
-    display: "none",
+  header: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
+    color: Colors.black,
   },
   item: {
     flexDirection: "row",
