@@ -18,7 +18,9 @@ const Button = ({
       style={[
         color ? { backgroundColor: color } : styles.primary,
         styles.container,
-        full ? { width: dpx(375) } : { width: dpx(200) },
+        full
+          ? { width: dpx(375), paddingVertical: dpx(15), borderRadius: 0 }
+          : { width: dpx(200) },
         disabled && { backgroundColor: Colors.lightGray },
       ]}
     >

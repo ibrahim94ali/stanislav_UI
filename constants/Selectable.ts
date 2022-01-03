@@ -24,3 +24,8 @@ export const cityTypes = [
   { value: CityType.SKOPJE, label: "Skopje" },
   { value: CityType.TETOVO, label: "Tetovo" },
 ];
+
+//TODO:
+// - Furnishing
+// - Heating
+// - Amenities

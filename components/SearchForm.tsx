@@ -3,7 +3,6 @@ import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
-import RNPickerSelect from "react-native-picker-select";
 import { dpx } from "../constants/Spacings";
 import { AdType, BuildingType, CityType, SearchFiltersI } from "../interfaces";
 import { ScrollView } from "react-native-gesture-handler";
@@ -13,20 +12,22 @@ import {
   buildingTypes,
   cityTypes,
 } from "../constants/Selectable";
-import { pickerSelectStyles } from "../constants/PickerStyle";
 import Header from "./Header";
 import IconButton from "./IconButton";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "./Button";
+import FilterOptions from "./FilterOptions";
+
+const CustomSliderMarker = () => {
+  return (
+    <View style={styles.customSliderMarkerContainer}>
+      <View style={styles.customSliderMarkerInside}></View>
+    </View>
+  );
+};
 
 const SearchForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
-
-  const placeholder = {
-    label: "All",
-    color: Colors.gray,
-    value: null,
-  };
 
   const { width: viewportWidth } = Dimensions.get("window");
 
@@ -62,7 +63,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     }
   }, [selectedAdType]);
 
-  useEffect(() => {
+  const showProperties = () => {
     const newFilters: SearchFiltersI = {
       sortBy: selectedSort,
       city: selectedCity,
@@ -79,25 +80,17 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       sortOrder: selectedOrder,
     };
     store.setFilters(newFilters);
-  }, [
-    selectedSort,
-    selectedCity,
-    selectedBuildingType,
-    selectedAdType,
-    minPrice,
-    maxPrice,
-    minArea,
-    maxArea,
-    minRoom,
-    maxRoom,
-    minFloor,
-    maxFloor,
-    selectedOrder,
-  ]);
+    goToProperties();
+  };
 
   return (
     <View>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: dpx(50),
+        }}
+        showsVerticalScrollIndicator={false}
+      >
         <Header>
           <IconButton handlePress={() => null}>
             <MaterialCommunityIcons name="restart" size={24} color="black" />
@@ -107,105 +100,58 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             <Ionicons name="close" color={Colors.black} size={dpx(24)} />
           </IconButton>
         </Header>
-        {/* Cities */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Cities: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              value={selectedCity}
-              onValueChange={(itemValue) => {
-                setSelectedCity(itemValue);
-              }}
-              itemKey="value"
-              items={cityTypes}
-              style={pickerSelectStyles}
-            />
-          </View>
-        </View>
 
-        {/* adtype */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Ad Type: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              value={selectedAdType}
-              onValueChange={(itemValue) => {
-                setSelectedAdType(itemValue);
-              }}
-              itemKey="value"
-              items={adTypes}
-              style={pickerSelectStyles}
-            />
-          </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title="City"
+            any
+            items={cityTypes}
+            onValueChange={(itemValue: CityType) => {
+              setSelectedCity(itemValue);
+            }}
+          />
         </View>
-
-        {/* building type */}
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Building Type: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={placeholder}
-              value={selectedBuildingType}
-              onValueChange={(itemValue) => {
-                setSelectedBuildingType(itemValue);
-              }}
-              itemKey="value"
-              items={buildingTypes}
-              style={pickerSelectStyles}
-            />
-          </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title="Property Type"
+            any
+            items={buildingTypes}
+            onValueChange={(itemValue: BuildingType) => {
+              setSelectedBuildingType(itemValue);
+            }}
+          />
         </View>
-
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Sort Order: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={{}}
-              value={selectedOrder}
-              onValueChange={(itemValue) => {
-                setSelectedOrder(+itemValue);
-              }}
-              itemKey="value"
-              items={[
-                { label: "High to Low", value: -1 },
-                { label: "Low to High", value: 1 },
-              ]}
-              style={pickerSelectStyles}
-            />
-          </View>
-        </View>
-        <View style={styles.item}>
-          <Text style={styles.itemText}>Sort By: </Text>
-          <View style={styles.picker}>
-            <RNPickerSelect
-              placeholder={{}}
-              value={selectedSort}
-              onValueChange={(itemValue) => {
-                setSelectedSort(itemValue);
-              }}
-              itemKey="value"
-              items={sortFields}
-              style={pickerSelectStyles}
-            />
-          </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title="Ad Type"
+            any
+            items={adTypes}
+            onValueChange={(itemValue: AdType) => {
+              setSelectedAdType(itemValue);
+            }}
+          />
         </View>
 
         {/* price */}
+        <View style={styles.sliderTextContainer}>
+          <Text style={styles.sliderHeader}>Price</Text>
+          <Text style={styles.sliderValues}>
+            {minPrice + " - " + maxPrice + " €"}
+          </Text>
+        </View>
         <View style={styles.sliderFilters}>
-          <Text style={styles.itemText}>Price (€): </Text>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
-            isMarkersSeparated
-            enableLabel
             min={0}
             max={selectedAdType === AdType.RENT ? 1000 : 1000000}
             step={selectedAdType === AdType.RENT ? 50 : 50000}
-            sliderLength={viewportWidth * 0.7}
+            sliderLength={viewportWidth * 0.85}
+            customMarker={() => {
+              return <CustomSliderMarker />;
+            }}
             values={[minPrice, maxPrice]}
-            onValuesChangeFinish={([min, max]) => {
+            onValuesChange={([min, max]) => {
               setMinPrice(min);
               setMaxPrice(max);
             }}
@@ -213,19 +159,25 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
 
         {/* area */}
+        <View style={styles.sliderTextContainer}>
+          <Text style={styles.sliderHeader}>Area</Text>
+          <Text style={styles.sliderValues}>
+            {minArea + " - " + maxArea + " m2"}
+          </Text>
+        </View>
         <View style={styles.sliderFilters}>
-          <Text style={styles.itemText}>Area (ms2): </Text>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
-            isMarkersSeparated
-            enableLabel
             min={0}
             max={300}
             step={20}
-            sliderLength={viewportWidth * 0.7}
+            sliderLength={viewportWidth * 0.85}
+            customMarker={() => {
+              return <CustomSliderMarker />;
+            }}
             values={[minArea, maxArea]}
-            onValuesChangeFinish={([min, max]) => {
+            onValuesChange={([min, max]) => {
               setMinArea(min);
               setMaxArea(max);
             }}
@@ -233,19 +185,23 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
 
         {/* room */}
+        <View style={styles.sliderTextContainer}>
+          <Text style={styles.sliderHeader}>Rooms</Text>
+          <Text style={styles.sliderValues}>{minRoom + " - " + maxRoom}</Text>
+        </View>
         <View style={styles.sliderFilters}>
-          <Text style={styles.itemText}>Rooms: </Text>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
-            isMarkersSeparated
-            enableLabel
             min={0}
             max={10}
             step={1}
-            sliderLength={viewportWidth * 0.7}
+            sliderLength={viewportWidth * 0.85}
+            customMarker={() => {
+              return <CustomSliderMarker />;
+            }}
             values={[minRoom, maxRoom]}
-            onValuesChangeFinish={([min, max]) => {
+            onValuesChange={([min, max]) => {
               setMinRoom(min);
               setMaxRoom(max);
             }}
@@ -253,30 +209,36 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
 
         {/* floor */}
+        <View style={styles.sliderTextContainer}>
+          <Text style={styles.sliderHeader}>Floor</Text>
+          <Text style={styles.sliderValues}>{minFloor + " - " + maxFloor}</Text>
+        </View>
         <View style={styles.sliderFilters}>
-          <Text style={styles.itemText}>Floor: </Text>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
-            isMarkersSeparated
-            enableLabel
             min={0}
             max={30}
             step={1}
-            sliderLength={viewportWidth * 0.7}
+            sliderLength={viewportWidth * 0.85}
             values={[minFloor, maxFloor]}
-            onValuesChangeFinish={([min, max]) => {
+            customMarker={() => {
+              return <CustomSliderMarker />;
+            }}
+            onValuesChange={([min, max]) => {
               setMinFloor(min);
               setMaxFloor(max);
             }}
           />
         </View>
       </ScrollView>
-      <Button
-        title="Show Properties"
-        full
-        onPress={() => goToProperties()}
-      ></Button>
+      <View style={styles.bigBtn}>
+        <Button
+          title="Show Properties"
+          full
+          onPress={() => showProperties()}
+        ></Button>
+      </View>
     </View>
   );
 };
@@ -288,6 +250,9 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_500Medium",
     fontSize: dpx(16),
     color: Colors.black,
+  },
+  filterContainer: {
+    marginBottom: dpx(20),
   },
   item: {
     flexDirection: "row",
@@ -303,10 +268,21 @@ const styles = StyleSheet.create({
     flex: 1,
     color: Colors.black,
   },
-  sliderContainer: {
-    width: "75%",
+  sliderTextContainer: {
+    marginBottom: dpx(10),
+    marginHorizontal: dpx(20),
     flexDirection: "row",
-    alignItems: "center",
+    justifyContent: "space-between",
+  },
+  sliderHeader: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(14),
+    color: Colors.black,
+  },
+  sliderValues: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(14),
+    color: Colors.primary,
   },
   sliderFilters: {
     alignItems: "center",
@@ -314,6 +290,24 @@ const styles = StyleSheet.create({
     paddingHorizontal: dpx(5),
   },
   slider: {
-    backgroundColor: Colors.secondary,
+    backgroundColor: Colors.primary,
+  },
+  bigBtn: {
+    position: "absolute",
+    bottom: 0,
+  },
+  customSliderMarkerContainer: {
+    width: dpx(23),
+    height: dpx(23),
+    backgroundColor: Colors.primary,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  customSliderMarkerInside: {
+    backgroundColor: Colors.white,
+    width: dpx(17),
+    height: dpx(17),
+    borderRadius: 100,
   },
 });
