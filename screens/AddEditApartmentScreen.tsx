@@ -28,6 +28,7 @@ import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LocationPicker from "../components/LocationPicker";
+import FilterOptions from "../components/FilterOptions";
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
@@ -72,9 +73,8 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
 
   const pickImage = async () => {
-    const {
-      status: statusImagePicker,
-    } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    const { status: statusImagePicker } =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (statusImagePicker !== "granted") {
       Alert.alert("Sorry, we need camera roll permissions to make this work!");
@@ -103,16 +103,14 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     setUploadImages([...uploadImages, manipResult.uri]);
   };
 
-  const [
-    addApartment,
-    { data: newApartment, loading: loadingNewApartment },
-  ] = useMutation(ADD_APARTMENT, {
-    update(cache, { data }) {
-      if (data) {
-        cache.reset();
-      }
-    },
-  });
+  const [addApartment, { data: newApartment, loading: loadingNewApartment }] =
+    useMutation(ADD_APARTMENT, {
+      update(cache, { data }) {
+        if (data) {
+          cache.reset();
+        }
+      },
+    });
 
   const [
     updateApartment,
@@ -154,7 +152,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   useEffect(() => {
     (async () => {
       if (itemOnEdit) return;
-      let { status } = await Location.requestPermissionsAsync();
+      let { status } = await Location.requestBackgroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(
           "Sorry, we need location to find geocoding of the address!"
@@ -228,7 +226,8 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   };
 
   const attemptGeocodeAsync = async () => {
-    const { status: statusLocation } = await Location.requestPermissionsAsync();
+    const { status: statusLocation } =
+      await Location.requestBackgroundPermissionsAsync();
 
     if (statusLocation !== "granted") {
       Alert.alert("Sorry, we need location to find geocoding of the address!");
@@ -307,17 +306,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         </IconButton>
       </Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.pickerContainer}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={city}
-            onValueChange={(itemValue) => {
-              setCity(itemValue);
-            }}
-            itemKey="value"
-            items={cityTypes}
-          />
-        </View>
         <View style={styles.imagesContainer}>
           <ScrollView
             horizontal
@@ -458,26 +446,35 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
         />
 
-        <View style={styles.pickerContainer}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={buildingType}
-            onValueChange={(itemValue) => {
-              setBuildingType(itemValue);
+        <View style={[styles.optionContainer, { marginTop: dpx(5) }]}>
+          <FilterOptions
+            title="City"
+            items={cityTypes}
+            initialValue={city}
+            onValueChange={(itemValue: CityType) => {
+              setCity(itemValue);
             }}
-            itemKey="value"
-            items={buildingTypes}
           />
         </View>
-        <View style={[styles.pickerContainer, { marginVertical: dpx(10) }]}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={adType}
-            onValueChange={(itemValue) => {
+
+        <View style={[styles.optionContainer]}>
+          <FilterOptions
+            title="Property Type"
+            items={buildingTypes}
+            initialValue={buildingType}
+            onValueChange={(itemValue: BuildingType) => {
+              setBuildingType(itemValue);
+            }}
+          />
+        </View>
+        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+          <FilterOptions
+            title="Ad Type"
+            items={adTypes}
+            initialValue={adType}
+            onValueChange={(itemValue: AdType) => {
               setAdType(itemValue);
             }}
-            itemKey="value"
-            items={adTypes}
           />
         </View>
 
@@ -515,15 +512,12 @@ const styles = StyleSheet.create({
     fontSize: dpx(16),
     color: Colors.black,
   },
+  optionContainer: {
+    alignSelf: "stretch",
+    marginBottom: dpx(10),
+  },
   scrollContainer: {
     alignItems: "center",
-  },
-  pickerContainer: {
-    width: dpx(170),
-    borderRadius: dpx(10),
-    borderWidth: 1,
-    borderColor: Colors.lightGray,
-    alignSelf: "center",
   },
   imagesContainer: {
     marginVertical: dpx(20),

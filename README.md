@@ -1,6 +1,5 @@
 TODO:
 
-- Filters page
 - Sort by, sort order
 - More amenities
 - Filter by Cities and add bg photo

@@ -11,11 +11,14 @@ interface Props {
     value: string;
     label: string;
   }[];
+  initialValue?: string;
   onValueChange: any;
 }
 
 const FilterOptions = (props: Props) => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<string | null>(
+    props.initialValue || null
+  );
 
   useEffect(() => {
     props.onValueChange(activeFilter);
@@ -44,6 +47,7 @@ const FilterOptions = (props: Props) => {
             key={item.label}
             label={item.label}
             value={item.value}
+            canDeactivate={!props.any}
             isActive={activeFilter === item.value}
             onValueChange={(val: string) => setActiveFilter(val)}
           />
