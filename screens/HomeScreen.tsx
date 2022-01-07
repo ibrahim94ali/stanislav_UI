@@ -18,6 +18,7 @@ import Sponsor from "../components/Sponsor";
 import { ApartmentI } from "../interfaces";
 import Header from "../components/Header";
 import SearchForm from "../components/SearchForm";
+import { cityTypes } from "../constants/Selectable";
 
 function HomeScreen({ navigation }: any) {
   const store = useStore();
@@ -56,10 +57,15 @@ function HomeScreen({ navigation }: any) {
                 horizontal
                 showsHorizontalScrollIndicator={false}
               >
-                <City />
-                <City />
-                <City />
-                <City />
+                {cityTypes.map((city) => (
+                  <City
+                    key={city.label}
+                    title={city.label}
+                    value={city.value}
+                    url={city.url}
+                    onPress={() => navigation.push("ApartmentListScreen")}
+                  />
+                ))}
               </ScrollView>
             </View>
             <View style={styles.propertiesContainer}>

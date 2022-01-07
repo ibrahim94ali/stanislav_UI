@@ -18,11 +18,31 @@ export const adTypes = [
 ];
 
 export const cityTypes = [
-  { value: CityType.BITOLA, label: "Bitola" },
-  { value: CityType.GOSTIVAR, label: "Gostivar" },
-  { value: CityType.OHRID, label: "Ohrid" },
-  { value: CityType.SKOPJE, label: "Skopje" },
-  { value: CityType.TETOVO, label: "Tetovo" },
+  {
+    value: CityType.BITOLA,
+    label: "Bitola",
+    url: "https://static.trip101.com/main_pics/218282/medium.jpg",
+  },
+  {
+    value: CityType.GOSTIVAR,
+    label: "Gostivar",
+    url: "https://upload.wikimedia.org/wikipedia/commons/4/44/Gostivarcenter.jpg",
+  },
+  {
+    value: CityType.OHRID,
+    label: "Ohrid",
+    url: "https://media.istockphoto.com/photos/sveti-jovan-kaneo-church-on-lake-ohrid-macedonia-picture-id497144333?k=20&m=497144333&s=612x612&w=0&h=jrxn7RTJoOu9e-wUMSazAlzqP-FYzgdxxWTdVj8Jicg=",
+  },
+  {
+    value: CityType.SKOPJE,
+    label: "Skopje",
+    url: "https://media.istockphoto.com/photos/alexander-statue-in-skopje-center-picture-id564585966?k=20&m=564585966&s=612x612&w=0&h=SulNwXYQCSgkY1hhVF1DPUqrSxWE0QkT_eKkXGPzaNM=",
+  },
+  {
+    value: CityType.TETOVO,
+    label: "Tetovo",
+    url: "https://i0.wp.com/www.travelsewhere.net/wp-content/uploads/2016/11/DSC_0178-4.jpg?fit=585%2C390&ssl=1",
+  },
 ];
 
 //TODO:
