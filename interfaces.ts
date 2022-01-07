@@ -31,9 +31,9 @@ export interface UserI {
 
 export interface SearchFiltersI {
   sortBy?: string;
-  city?: string;
-  buildingType?: string;
-  adType?: string;
+  city?: CityType;
+  buildingType?: BuildingType;
+  adType?: AdType;
   minPrice?: number;
   maxPrice?: number;
   minArea?: number;

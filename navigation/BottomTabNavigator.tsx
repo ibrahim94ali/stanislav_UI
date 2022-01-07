@@ -25,28 +25,26 @@ const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabNavigator() {
   return (
-    <BottomTab.Navigator initialRouteName="Home">
+    <BottomTab.Navigator
+      initialRouteName="Home"
+      tabBarOptions={{
+        activeTintColor: Colors.primary,
+        inactiveTintColor: Colors.gray,
+      }}
+    >
       <BottomTab.Screen
         name="Home"
         component={HomeNavigator}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              name="home"
-              color={focused ? Colors.primary : Colors.gray}
-            />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
         name="Explore"
         component={MapNavigator}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              name="compass"
-              color={focused ? Colors.primary : Colors.gray}
-            />
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="compass" color={color} />
           ),
         }}
       />
@@ -54,12 +52,7 @@ export default function BottomTabNavigator() {
         name="Profile"
         component={ProfileNavigator}
         options={{
-          tabBarIcon: ({ focused }) => (
-            <TabBarIcon
-              name="person"
-              color={focused ? Colors.primary : Colors.gray}
-            />
-          ),
+          tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
         }}
       />
     </BottomTab.Navigator>

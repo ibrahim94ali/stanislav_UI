@@ -11,14 +11,18 @@ interface Props {
     value: string;
     label: string;
   }[];
-  initialValue?: string;
+  value?: string;
   onValueChange: any;
 }
 
 const FilterOptions = (props: Props) => {
-  const [activeFilter, setActiveFilter] = useState<string | null>(
-    props.initialValue || null
+  const [activeFilter, setActiveFilter] = useState<string | undefined>(
+    props.value
   );
+
+  useEffect(() => {
+    setActiveFilter(props.value);
+  }, [props.value]);
 
   useEffect(() => {
     props.onValueChange(activeFilter);
@@ -37,9 +41,9 @@ const FilterOptions = (props: Props) => {
         {props.any && (
           <FilterBadge
             label="Any"
-            value={null}
+            value={undefined}
             isActive={activeFilter ? false : true}
-            onValueChange={() => setActiveFilter(null)}
+            onValueChange={() => setActiveFilter(undefined)}
           />
         )}
         {props.items.map((item) => (

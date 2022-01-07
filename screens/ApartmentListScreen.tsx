@@ -22,6 +22,10 @@ const ApartmentListScreen = ({ navigation }: any) => {
     variables: store.filters,
   });
 
+  const removeFilters = () => {
+    store.resetFilters();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
@@ -39,32 +43,19 @@ const ApartmentListScreen = ({ navigation }: any) => {
         </IconButton>
       </Header>
 
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingBottom: dpx(10),
-          paddingRight: dpx(10),
-          paddingLeft: dpx(20),
-        }}
-      >
-        <View style={styles.activeFilter}>
-          <ActiveFilterBadge name="Rent" />
+      {store.isAnyFilterActive && (
+        <View style={styles.activeFiltersContainer}>
+          <ActiveFilterBadge
+            name="Active Filters"
+            onPress={() => removeFilters()}
+          />
         </View>
-        <View style={styles.activeFilter}>
-          <ActiveFilterBadge name="Apartment" />
-        </View>
-        <View style={styles.activeFilter}>
-          <ActiveFilterBadge name="Furnished" />
-        </View>
-        <View style={styles.activeFilter}>
-          <ActiveFilterBadge name="Furnished" />
-        </View>
-      </ScrollView>
+      )}
 
       <ScrollView
-        style={styles.propertyContainer}
-        contentContainerStyle={{ alignItems: "center" }}
+        contentContainerStyle={{
+          alignItems: "center",
+        }}
         showsVerticalScrollIndicator={false}
       >
         {data &&
@@ -89,11 +80,10 @@ const styles = StyleSheet.create({
     fontSize: dpx(16),
     color: Colors.black,
   },
-  activeFilter: {
-    marginRight: dpx(10),
-  },
-  propertyContainer: {
-    marginTop: dpx(10),
+  activeFiltersContainer: {
+    marginBottom: dpx(10),
+    justifyContent: "center",
+    alignItems: "center",
   },
   property: {
     width: dpx(330),

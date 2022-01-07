@@ -5,14 +5,11 @@ import { dpx } from "../constants/Spacings";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const ActiveFilterBadge = ({ name }: any) => {
+const ActiveFilterBadge = ({ name, onPress }: any) => {
   return (
     <View style={styles.container}>
       <Text style={styles.name}>{name}</Text>
-      <TouchableOpacity
-        onPress={() => console.log("click")}
-        style={styles.removeBtn}
-      >
+      <TouchableOpacity onPress={() => onPress()} style={styles.removeBtn}>
         <Ionicons name="md-remove-circle" color={Colors.white} size={dpx(16)} />
       </TouchableOpacity>
     </View>
@@ -32,7 +29,7 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily: "Montserrat_500Medium",
-    fontSize: dpx(10),
+    fontSize: dpx(12),
     color: Colors.white,
   },
   removeBtn: {

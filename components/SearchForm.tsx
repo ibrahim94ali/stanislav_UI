@@ -17,6 +17,7 @@ import IconButton from "./IconButton";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "./Button";
 import FilterOptions from "./FilterOptions";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CustomSliderMarker = () => {
   return (
@@ -29,58 +30,92 @@ const CustomSliderMarker = () => {
 const SearchForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
 
+  useEffect(() => {
+    setSelectedCity(store.filters.city);
+    setSelectedBuildingType(store.filters.buildingType);
+    setSelectedAdType(store.filters.adType);
+    setMinPrice(store.filters.minPrice || 0);
+    setMaxPrice(store.filters.maxPrice || 1000000);
+    setMinArea(store.filters.minArea || 0);
+    setMaxArea(store.filters.maxArea || 300);
+    setMinRoom(store.filters.minRoom || 0);
+    setMaxRoom(store.filters.maxRoom || 10);
+    setMinFloor(store.filters.minFloor || 0);
+    setMaxFloor(store.filters.maxFloor || 30);
+  }, [store.filters]);
+
   const { width: viewportWidth } = Dimensions.get("window");
 
-  const [selectedOrder, setSelectedOrder] = useState(-1);
+  // const [selectedOrder, setSelectedOrder] = useState(-1);
 
-  const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
-  const [selectedCity, setSelectedCity] = useState<CityType>();
-  const [selectedBuildingType, setSelectedBuildingType] =
-    useState<BuildingType>();
-  const [selectedAdType, setSelectedAdType] = useState<AdType>();
+  // const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
+  const [selectedCity, setSelectedCity] = useState<CityType | undefined>(
+    store.filters.city
+  );
+  const [selectedBuildingType, setSelectedBuildingType] = useState<
+    BuildingType | undefined
+  >(store.filters.buildingType);
+  const [selectedAdType, setSelectedAdType] = useState<AdType | undefined>(
+    store.filters.adType
+  );
 
   //price
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice, setMaxPrice] = useState(1000000);
+  const [minPrice, setMinPrice] = useState<number>(store.filters.minPrice || 0);
+  const [maxPrice, setMaxPrice] = useState<number>(
+    store.filters.maxPrice || 1000000
+  );
 
   //area
-  const [minArea, setMinArea] = useState(0);
-  const [maxArea, setMaxArea] = useState(300);
+  const [minArea, setMinArea] = useState<number>(store.filters.minArea || 0);
+  const [maxArea, setMaxArea] = useState<number>(store.filters.maxArea || 300);
 
   // room
-  const [minRoom, setMinRoom] = useState(0);
-  const [maxRoom, setMaxRoom] = useState(10);
+  const [minRoom, setMinRoom] = useState<number>(store.filters.minRoom || 0);
+  const [maxRoom, setMaxRoom] = useState<number>(store.filters.maxRoom || 10);
 
   // floor
-  const [minFloor, setMinFloor] = useState(0);
-  const [maxFloor, setMaxFloor] = useState(30);
+  const [minFloor, setMinFloor] = useState<number>(store.filters.minFloor || 0);
+  const [maxFloor, setMaxFloor] = useState<number>(
+    store.filters.maxFloor || 30
+  );
 
   useEffect(() => {
     if (selectedAdType === AdType.RENT) {
-      setMaxPrice(1000);
+      setMinPrice(minPrice < 1000 ? minPrice : 0);
+      setMaxPrice(maxPrice > 1000 ? 1000 : maxPrice);
     } else {
-      setMaxPrice(1000000);
+      setMinPrice(minPrice % 50000 === 0 ? minPrice : 0);
+      setMaxPrice(maxPrice <= 1000 ? 1000000 : maxPrice);
     }
   }, [selectedAdType]);
 
   const showProperties = () => {
     const newFilters: SearchFiltersI = {
-      sortBy: selectedSort,
       city: selectedCity,
       buildingType: selectedBuildingType,
       adType: selectedAdType,
-      minPrice,
-      maxPrice,
-      minArea,
-      maxArea,
-      minRoom,
-      maxRoom,
-      minFloor,
-      maxFloor,
-      sortOrder: selectedOrder,
+      minPrice: minPrice > 0 ? minPrice : undefined,
+      maxPrice:
+        (selectedAdType === AdType.RENT && maxPrice < 1000) ||
+        (selectedAdType === AdType.PURCHASE && maxPrice < 1000000)
+          ? maxPrice
+          : undefined,
+      minArea: minArea > 0 ? minArea : undefined,
+      maxArea: maxArea < 300 ? maxArea : undefined,
+      minRoom: minRoom > 0 ? minRoom : undefined,
+      maxRoom: maxRoom < 10 ? maxRoom : undefined,
+      minFloor: minFloor > 0 ? minFloor : undefined,
+      maxFloor: maxFloor < 30 ? maxFloor : undefined,
     };
     store.setFilters(newFilters);
+
+    storeFiltersLocally(newFilters);
+
     goToProperties();
+  };
+
+  const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
+    await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
   return (
@@ -92,7 +127,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         showsVerticalScrollIndicator={false}
       >
         <Header>
-          <IconButton handlePress={() => null}>
+          <IconButton handlePress={() => store.resetFilters()}>
             <MaterialCommunityIcons name="restart" size={24} color="black" />
           </IconButton>
           <Text style={styles.header}>Filters</Text>
@@ -106,6 +141,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             title="City"
             any
             items={cityTypes}
+            value={selectedCity}
             onValueChange={(itemValue: CityType) => {
               setSelectedCity(itemValue);
             }}
@@ -116,6 +152,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             title="Property Type"
             any
             items={buildingTypes}
+            value={selectedBuildingType}
             onValueChange={(itemValue: BuildingType) => {
               setSelectedBuildingType(itemValue);
             }}
@@ -126,6 +163,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             title="Ad Type"
             any
             items={adTypes}
+            value={selectedAdType}
             onValueChange={(itemValue: AdType) => {
               setSelectedAdType(itemValue);
             }}

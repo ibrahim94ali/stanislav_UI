@@ -27,6 +27,7 @@ import {
   Montserrat_500Medium,
   Montserrat_700Bold,
 } from "@expo-google-fonts/montserrat";
+import { SearchFiltersI } from "./interfaces";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -65,9 +66,22 @@ export default function App() {
     }
   };
 
+  const getStoredFilters = async () => {
+    try {
+      const filters = await AsyncStorage.getItem("filters");
+      if (filters) {
+        const filtersObj: SearchFiltersI = JSON.parse(filters);
+        store.setFilters(filtersObj);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
   useEffect(() => {
     getStoredUserData();
     getStoredLanguage();
+    getStoredFilters();
   }, []);
 
   const errorLink = onError(({ graphQLErrors, networkError }) => {
