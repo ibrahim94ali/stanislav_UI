@@ -28,6 +28,7 @@ import {
   Montserrat_700Bold,
 } from "@expo-google-fonts/montserrat";
 import { SearchFiltersI } from "./interfaces";
+import "react-native-gesture-handler";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();

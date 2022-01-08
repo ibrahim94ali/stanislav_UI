@@ -45,6 +45,40 @@ export const cityTypes = [
   },
 ];
 
+export interface SortTypeI {
+  label: string;
+  value: string;
+  order: number;
+}
+
+export const sortTypes: SortTypeI[] = [
+  {
+    label: "Newest",
+    value: "date",
+    order: -1,
+  },
+  {
+    label: "Price (low to high)",
+    value: "price",
+    order: 1,
+  },
+  {
+    label: "Price (high to low)",
+    value: "price",
+    order: -1,
+  },
+  {
+    label: "Area (low to high)",
+    value: "msquare",
+    order: 1,
+  },
+  {
+    label: "Area (high to low)",
+    value: "msquare",
+    order: -1,
+  },
+];
+
 //TODO:
 // - Furnishing
 // - Heating

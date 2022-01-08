@@ -6,12 +6,7 @@ import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { AdType, BuildingType, CityType, SearchFiltersI } from "../interfaces";
 import { ScrollView } from "react-native-gesture-handler";
-import {
-  sortFields,
-  adTypes,
-  buildingTypes,
-  cityTypes,
-} from "../constants/Selectable";
+import { adTypes, buildingTypes, cityTypes } from "../constants/Selectable";
 import Header from "./Header";
 import IconButton from "./IconButton";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -46,9 +41,6 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
   const { width: viewportWidth } = Dimensions.get("window");
 
-  // const [selectedOrder, setSelectedOrder] = useState(-1);
-
-  // const [selectedSort, setSelectedSort] = useState(sortFields[0]?.value);
   const [selectedCity, setSelectedCity] = useState<CityType | undefined>(
     store.filters.city
   );

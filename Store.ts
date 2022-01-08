@@ -14,6 +14,7 @@ export class StoreImpl {
       setUser: action,
       setFilters: action,
       resetFilters: action,
+      setSorting: action,
     });
   }
 
@@ -29,8 +30,19 @@ export class StoreImpl {
   }
 
   resetFilters() {
-    this.filters = {};
+    this.filters = {
+      sortBy: "date",
+      sortOrder: -1,
+    };
     this.isAnyFilterActive = false;
+  }
+
+  setSorting(sortBy: string, sortOrder: number) {
+    this.filters = {
+      ...this.filters,
+      sortBy,
+      sortOrder,
+    };
   }
 }
 

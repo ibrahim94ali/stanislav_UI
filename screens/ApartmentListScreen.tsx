@@ -1,5 +1,15 @@
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import React from "react";
+import {
+  FontAwesome5,
+  Ionicons,
+  MaterialCommunityIcons,
+} from "@expo/vector-icons";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
@@ -14,6 +24,9 @@ import { useStore } from "../hooks/StoreContext";
 import { ApartmentI } from "../interfaces";
 import Property from "../components/Property";
 import LoadingSpinner from "../components/LoadingSpinner";
+import BottomSheet from "@gorhom/bottom-sheet";
+import { SortTypeI, sortTypes } from "../constants/Selectable";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const ApartmentListScreen = ({ navigation }: any) => {
   const store = useStore();
@@ -26,6 +39,42 @@ const ApartmentListScreen = ({ navigation }: any) => {
     store.resetFilters();
   };
 
+  const [isSortingActive, setIsSortingActive] = useState(false);
+
+  const bottomSheetRef = useRef<BottomSheet>(null);
+  const snapPoints = useMemo(() => [dpx(300)], []);
+  const handleSheetChanges = useCallback((index: number) => {
+    setIsSortingActive(index === 1 ? true : false);
+  }, []);
+
+  const handleSortModal = (open?: boolean) => {
+    if (open) {
+      bottomSheetRef.current?.expand();
+    } else if (open === false) {
+      bottomSheetRef.current?.close();
+    } else {
+      //toggle
+      if (isSortingActive) {
+        bottomSheetRef.current?.close();
+      } else {
+        bottomSheetRef.current?.expand();
+      }
+    }
+  };
+
+  const handleSortFieldChange = (selectedField: SortTypeI) => {
+    store.setSorting(selectedField.value, selectedField.order);
+    setTimeout(() => {
+      handleSortModal(false);
+    }, 500);
+  };
+
+  useEffect(() => {
+    if (!store.filters.sortBy) {
+      store.setSorting("date", -1);
+    }
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
@@ -34,7 +83,7 @@ const ApartmentListScreen = ({ navigation }: any) => {
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
         <Text style={styles.header}>Properties</Text>
-        <IconButton handlePress={() => console.log("click")}>
+        <IconButton handlePress={() => handleSortModal()}>
           <MaterialCommunityIcons
             name="sort-ascending"
             color={Colors.black}
@@ -65,6 +114,46 @@ const ApartmentListScreen = ({ navigation }: any) => {
             </View>
           ))}
       </ScrollView>
+
+      <BottomSheet
+        ref={bottomSheetRef}
+        index={-1}
+        snapPoints={snapPoints}
+        onChange={handleSheetChanges}
+        enablePanDownToClose
+      >
+        <View style={styles.sortContainer}>
+          <Text style={styles.sortHeader}>Sort By:</Text>
+          <View style={styles.sortListContainer}>
+            {sortTypes.map((sortType) => {
+              const isSelected =
+                store.filters?.sortBy === sortType.value &&
+                store.filters?.sortOrder === sortType.order;
+              return (
+                <TouchableOpacity
+                  style={styles.sortList}
+                  key={sortType.label}
+                  onPress={() => handleSortFieldChange(sortType)}
+                >
+                  <FontAwesome5
+                    name={isSelected ? "check-circle" : "circle"}
+                    size={24}
+                    color={isSelected ? Colors.primary : Colors.black}
+                  />
+                  <Text
+                    style={[
+                      styles.sortListText,
+                      { color: isSelected ? Colors.primary : Colors.black },
+                    ]}
+                  >
+                    {sortType.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>
+      </BottomSheet>
     </SafeAreaView>
   );
 };
@@ -89,5 +178,28 @@ const styles = StyleSheet.create({
     width: dpx(330),
     height: dpx(270),
     marginBottom: dpx(20),
+  },
+  sortContainer: {
+    paddingHorizontal: dpx(20),
+  },
+  sortHeader: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
+    color: Colors.black,
+  },
+  sortListContainer: {
+    marginVertical: dpx(10),
+  },
+  sortList: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: dpx(10),
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.lightGray,
+  },
+  sortListText: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(14),
+    marginLeft: dpx(10),
   },
 });
