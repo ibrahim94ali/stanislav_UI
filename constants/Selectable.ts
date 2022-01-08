@@ -10,6 +10,9 @@ export const sortFields = [
 export const buildingTypes = [
   { value: BuildingType.FLAT, label: "Flat" },
   { value: BuildingType.HOUSE, label: "House" },
+  { value: BuildingType.VILLA, label: "Villa" },
+  { value: BuildingType.SHOP, label: "Shop" },
+  { value: BuildingType.LAND, label: "Land" },
 ];
 
 export const adTypes = [
@@ -81,6 +84,32 @@ export const sortTypes: SortTypeI[] = [
     label: "Area (high to low)",
     value: "msquare",
     order: -1,
+  },
+];
+
+export const sponsors = [
+  {
+    name: "Antep Baklava",
+    redirectUrl: "https://www.antepbaklava.mk",
+    logoUrl: "https://www.antepbaklava.mk/antep-icon.png",
+  },
+  {
+    name: "Red Bull",
+    redirectUrl: "https://www.redbull.com",
+    logoUrl:
+      "https://i.pinimg.com/originals/ec/d1/bf/ecd1bf4aa8781e0e4761106cebffce16.jpg",
+  },
+  {
+    name: "Mercedes",
+    redirectUrl: "https://www.mercedes-benz.com/en/",
+    logoUrl:
+      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpvyBYPm4HHpTf4hiXUtrE-lcuAhFUjtaTVA&usqp=CAU",
+  },
+  {
+    name: "Ferrari",
+    redirectUrl: "https://www.ferrari.com/en-EN",
+    logoUrl:
+      "https://prod.cloud.rockstargames.com/crews/sc/2620/9252858/publish/emblem/emblem_512.png",
   },
 ];
 

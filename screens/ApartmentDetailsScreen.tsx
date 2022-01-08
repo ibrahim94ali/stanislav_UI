@@ -35,6 +35,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
 import MapView, { Marker } from "react-native-maps";
+import { furnishingTypes } from "../constants/Selectable";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -62,45 +63,43 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   const [activePhotoIndex, setActivePhotoIndex] = useState(0);
 
-  const [
-    addFavorite,
-    { data: isNowFavorite, loading: loadingFavorite },
-  ] = useMutation(ADD_FAV_APARTMENT, {
-    variables: {
-      id: apartment.id,
-    },
-    update(cache, { data }) {
-      const favoriteApartment: ApartmentI = data?.addFavorite;
-      if (!favoriteApartment) return;
+  const [addFavorite, { data: isNowFavorite, loading: loadingFavorite }] =
+    useMutation(ADD_FAV_APARTMENT, {
+      variables: {
+        id: apartment.id,
+      },
+      update(cache, { data }) {
+        const favoriteApartment: ApartmentI = data?.addFavorite;
+        if (!favoriteApartment) return;
 
-      cache.writeFragment({
-        id: `Apartment:${favoriteApartment.id}`,
-        fragment: gql`
-          fragment apartments on Apartment {
-            isFavorite
-          }
-        `,
-        data: {
-          isFavorite: true,
-        },
-      });
-
-      const favoritesCache = cache.readQuery<{
-        favorites: ApartmentI[];
-      }>({
-        query: GET_FAV_APARTMENTS,
-      });
-
-      if (favoritesCache) {
-        cache.writeQuery({
-          query: GET_FAV_APARTMENTS,
+        cache.writeFragment({
+          id: `Apartment:${favoriteApartment.id}`,
+          fragment: gql`
+            fragment apartments on Apartment {
+              isFavorite
+            }
+          `,
           data: {
-            favorites: [favoriteApartment, ...favoritesCache?.favorites],
+            isFavorite: true,
           },
         });
-      }
-    },
-  });
+
+        const favoritesCache = cache.readQuery<{
+          favorites: ApartmentI[];
+        }>({
+          query: GET_FAV_APARTMENTS,
+        });
+
+        if (favoritesCache) {
+          cache.writeQuery({
+            query: GET_FAV_APARTMENTS,
+            data: {
+              favorites: [favoriteApartment, ...favoritesCache?.favorites],
+            },
+          });
+        }
+      },
+    });
   const [
     removeFavorite,
     { data: isNowUnfavorite, loading: loadingUnfavorite },
@@ -145,21 +144,19 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     },
   });
 
-  const [
-    deleteApartment,
-    { data: deletedApartment, loading: loadingDelete },
-  ] = useMutation(DELETE_APARTMENT, {
-    update(cache, { data }) {
-      const myDeletedApartmentId: string = data?.deleteApartment.id;
+  const [deleteApartment, { data: deletedApartment, loading: loadingDelete }] =
+    useMutation(DELETE_APARTMENT, {
+      update(cache, { data }) {
+        const myDeletedApartmentId: string = data?.deleteApartment.id;
 
-      if (!myDeletedApartmentId) return;
+        if (!myDeletedApartmentId) return;
 
-      cache.evict({
-        id: `Apartment:${myDeletedApartmentId}`,
-      });
-      cache.gc();
-    },
-  });
+        cache.evict({
+          id: `Apartment:${myDeletedApartmentId}`,
+        });
+        cache.gc();
+      },
+    });
 
   const handleFavorite = () => {
     if (isFav) {
@@ -369,18 +366,31 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           <Text style={styles.title}>Amenities</Text>
           <View style={styles.amenityRow}>
             <View style={styles.amenityContainer}>
-              <MaterialCommunityIcons name="parking" size={dpx(18)} />
-              <Text style={styles.amenity}>Parking</Text>
+              <MaterialCommunityIcons
+                name="sofa"
+                size={dpx(18)}
+                color={Colors.black}
+              />
+              <Text style={styles.amenity}>
+                {
+                  furnishingTypes.find((f) => f.value === apartment.isFurnished)
+                    ?.label
+                }
+              </Text>
             </View>
             <View style={styles.amenityContainer}>
-              <MaterialCommunityIcons name="parking" size={dpx(18)} />
+              <MaterialCommunityIcons
+                name="parking"
+                size={dpx(18)}
+                color={Colors.black}
+              />
               <Text style={styles.amenity}>Parking</Text>
             </View>
           </View>
           <View style={styles.amenityRow}>
             <View style={styles.amenityContainer}>
-              <MaterialCommunityIcons name="parking" size={dpx(18)} />
-              <Text style={styles.amenity}>Parking</Text>
+              <FontAwesome name="bathtub" size={dpx(18)} color={Colors.black} />
+              <Text style={styles.amenity}>Jaccuzi</Text>
             </View>
           </View>
         </View>

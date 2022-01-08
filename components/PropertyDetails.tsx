@@ -25,7 +25,10 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
       ) : (
         <Text style={styles.price}>{apartment.price} €</Text>
       )}
-      <Text style={styles.address}>{apartment.address}</Text>
+      <Text style={styles.address}>
+        {apartment.address} -{" "}
+        {apartment.city.charAt(0).toUpperCase() + apartment.city.slice(1)}
+      </Text>
       <View style={styles.iconsContainer}>
         <View style={styles.iconContainer}>
           <Entypo name="ruler" color={Colors.black} size={dpx(14)} />

@@ -17,7 +17,7 @@ import Sponsor from "../components/Sponsor";
 import { ApartmentI } from "../interfaces";
 import Header from "../components/Header";
 import SearchForm from "../components/SearchForm";
-import { cityTypes } from "../constants/Selectable";
+import { cityTypes, sponsors } from "../constants/Selectable";
 
 function HomeScreen({ navigation }: any) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -37,7 +37,7 @@ function HomeScreen({ navigation }: any) {
           goToProperties={() => navigation.push("ApartmentListScreen")}
         />
       ) : (
-        <View>
+        <View style={styles.container}>
           <Header>
             <View style={styles.searchField}>
               <SearchBox searchTextEntered={(q: string) => handleSearch(q)} />
@@ -46,7 +46,12 @@ function HomeScreen({ navigation }: any) {
               <Ionicons name="options" color={Colors.black} size={dpx(24)} />
             </IconButton>
           </Header>
-          <ScrollView showsVerticalScrollIndicator={false}>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerStyle={{
+              paddingBottom: dpx(20),
+            }}
+          >
             <View>
               <Text style={styles.header}>Cities</Text>
               <ScrollView
@@ -104,10 +109,9 @@ function HomeScreen({ navigation }: any) {
                 horizontal
                 showsHorizontalScrollIndicator={false}
               >
-                <Sponsor />
-                <Sponsor />
-                <Sponsor />
-                <Sponsor />
+                {sponsors.map((sponsor) => (
+                  <Sponsor key={sponsor.name} {...sponsor} />
+                ))}
               </ScrollView>
             </View>
           </ScrollView>

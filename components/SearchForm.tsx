@@ -132,23 +132,20 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
+      <Header>
+        <IconButton handlePress={() => store.resetFilters()}>
+          <MaterialCommunityIcons name="restart" size={24} color="black" />
+        </IconButton>
+        <Text style={styles.header}>Filters</Text>
+        <IconButton handlePress={() => closeFilters()}>
+          <Ionicons name="close" color={Colors.black} size={dpx(24)} />
+        </IconButton>
+      </Header>
       <ScrollView
-        contentContainerStyle={{
-          paddingBottom: dpx(50),
-        }}
+        contentContainerStyle={{ paddingBottom: dpx(50) }}
         showsVerticalScrollIndicator={false}
       >
-        <Header>
-          <IconButton handlePress={() => store.resetFilters()}>
-            <MaterialCommunityIcons name="restart" size={24} color="black" />
-          </IconButton>
-          <Text style={styles.header}>Filters</Text>
-          <IconButton handlePress={() => closeFilters()}>
-            <Ionicons name="close" color={Colors.black} size={dpx(24)} />
-          </IconButton>
-        </Header>
-
         <View style={styles.filterContainer}>
           <FilterOptions
             title="City"
@@ -308,6 +305,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 export default SearchForm;
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   header: {
     fontFamily: "Montserrat_500Medium",
     fontSize: dpx(16),

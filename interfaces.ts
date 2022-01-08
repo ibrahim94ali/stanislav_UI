@@ -52,6 +52,9 @@ export interface SearchFiltersI {
 export enum BuildingType {
   HOUSE = "house",
   FLAT = "flat",
+  VILLA = "villa",
+  SHOP = "shop",
+  LAND = "land",
 }
 
 export enum AdType {
