@@ -9,8 +9,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import SearchBox from "../components/SearchBox";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
-import { GET_APARTMENTS } from "../graphQL/Queries";
-import { useStore } from "../hooks/StoreContext";
+import { GET_FEATURED_APARTMENTS } from "../graphQL/Queries";
 import City from "../components/City";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Property from "../components/Property";
@@ -21,12 +20,13 @@ import SearchForm from "../components/SearchForm";
 import { cityTypes } from "../constants/Selectable";
 
 function HomeScreen({ navigation }: any) {
-  const store = useStore();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
-  const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
-    variables: store.filters,
-  });
+  const { data, loading: isDataLoading } = useQuery(GET_FEATURED_APARTMENTS);
+
+  const handleSearch = (q: string) => {
+    navigation.push("ApartmentListScreen", { q: q });
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={["top"]}>
@@ -40,7 +40,7 @@ function HomeScreen({ navigation }: any) {
         <View>
           <Header>
             <View style={styles.searchField}>
-              <SearchBox />
+              <SearchBox searchTextEntered={(q: string) => handleSearch(q)} />
             </View>
             <IconButton handlePress={() => setIsFiltersOpen(!isFiltersOpen)}>
               <Ionicons name="options" color={Colors.black} size={dpx(24)} />
@@ -87,7 +87,7 @@ function HomeScreen({ navigation }: any) {
                 showsHorizontalScrollIndicator={false}
               >
                 {data &&
-                  data.apartments.map((apart: ApartmentI) => (
+                  data.featuredApartments.map((apart: ApartmentI) => (
                     <View key={apart.id} style={styles.property}>
                       <Property apartment={apart} />
                     </View>

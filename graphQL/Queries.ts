@@ -13,6 +13,8 @@ export const GET_APARTMENTS = gql`
     $maxRoom: Int
     $minFloor: Int
     $maxFloor: Int
+    $isFeatured: Boolean
+    $isFurnished: Boolean
     $sortBy: String
     $sortOrder: Int
   ) {
@@ -28,6 +30,8 @@ export const GET_APARTMENTS = gql`
       maxRoom: $maxRoom
       minFloor: $minFloor
       maxFloor: $maxFloor
+      isFeatured: $isFeatured
+      isFurnished: $isFurnished
       sortBy: $sortBy
       sortOrder: $sortOrder
     ) {
@@ -52,6 +56,8 @@ export const GET_APARTMENTS = gql`
       roomCount
       floor
       isFavorite
+      isFurnished
+      isFeatured
     }
   }
 `;
@@ -73,6 +79,8 @@ export const GET_MY_APARTMENTS = gql`
       msquare
       roomCount
       floor
+      isFurnished
+      isFeatured
     }
   }
 `;
@@ -94,12 +102,72 @@ export const GET_FAV_APARTMENTS = gql`
       msquare
       roomCount
       floor
+      isFurnished
+      isFeatured
       owner {
         name
         surname
         email
         phone
       }
+    }
+  }
+`;
+
+export const GET_FEATURED_APARTMENTS = gql`
+  query {
+    featuredApartments {
+      id
+      title
+      details
+      date
+      geolocation
+      address
+      city
+      price
+      buildingType
+      adType
+      photos
+      msquare
+      roomCount
+      floor
+      isFurnished
+      owner {
+        name
+        surname
+        email
+        phone
+      }
+    }
+  }
+`;
+
+export const GET_SEARCHED_APARTMENTS = gql`
+  query searchedApartments($q: String!) {
+    searchedApartments(q: $q) {
+      id
+      title
+      details
+      owner {
+        name
+        surname
+        email
+        phone
+      }
+      date
+      geolocation
+      address
+      city
+      price
+      buildingType
+      adType
+      photos
+      msquare
+      roomCount
+      floor
+      isFavorite
+      isFurnished
+      isFeatured
     }
   }
 `;

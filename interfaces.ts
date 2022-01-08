@@ -16,6 +16,8 @@ export interface ApartmentI {
   floor: number;
   owner?: UserI;
   isFavorite?: boolean;
+  isFurnished: boolean;
+  isFeatured?: boolean;
 }
 
 export interface UserI {
@@ -30,7 +32,6 @@ export interface UserI {
 }
 
 export interface SearchFiltersI {
-  sortBy?: string;
   city?: CityType;
   buildingType?: BuildingType;
   adType?: AdType;
@@ -42,6 +43,9 @@ export interface SearchFiltersI {
   maxRoom?: number;
   minFloor?: number;
   maxFloor?: number;
+  isFeatured?: boolean;
+  isFurnished?: boolean;
+  sortBy?: string;
   sortOrder?: number;
 }
 

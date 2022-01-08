@@ -94,7 +94,7 @@ export default function App() {
     }
   });
 
-  const localAPIUri = "http://192.168.0.36:3000/graphql";
+  const localAPIUri = "http://192.168.0.111:3000/graphql";
   const herokuUri = "https://stanislav-app.herokuapp.com/graphql";
   const awsUri =
     "http://stanislav-env-2.eba-ada5zbfj.eu-central-1.elasticbeanstalk.com/graphql";

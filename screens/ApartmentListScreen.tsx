@@ -18,7 +18,7 @@ import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import ActiveFilterBadge from "../components/ActiveFilterBadge";
 import { useQuery } from "@apollo/client";
-import { GET_APARTMENTS } from "../graphQL/Queries";
+import { GET_APARTMENTS, GET_SEARCHED_APARTMENTS } from "../graphQL/Queries";
 import { observer } from "mobx-react";
 import { useStore } from "../hooks/StoreContext";
 import { ApartmentI } from "../interfaces";
@@ -28,14 +28,38 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { SortTypeI, sortTypes } from "../constants/Selectable";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-const ApartmentListScreen = ({ navigation }: any) => {
+interface Props {
+  navigation: any;
+  route: any;
+}
+
+const ApartmentListScreen = (props: Props) => {
   const store = useStore();
 
-  const { data, loading: isDataLoading } = useQuery(GET_APARTMENTS, {
-    variables: store.filters,
-  });
+  let filteredData, isDataLoading;
+
+  const [q, setQ] = useState<string | undefined>(
+    props.route?.params?.q || undefined
+  );
+
+  if (q) {
+    const { data, loading } = useQuery(GET_SEARCHED_APARTMENTS, {
+      variables: {
+        q: q,
+      },
+    });
+    filteredData = data;
+    isDataLoading = loading;
+  } else {
+    const { data, loading } = useQuery(GET_APARTMENTS, {
+      variables: store.filters,
+    });
+    filteredData = data;
+    isDataLoading = loading;
+  }
 
   const removeFilters = () => {
+    setQ(undefined);
     store.resetFilters();
   };
 
@@ -79,7 +103,7 @@ const ApartmentListScreen = ({ navigation }: any) => {
     <SafeAreaView style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
       <Header>
-        <IconButton handlePress={() => navigation.goBack()}>
+        <IconButton handlePress={() => props.navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
         <Text style={styles.header}>Properties</Text>
@@ -92,7 +116,7 @@ const ApartmentListScreen = ({ navigation }: any) => {
         </IconButton>
       </Header>
 
-      {store.isAnyFilterActive && (
+      {(store.isAnyFilterActive || q) && (
         <View style={styles.activeFiltersContainer}>
           <ActiveFilterBadge
             name="Active Filters"
@@ -107,12 +131,19 @@ const ApartmentListScreen = ({ navigation }: any) => {
         }}
         showsVerticalScrollIndicator={false}
       >
-        {data &&
-          data.apartments.map((apart: ApartmentI) => (
+        {(filteredData &&
+          q &&
+          filteredData?.searchedApartments?.map((apart: ApartmentI) => (
             <View key={apart.id} style={styles.property}>
               <Property apartment={apart} />
             </View>
-          ))}
+          ))) ||
+          (!q &&
+            filteredData?.apartments?.map((apart: ApartmentI) => (
+              <View key={apart.id} style={styles.property}>
+                <Property apartment={apart} />
+              </View>
+            )))}
       </ScrollView>
 
       <BottomSheet

@@ -8,15 +8,15 @@ interface Props {
   title?: string;
   any?: boolean;
   items: {
-    value: string;
+    value: any;
     label: string;
   }[];
-  value?: string;
+  value?: any;
   onValueChange: any;
 }
 
 const FilterOptions = (props: Props) => {
-  const [activeFilter, setActiveFilter] = useState<string | undefined>(
+  const [activeFilter, setActiveFilter] = useState<any | undefined>(
     props.value
   );
 
@@ -42,7 +42,7 @@ const FilterOptions = (props: Props) => {
           <FilterBadge
             label="Any"
             value={undefined}
-            isActive={activeFilter ? false : true}
+            isActive={activeFilter === undefined ? true : false}
             onValueChange={() => setActiveFilter(undefined)}
           />
         )}

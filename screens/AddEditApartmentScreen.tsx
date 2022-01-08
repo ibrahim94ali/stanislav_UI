@@ -18,8 +18,12 @@ import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import { AdType, ApartmentI, BuildingType, CityType } from "../interfaces";
-import RNPickerSelect from "react-native-picker-select";
-import { buildingTypes, adTypes, cityTypes } from "../constants/Selectable";
+import {
+  buildingTypes,
+  adTypes,
+  cityTypes,
+  furnishingTypes,
+} from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { dpx } from "../constants/Spacings";
@@ -50,6 +54,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
   const [adType, setAdType] = useState<AdType>(
     itemOnEdit ? itemOnEdit.adType : AdType.RENT
+  );
+  const [isFurnished, setIsFurnished] = useState<boolean>(
+    itemOnEdit ? itemOnEdit.isFurnished : true
   );
   const [floor, setFloor] = useState(itemOnEdit ? itemOnEdit.floor : undefined);
 
@@ -201,6 +208,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           msquare,
           roomCount,
           floor,
+          isFurnished,
         },
       });
       return;
@@ -221,6 +229,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         msquare,
         roomCount,
         floor,
+        isFurnished,
       },
     });
   };
@@ -450,34 +459,43 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           <FilterOptions
             title="City"
             items={cityTypes}
-            initialValue={city}
+            value={city}
             onValueChange={(itemValue: CityType) => {
               setCity(itemValue);
             }}
           />
         </View>
 
-        <View style={[styles.optionContainer]}>
+        <View style={styles.optionContainer}>
           <FilterOptions
             title="Property Type"
             items={buildingTypes}
-            initialValue={buildingType}
+            value={buildingType}
             onValueChange={(itemValue: BuildingType) => {
               setBuildingType(itemValue);
             }}
           />
         </View>
-        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+        <View style={styles.optionContainer}>
           <FilterOptions
             title="Ad Type"
             items={adTypes}
-            initialValue={adType}
+            value={adType}
             onValueChange={(itemValue: AdType) => {
               setAdType(itemValue);
             }}
           />
         </View>
-
+        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+          <FilterOptions
+            title="Furnishing"
+            items={furnishingTypes}
+            value={isFurnished}
+            onValueChange={(itemValue: boolean) => {
+              setIsFurnished(itemValue);
+            }}
+          />
+        </View>
         <Button
           color={Colors.primary}
           title="Submit"

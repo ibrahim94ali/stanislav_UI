@@ -6,7 +6,12 @@ import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { AdType, BuildingType, CityType, SearchFiltersI } from "../interfaces";
 import { ScrollView } from "react-native-gesture-handler";
-import { adTypes, buildingTypes, cityTypes } from "../constants/Selectable";
+import {
+  adTypes,
+  buildingTypes,
+  cityTypes,
+  furnishingTypes,
+} from "../constants/Selectable";
 import Header from "./Header";
 import IconButton from "./IconButton";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -37,6 +42,11 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     setMaxRoom(store.filters.maxRoom || 10);
     setMinFloor(store.filters.minFloor || 0);
     setMaxFloor(store.filters.maxFloor || 30);
+    setSelectedFurnishingType(
+      store.filters.isFurnished !== undefined
+        ? store.filters.isFurnished
+        : undefined
+    );
   }, [store.filters]);
 
   const { width: viewportWidth } = Dimensions.get("window");
@@ -49,6 +59,13 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   >(store.filters.buildingType);
   const [selectedAdType, setSelectedAdType] = useState<AdType | undefined>(
     store.filters.adType
+  );
+  const [selectedFurnishingType, setSelectedFurnishingType] = useState<
+    boolean | undefined
+  >(
+    store.filters.isFurnished !== undefined
+      ? store.filters.isFurnished
+      : undefined
   );
 
   //price
@@ -98,6 +115,10 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       maxRoom: maxRoom < 10 ? maxRoom : undefined,
       minFloor: minFloor > 0 ? minFloor : undefined,
       maxFloor: maxFloor < 30 ? maxFloor : undefined,
+      isFurnished:
+        selectedFurnishingType !== undefined
+          ? selectedFurnishingType
+          : undefined,
     };
     store.setFilters(newFilters);
 
@@ -158,6 +179,17 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             value={selectedAdType}
             onValueChange={(itemValue: AdType) => {
               setSelectedAdType(itemValue);
+            }}
+          />
+        </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title="Furnishing"
+            any
+            items={furnishingTypes}
+            value={selectedFurnishingType}
+            onValueChange={(itemValue: boolean | undefined) => {
+              setSelectedFurnishingType(itemValue);
             }}
           />
         </View>

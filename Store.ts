@@ -24,7 +24,7 @@ export class StoreImpl {
 
   setFilters(filters: SearchFiltersI) {
     this.filters = filters;
-    if (Object.values(filters).some((value) => value)) {
+    if (Object.values(filters).some((value) => value !== undefined)) {
       this.isAnyFilterActive = true;
     }
   }

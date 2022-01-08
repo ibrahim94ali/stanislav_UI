@@ -17,6 +17,11 @@ export const adTypes = [
   { value: AdType.PURCHASE, label: "Purchase" },
 ];
 
+export const furnishingTypes = [
+  { value: true, label: "Furnished" },
+  { value: false, label: "Unfurnished" },
+];
+
 export const cityTypes = [
   {
     value: CityType.BITOLA,

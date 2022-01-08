@@ -4,7 +4,11 @@ import { StyleSheet, TextInput, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 
-const SearchBox = () => {
+interface Props {
+  searchTextEntered: (q: string) => void;
+}
+
+const SearchBox = (props: Props) => {
   const [search, setSearch] = useState("");
 
   return (
@@ -16,6 +20,10 @@ const SearchBox = () => {
         placeholder="Search Property..."
         placeholderTextColor={Colors.gray}
         onChangeText={(value) => setSearch(value)}
+        onEndEditing={() => {
+          props.searchTextEntered(search);
+          setSearch("");
+        }}
         returnKeyType="done"
         returnKeyLabel="Search"
       />
