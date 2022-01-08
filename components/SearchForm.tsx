@@ -18,6 +18,14 @@ import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Button from "./Button";
 import FilterOptions from "./FilterOptions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNPickerSelect from "react-native-picker-select";
+import { pickerSelectStyles } from "../constants/PickerStyle";
+
+const placeholder = {
+  label: "Any",
+  color: Colors.gray,
+  value: undefined,
+};
 
 const CustomSliderMarker = () => {
   return (
@@ -146,15 +154,16 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         contentContainerStyle={{ paddingBottom: dpx(50) }}
         showsVerticalScrollIndicator={false}
       >
-        <View style={styles.filterContainer}>
-          <FilterOptions
-            title="City"
-            any
-            items={cityTypes}
+        <Text style={styles.headerFilter}>City</Text>
+        <View style={styles.cityContainer}>
+          <RNPickerSelect
+            placeholder={placeholder}
             value={selectedCity}
             onValueChange={(itemValue: CityType) => {
               setSelectedCity(itemValue);
             }}
+            items={cityTypes}
+            style={pickerSelectStyles}
           />
         </View>
         <View style={styles.filterContainer}>
@@ -313,6 +322,12 @@ const styles = StyleSheet.create({
     fontSize: dpx(16),
     color: Colors.black,
   },
+  headerFilter: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(14),
+    color: Colors.black,
+    marginLeft: dpx(20),
+  },
   filterContainer: {
     marginBottom: dpx(20),
   },
@@ -371,5 +386,13 @@ const styles = StyleSheet.create({
     width: dpx(17),
     height: dpx(17),
     borderRadius: 100,
+  },
+  cityContainer: {
+    marginVertical: dpx(10),
+    width: dpx(170),
+    borderRadius: dpx(10),
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+    alignSelf: "center",
   },
 });

@@ -51,7 +51,42 @@ export const cityTypes = [
     label: "Tetovo",
     url: "https://i0.wp.com/www.travelsewhere.net/wp-content/uploads/2016/11/DSC_0178-4.jpg?fit=585%2C390&ssl=1",
   },
-];
+  {
+    value: CityType.STRUGA,
+    label: "Struga",
+    url: "https://poetryrun.mk/storage/600238be187c9.jpg",
+  },
+  {
+    value: CityType.VELES,
+    label: "Veles",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Veles_X17.jpg/1920px-Veles_X17.jpg",
+  },
+  {
+    value: CityType.PRILEP,
+    label: "Prilep",
+    url: "https://100daysandnights.com/wp-content/uploads/2020/03/Vito-Valentinetti-Prilep-2020-45.jpg",
+  },
+  {
+    value: CityType.DEBAR,
+    label: "Debar",
+    url: "https://macedonia-timeless.com/wp-content/uploads/2018/08/debar.jpg",
+  },
+  {
+    value: CityType.KICEVO,
+    label: "Kicevo",
+    url: "https://upload.wikimedia.org/wikipedia/commons/9/9f/Komuna-e-kercoves.png",
+  },
+  {
+    value: CityType.STRUMICA,
+    label: "Strumica",
+    url: "https://upload.wikimedia.org/wikipedia/commons/c/c1/%D0%9F%D0%BB%D0%BE%D1%88%D1%82%D0%B0%D0%B4_%D0%93%D0%BE%D1%86%D0%B5_%D0%94%D0%B5%D0%BB%D1%87%D0%B5%D0%B2_%D0%A1%D1%82%D1%80%D1%83%D0%BC%D0%B8%D1%86%D0%B0_%282%29.jpg",
+  },
+  {
+    value: CityType.KUMANOVO,
+    label: "Kumanovo",
+    url: "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/The_square_of_Kumanovo_%282%29.JPG/1920px-The_square_of_Kumanovo_%282%29.JPG",
+  },
+].sort((a, b) => (a.label > b.label ? 1 : -1));
 
 export interface SortTypeI {
   label: string;

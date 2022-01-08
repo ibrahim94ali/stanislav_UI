@@ -68,4 +68,11 @@ export enum CityType {
   TETOVO = "tetovo",
   OHRID = "ohrid",
   BITOLA = "bitola",
+  STRUGA = "struga",
+  VELES = "veles",
+  PRILEP = "prilep",
+  DEBAR = "debar",
+  KICEVO = "kicevo",
+  STRUMICA = "strumica",
+  KUMANOVO = "kumanovo",
 }

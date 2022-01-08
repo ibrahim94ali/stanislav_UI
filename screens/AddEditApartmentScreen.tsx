@@ -33,6 +33,8 @@ import IconButton from "../components/IconButton";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LocationPicker from "../components/LocationPicker";
 import FilterOptions from "../components/FilterOptions";
+import RNPickerSelect from "react-native-picker-select";
+import { pickerSelectStyles } from "../constants/PickerStyle";
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
@@ -252,6 +254,16 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     }
   };
 
+  const NoImage = () => (
+    <TouchableOpacity style={styles.noImageContainer} onPress={pickImage}>
+      <MaterialIcons
+        name="add-photo-alternate"
+        size={dpx(60)}
+        color={Colors.lightGray}
+      />
+    </TouchableOpacity>
+  );
+
   const PhotoViewer = ({ photo, index, handlePress }: any) => (
     <View style={{ marginRight: 10 }}>
       <TouchableOpacity
@@ -316,6 +328,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       </Header>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         <View style={styles.imagesContainer}>
+          {oldImages.length + uploadImages.length < 1 && <NoImage />}
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -455,14 +468,15 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
         />
 
-        <View style={[styles.optionContainer, { marginTop: dpx(5) }]}>
-          <FilterOptions
-            title="City"
-            items={cityTypes}
+        <View style={styles.cityContainer}>
+          <RNPickerSelect
+            placeholder={{}}
             value={city}
             onValueChange={(itemValue: CityType) => {
               setCity(itemValue);
             }}
+            items={cityTypes}
+            style={pickerSelectStyles}
           />
         </View>
 
@@ -552,5 +566,22 @@ const styles = StyleSheet.create({
     marginBottom: dpx(10),
     fontFamily: "Montserrat_400Regular",
     fontSize: dpx(14),
+  },
+  cityContainer: {
+    marginVertical: dpx(10),
+    width: dpx(170),
+    borderRadius: dpx(10),
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+  },
+  noImageContainer: {
+    borderWidth: 1,
+    borderStyle: "dashed",
+    borderColor: Colors.lightGray,
+    borderRadius: dpx(20),
+    width: dpx(130),
+    height: dpx(130),
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
