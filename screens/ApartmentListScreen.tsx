@@ -27,6 +27,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { SortTypeI, sortTypes } from "../constants/Selectable";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   navigation: any;
@@ -62,6 +63,8 @@ const ApartmentListScreen = (props: Props) => {
     setQ(undefined);
     store.resetFilters();
   };
+
+  const { t } = useTranslation();
 
   const [isSortingActive, setIsSortingActive] = useState(false);
 
@@ -106,7 +109,7 @@ const ApartmentListScreen = (props: Props) => {
         <IconButton handlePress={() => props.navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>Properties</Text>
+        <Text style={styles.header}>{t("APARTMENT_LIST_SCREEN.RESULTS")}</Text>
         <IconButton handlePress={() => handleSortModal()}>
           <MaterialCommunityIcons
             name="sort-ascending"
@@ -154,7 +157,9 @@ const ApartmentListScreen = (props: Props) => {
         enablePanDownToClose
       >
         <View style={styles.sortContainer}>
-          <Text style={styles.sortHeader}>Sort By:</Text>
+          <Text style={styles.sortHeader}>
+            {t("APARTMENT_LIST_SCREEN.SORT_BY") + ":"}
+          </Text>
           <View style={styles.sortListContainer}>
             {sortTypes.map((sortType) => {
               const isSelected =
@@ -177,7 +182,7 @@ const ApartmentListScreen = (props: Props) => {
                       { color: isSelected ? Colors.primary : Colors.black },
                     ]}
                   >
-                    {sortType.label}
+                    {t(`APARTMENT_LIST_SCREEN.SORTS.${sortType.label}`)}
                   </Text>
                 </TouchableOpacity>
               );

@@ -18,8 +18,10 @@ import { ApartmentI } from "../interfaces";
 import Header from "../components/Header";
 import SearchForm from "../components/SearchForm";
 import { cityTypes, sponsors } from "../constants/Selectable";
+import { useTranslation } from "react-i18next";
 
 function HomeScreen({ navigation }: any) {
+  const { t } = useTranslation();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const { data, loading: isDataLoading } = useQuery(GET_FEATURED_APARTMENTS);
@@ -53,7 +55,7 @@ function HomeScreen({ navigation }: any) {
             }}
           >
             <View>
-              <Text style={styles.header}>Cities</Text>
+              <Text style={styles.header}>{t("HOME.CITIES")}</Text>
               <ScrollView
                 style={styles.cityContainer}
                 contentContainerStyle={{
@@ -75,11 +77,15 @@ function HomeScreen({ navigation }: any) {
             </View>
             <View style={styles.propertiesContainer}>
               <View style={styles.propertiesHeaders}>
-                <Text style={styles.header}>Featured Properties</Text>
+                <Text style={styles.header}>
+                  {t("HOME.FEATURED_PROPERTIES")}
+                </Text>
                 <TouchableOpacity
                   onPress={() => navigation.push("ApartmentListScreen")}
                 >
-                  <Text style={styles.propertiesHeaderBtn}>See all</Text>
+                  <Text style={styles.propertiesHeaderBtn}>
+                    {t("HOME.SEE_ALL")}
+                  </Text>
                 </TouchableOpacity>
               </View>
               <ScrollView
@@ -100,7 +106,7 @@ function HomeScreen({ navigation }: any) {
               </ScrollView>
             </View>
             <View style={styles.sponsorContainer}>
-              <Text style={styles.header}>Sponsors</Text>
+              <Text style={styles.header}>{t("HOME.SPONSORS")}</Text>
               <ScrollView
                 style={styles.propertyContainer}
                 contentContainerStyle={{

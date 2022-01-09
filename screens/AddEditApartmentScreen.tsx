@@ -35,8 +35,10 @@ import LocationPicker from "../components/LocationPicker";
 import FilterOptions from "../components/FilterOptions";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
+import { useTranslation } from "react-i18next";
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
+  const { t } = useTranslation();
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
   const [title, setTitle] = useState<string>(
     itemOnEdit ? itemOnEdit.title : ""
@@ -86,7 +88,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (statusImagePicker !== "granted") {
-      Alert.alert("Sorry, we need camera roll permissions to make this work!");
+      Alert.alert(t("PERMISSIONS.CAMERA_ROLL"));
       return;
     }
 
@@ -163,9 +165,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       if (itemOnEdit) return;
       let { status } = await Location.requestBackgroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(
-          "Sorry, we need location to find geocoding of the address!"
-        );
+        Alert.alert(t("PERMISSIONS.ADDRESS"));
         return;
       }
 
@@ -241,7 +241,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       await Location.requestBackgroundPermissionsAsync();
 
     if (statusLocation !== "granted") {
-      Alert.alert("Sorry, we need location to find geocoding of the address!");
+      Alert.alert(t("PERMISSIONS.ADDRESS"));
       return;
     }
 
@@ -250,7 +250,10 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       const { latitude, longitude } = result[0];
       setGeolocation([latitude, longitude]);
     } catch (e) {
-      Alert.alert("Location error", "Please enter a valid address");
+      Alert.alert(
+        t("PERMISSIONS.LOCATION_ERROR"),
+        t("PERMISSIONS.ENTER_VALID_ADDRESS")
+      );
     }
   };
 
@@ -309,7 +312,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
         <Text style={styles.header}>
-          {itemOnEdit ? "Edit Apartment" : "Add Apartment"}
+          {itemOnEdit ? t("ADD_EDIT_APT.EDIT") : t("ADD_EDIT_APT.ADD")}
         </Text>
         <IconButton
           handlePress={pickImage}
@@ -383,21 +386,21 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={title}
-          placeholder="Title *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.TITLE") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setTitle(value)}
         />
         <TextInput
           style={styles.input}
           value={details}
-          placeholder="Description *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.DESCRIPTION") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setDetails(value)}
         />
         <TextInput
           style={styles.input}
           value={price?.toString() || ""}
-          placeholder="Price (euro) *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.PRICE") + " (euro) *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -412,7 +415,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={msquare?.toString() || ""}
-          placeholder="Area (ms2) *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (ms2) *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -427,7 +430,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={roomCount?.toString() || ""}
-          placeholder="Rooms *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -442,7 +445,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={floor?.toString() || ""}
-          placeholder="Floor *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
@@ -457,7 +460,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={address}
-          placeholder="Address *"
+          placeholder={t("ADD_EDIT_APT.FIELDS.ADDRESS") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setAddress(value)}
           onEndEditing={attemptGeocodeAsync}
@@ -482,7 +485,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
 
         <View style={styles.optionContainer}>
           <FilterOptions
-            title="Property Type"
+            title={t("ADD_EDIT_APT.PROPERTY_TYPE")}
             items={buildingTypes}
             value={buildingType}
             onValueChange={(itemValue: BuildingType) => {
@@ -492,7 +495,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         </View>
         <View style={styles.optionContainer}>
           <FilterOptions
-            title="Ad Type"
+            title={t("ADD_EDIT_APT.AD_TYPE")}
             items={adTypes}
             value={adType}
             onValueChange={(itemValue: AdType) => {
@@ -502,7 +505,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         </View>
         <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
           <FilterOptions
-            title="Furnishing"
+            title={t("ADD_EDIT_APT.FURNISHING")}
             items={furnishingTypes}
             value={isFurnished}
             onValueChange={(itemValue: boolean) => {
@@ -512,7 +515,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         </View>
         <Button
           color={Colors.primary}
-          title="Submit"
+          title={t("ADD_EDIT_APT.SUBMIT")}
           onPress={handleSubmit}
           full
           disabled={

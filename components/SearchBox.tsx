@@ -1,5 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, TextInput, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -9,6 +10,7 @@ interface Props {
 }
 
 const SearchBox = (props: Props) => {
+  const { t } = useTranslation();
   const [search, setSearch] = useState("");
 
   return (
@@ -17,7 +19,7 @@ const SearchBox = (props: Props) => {
       <TextInput
         style={styles.text}
         value={search}
-        placeholder="Search Property..."
+        placeholder={t("HOME.SEARCH_PROPERTY") + "..."}
         placeholderTextColor={Colors.gray}
         onChangeText={(value) => setSearch(value)}
         onEndEditing={() => {

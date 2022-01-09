@@ -20,12 +20,7 @@ import FilterOptions from "./FilterOptions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
-
-const placeholder = {
-  label: "Any",
-  color: Colors.gray,
-  value: undefined,
-};
+import { useTranslation } from "react-i18next";
 
 const CustomSliderMarker = () => {
   return (
@@ -37,6 +32,13 @@ const CustomSliderMarker = () => {
 
 const SearchForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
+  const { t } = useTranslation();
+
+  const placeholder = {
+    label: t("FILTER_OPTIONS.ANY"),
+    color: Colors.gray,
+    value: undefined,
+  };
 
   useEffect(() => {
     setSelectedCity(store.filters.city);
@@ -145,7 +147,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         <IconButton handlePress={() => store.resetFilters()}>
           <MaterialCommunityIcons name="restart" size={24} color="black" />
         </IconButton>
-        <Text style={styles.header}>Filters</Text>
+        <Text style={styles.header}>{t("SEARCH_FORM.FILTERS")}</Text>
         <IconButton handlePress={() => closeFilters()}>
           <Ionicons name="close" color={Colors.black} size={dpx(24)} />
         </IconButton>
@@ -154,7 +156,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         contentContainerStyle={{ paddingBottom: dpx(50) }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.headerFilter}>City</Text>
+        <Text style={styles.headerFilter}>{t("SEARCH_FORM.CITY")}</Text>
         <View style={styles.cityContainer}>
           <RNPickerSelect
             placeholder={placeholder}
@@ -168,7 +170,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
         <View style={styles.filterContainer}>
           <FilterOptions
-            title="Property Type"
+            title={t("ADD_EDIT_APT.PROPERTY_TYPE")}
             any
             items={buildingTypes}
             value={selectedBuildingType}
@@ -179,7 +181,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
         <View style={styles.filterContainer}>
           <FilterOptions
-            title="Ad Type"
+            title={t("ADD_EDIT_APT.AD_TYPE")}
             any
             items={adTypes}
             value={selectedAdType}
@@ -190,7 +192,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
         </View>
         <View style={styles.filterContainer}>
           <FilterOptions
-            title="Furnishing"
+            title={t("ADD_EDIT_APT.FURNISHING")}
             any
             items={furnishingTypes}
             value={selectedFurnishingType}
@@ -202,7 +204,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
         {/* price */}
         <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>Price</Text>
+          <Text style={styles.sliderHeader}>
+            {t("ADD_EDIT_APT.FIELDS.PRICE")}
+          </Text>
           <Text style={styles.sliderValues}>
             {minPrice + " - " + maxPrice + " €"}
           </Text>
@@ -228,7 +232,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
         {/* area */}
         <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>Area</Text>
+          <Text style={styles.sliderHeader}>
+            {t("ADD_EDIT_APT.FIELDS.AREA")}
+          </Text>
           <Text style={styles.sliderValues}>
             {minArea + " - " + maxArea + " m2"}
           </Text>
@@ -254,7 +260,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
         {/* room */}
         <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>Rooms</Text>
+          <Text style={styles.sliderHeader}>
+            {t("ADD_EDIT_APT.FIELDS.ROOMS")}
+          </Text>
           <Text style={styles.sliderValues}>{minRoom + " - " + maxRoom}</Text>
         </View>
         <View style={styles.sliderFilters}>
@@ -278,7 +286,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
         {/* floor */}
         <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>Floor</Text>
+          <Text style={styles.sliderHeader}>
+            {t("ADD_EDIT_APT.FIELDS.FLOOR")}
+          </Text>
           <Text style={styles.sliderValues}>{minFloor + " - " + maxFloor}</Text>
         </View>
         <View style={styles.sliderFilters}>
@@ -302,7 +312,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       </ScrollView>
       <View style={styles.bigBtn}>
         <Button
-          title="Show Properties"
+          title={t("SEARCH_FORM.SHOW_RESULTS")}
           full
           onPress={() => showProperties()}
         ></Button>

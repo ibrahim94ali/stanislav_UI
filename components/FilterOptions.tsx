@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -9,13 +10,14 @@ interface Props {
   any?: boolean;
   items: {
     value: any;
-    label: string;
+    label?: string;
   }[];
   value?: any;
   onValueChange: any;
 }
 
 const FilterOptions = (props: Props) => {
+  const { t } = useTranslation();
   const [activeFilter, setActiveFilter] = useState<any | undefined>(
     props.value
   );
@@ -40,7 +42,7 @@ const FilterOptions = (props: Props) => {
       >
         {props.any && (
           <FilterBadge
-            label="Any"
+            label={t("FILTER_OPTIONS.ANY")}
             value={undefined}
             isActive={activeFilter === undefined ? true : false}
             onValueChange={() => setActiveFilter(undefined)}
@@ -48,8 +50,12 @@ const FilterOptions = (props: Props) => {
         )}
         {props.items.map((item) => (
           <FilterBadge
-            key={item.label}
-            label={item.label}
+            key={item.value}
+            label={
+              item.label
+                ? t(`FILTER_OPTIONS.${item.label}`)
+                : t(`FILTER_OPTIONS.${item.value}`)
+            }
             value={item.value}
             canDeactivate={!props.any}
             isActive={activeFilter === item.value}

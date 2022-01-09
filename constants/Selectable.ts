@@ -8,17 +8,14 @@ export const sortFields = [
 ];
 
 export const buildingTypes = [
-  { value: BuildingType.FLAT, label: "Flat" },
-  { value: BuildingType.HOUSE, label: "House" },
-  { value: BuildingType.VILLA, label: "Villa" },
-  { value: BuildingType.SHOP, label: "Shop" },
-  { value: BuildingType.LAND, label: "Land" },
+  { value: BuildingType.FLAT },
+  { value: BuildingType.HOUSE },
+  { value: BuildingType.VILLA },
+  { value: BuildingType.SHOP },
+  { value: BuildingType.LAND },
 ];
 
-export const adTypes = [
-  { value: AdType.RENT, label: "Rent" },
-  { value: AdType.PURCHASE, label: "Purchase" },
-];
+export const adTypes = [{ value: AdType.RENT }, { value: AdType.PURCHASE }];
 
 export const furnishingTypes = [
   { value: true, label: "Furnished" },
@@ -101,22 +98,22 @@ export const sortTypes: SortTypeI[] = [
     order: -1,
   },
   {
-    label: "Price (low to high)",
+    label: "Price_LH",
     value: "price",
     order: 1,
   },
   {
-    label: "Price (high to low)",
+    label: "Price_HL",
     value: "price",
     order: -1,
   },
   {
-    label: "Area (low to high)",
+    label: "Area_LH",
     value: "msquare",
     order: 1,
   },
   {
-    label: "Area (high to low)",
+    label: "Area_HL",
     value: "msquare",
     order: -1,
   },

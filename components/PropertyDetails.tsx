@@ -1,11 +1,13 @@
 import { Entypo, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { AdType, ApartmentI } from "../interfaces";
 
 const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
+  const { t } = useTranslation();
   return (
     <View style={styles.detailsContainer}>
       <View style={styles.detailsHeaders}>
@@ -15,13 +17,19 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
             color={Colors.secondary}
             size={dpx(14)}
           />
-          <Text style={styles.typeName}>{apartment.buildingType}</Text>
+          <Text style={styles.typeName}>
+            {t(`PROPERTY_DETAILS.BUILDINGTYPE.${apartment.buildingType}`)}
+          </Text>
         </View>
-        <Text style={styles.adType}>For {apartment.adType}</Text>
+        <Text style={styles.adType}>
+          {t(`PROPERTY_DETAILS.ADTYPE.${apartment.adType}`)}
+        </Text>
       </View>
       <Text style={styles.header}>{apartment.title}</Text>
       {apartment.adType === AdType.RENT ? (
-        <Text style={styles.price}>{apartment.price} € / Month</Text>
+        <Text style={styles.price}>
+          {apartment.price} € / {t("PROPERTY_DETAILS.MONTH")}
+        </Text>
       ) : (
         <Text style={styles.price}>{apartment.price} €</Text>
       )}
@@ -40,11 +48,15 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
             color={Colors.black}
             size={dpx(18)}
           />
-          <Text style={styles.iconText}>{apartment.roomCount} rooms</Text>
+          <Text style={styles.iconText}>
+            {apartment.roomCount} {t("PROPERTY_DETAILS.ROOMS")}
+          </Text>
         </View>
         <View style={styles.iconContainer}>
           <Ionicons name="layers-outline" color={Colors.black} size={dpx(18)} />
-          <Text style={styles.iconText}>{apartment.floor}. floor</Text>
+          <Text style={styles.iconText}>
+            {apartment.floor}. {t("PROPERTY_DETAILS.FLOOR")}
+          </Text>
         </View>
       </View>
     </View>

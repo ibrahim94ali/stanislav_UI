@@ -36,6 +36,7 @@ import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
 import MapView, { Marker } from "react-native-maps";
 import { furnishingTypes } from "../constants/Selectable";
+import { useTranslation } from "react-i18next";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -55,6 +56,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       uri: a,
     };
   });
+
+  const { t } = useTranslation();
 
   const store = useStore();
 
@@ -359,11 +362,11 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           </MapView>
         </TouchableOpacity>
         <View style={styles.descContainer}>
-          <Text style={styles.title}>Description</Text>
+          <Text style={styles.title}>{t("APARTMENT_DETAILS.DESCRIPTION")}</Text>
           <Text style={styles.details}>{apartment.details}</Text>
         </View>
         <View style={styles.amenitiesContainer}>
-          <Text style={styles.title}>Amenities</Text>
+          <Text style={styles.title}>{t("APARTMENT_DETAILS.AMENITIES")}</Text>
           <View style={styles.amenityRow}>
             <View style={styles.amenityContainer}>
               <MaterialCommunityIcons
@@ -372,10 +375,13 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                 color={Colors.black}
               />
               <Text style={styles.amenity}>
-                {
-                  furnishingTypes.find((f) => f.value === apartment.isFurnished)
-                    ?.label
-                }
+                {t(
+                  `APARTMENT_DETAILS.FURNISHINGTYPE.${
+                    furnishingTypes.find(
+                      (f) => f.value === apartment.isFurnished
+                    )?.label
+                  }`
+                )}
               </Text>
             </View>
             <View style={styles.amenityContainer}>
@@ -396,7 +402,9 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         </View>
         {!showActions && (
           <View style={styles.agentContainer}>
-            <Text style={styles.title}>Listing Agent</Text>
+            <Text style={styles.title}>
+              {t("APARTMENT_DETAILS.LISTING_AGENT")}
+            </Text>
 
             <View style={styles.personContainer}>
               <Text

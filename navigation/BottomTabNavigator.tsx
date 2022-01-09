@@ -20,27 +20,29 @@ import AddEditApartmentScreen from "../screens/AddEditApartmentScreen";
 import MyApartmentsScreen from "../screens/MyApartmentsScreen";
 import MyFavoriteApartmentsScreen from "../screens/MyFavoriteApartmentsScreen";
 import ApartmentListScreen from "../screens/ApartmentListScreen";
+import { useTranslation } from "react-i18next";
 
-const BottomTab = createBottomTabNavigator<BottomTabParamList>();
+const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
+  const { t } = useTranslation();
   return (
     <BottomTab.Navigator
-      initialRouteName="Home"
+      initialRouteName={t("TABS.HOME")}
       tabBarOptions={{
         activeTintColor: Colors.primary,
         inactiveTintColor: Colors.gray,
       }}
     >
       <BottomTab.Screen
-        name="Home"
+        name={t("TABS.HOME")}
         component={HomeNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
-        name="Explore"
+        name={t("TABS.EXPLORE")}
         component={MapNavigator}
         options={{
           tabBarIcon: ({ color }) => (
@@ -49,7 +51,7 @@ export default function BottomTabNavigator() {
         }}
       />
       <BottomTab.Screen
-        name="Profile"
+        name={t("TABS.PROFILE")}
         component={ProfileNavigator}
         options={{
           tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,

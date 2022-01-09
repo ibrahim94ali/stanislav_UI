@@ -1,6 +1,7 @@
 import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
@@ -13,9 +14,9 @@ import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
 import { ApartmentI } from "../interfaces";
 
 const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
-  const { data: myFavApartments, loading: loadingApartments } = useQuery(
-    GET_FAV_APARTMENTS
-  );
+  const { t } = useTranslation();
+  const { data: myFavApartments, loading: loadingApartments } =
+    useQuery(GET_FAV_APARTMENTS);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
@@ -24,7 +25,7 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>Favorite Apartments</Text>
+        <Text style={styles.header}>{t("PROFILE.FAV_APT")}</Text>
         <View style={{ width: dpx(40) }}></View>
       </Header>
 
