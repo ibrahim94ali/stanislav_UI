@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
+import NoResult from "../components/NoResult";
 import Property from "../components/Property";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -32,6 +33,8 @@ const MyApartmentsScreen = ({ navigation }: any) => {
           <Ionicons name="add" color={Colors.black} size={dpx(24)} />
         </IconButton>
       </Header>
+
+      {myApartments && myApartments.myApartments?.length === 0 && <NoResult />}
 
       <ScrollView
         style={styles.propertyContainer}

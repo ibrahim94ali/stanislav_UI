@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
+import NoResult from "../components/NoResult";
 import Property from "../components/Property";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -28,6 +29,10 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
         <Text style={styles.header}>{t("PROFILE.FAV_APT")}</Text>
         <View style={{ width: dpx(40) }}></View>
       </Header>
+
+      {myFavApartments && myFavApartments.favorites?.length === 0 && (
+        <NoResult />
+      )}
 
       <ScrollView
         style={styles.propertyContainer}

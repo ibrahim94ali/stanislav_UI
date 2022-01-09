@@ -102,5 +102,16 @@ export default {
       LOCATION_ERROR: "Konum hatası",
       ENTER_VALID_ADDRESS: "Lütfen geçerli bir adres girin",
     },
+    NO_RESULT: {
+      NO_RESULT_FOUND: "Sonuç Bulunamadı...",
+    },
+    REGISTER: {
+      EMAIL: "E-posta",
+      PASSWORD: "Şifre",
+      CONFIRM_PASSWORD: "Şifreyi onaylayın",
+      NAME: "Ad",
+      SURNAME: "Soyad",
+      PHONE: "Tel",
+    },
   },
 };

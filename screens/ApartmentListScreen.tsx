@@ -2,6 +2,7 @@ import {
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import React, {
   useCallback,
@@ -28,6 +29,7 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { SortTypeI, sortTypes } from "../constants/Selectable";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import NoResult from "../components/NoResult";
 
 interface Props {
   navigation: any;
@@ -128,6 +130,14 @@ const ApartmentListScreen = (props: Props) => {
         </View>
       )}
 
+      {filteredData &&
+        !!q &&
+        filteredData?.searchedApartments?.length === 0 && <NoResult />}
+
+      {filteredData && !q && filteredData?.apartments?.length === 0 && (
+        <NoResult />
+      )}
+
       <ScrollView
         contentContainerStyle={{
           alignItems: "center",
@@ -135,7 +145,7 @@ const ApartmentListScreen = (props: Props) => {
         showsVerticalScrollIndicator={false}
       >
         {(filteredData &&
-          q &&
+          !!q &&
           filteredData?.searchedApartments?.map((apart: ApartmentI) => (
             <View key={apart.id} style={styles.property}>
               <Property apartment={apart} />

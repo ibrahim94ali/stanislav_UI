@@ -7,7 +7,6 @@ import {
   View,
   Linking,
   Alert,
-  Share,
 } from "react-native";
 import { ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
@@ -169,12 +168,6 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     }
   };
 
-  const handleShare = async () => {
-    await Share.share({
-      message: `${await Linking.getInitialURL()} - ${apartment.id}`,
-    });
-  };
-
   const handleEdit = () => {
     navigation.navigate("AddEditApartmentScreen", { itemOnEdit: apartment });
   };
@@ -286,7 +279,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             <View style={styles.actionBtns}>
               {store.user && (
                 <TouchableOpacity
-                  style={[styles.actionBtnContainer, { marginRight: dpx(10) }]}
+                  style={styles.actionBtnContainer}
                   onPress={() => handleFavorite()}
                 >
                   <Ionicons
@@ -296,13 +289,6 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                   />
                 </TouchableOpacity>
               )}
-
-              <TouchableOpacity
-                style={styles.actionBtnContainer}
-                onPress={handleShare}
-              >
-                <FontAwesome name="share" color={Colors.white} size={dpx(25)} />
-              </TouchableOpacity>
             </View>
           )}
         </View>

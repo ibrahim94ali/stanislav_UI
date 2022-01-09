@@ -2,19 +2,16 @@ import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import Colors from "../constants/Colors";
 import { GET_APARTMENTS } from "../graphQL/Queries";
-import { useStore } from "../hooks/StoreContext";
 import { AdType, ApartmentI } from "../interfaces";
 
 const MapScreen = ({ navigation }: any) => {
-  const store = useStore();
-
-  const { data } = useQuery(GET_APARTMENTS, {
-    variables: store.filters,
-  });
+  const { t } = useTranslation();
+  const { data } = useQuery(GET_APARTMENTS);
 
   return (
     <View style={styles.container}>
@@ -37,7 +34,9 @@ const MapScreen = ({ navigation }: any) => {
             }}
             title={apartment.title}
             description={`${apartment.price} € ${
-              apartment.adType === AdType.RENT ? "/ Month" : ""
+              apartment.adType === AdType.RENT
+                ? "/ " + t("PROPERTY_DETAILS.MONTH")
+                : ""
             }`}
             onCalloutPress={() =>
               navigation.push("ApartmentDetailsScreen", { apartment })

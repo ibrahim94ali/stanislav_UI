@@ -100,5 +100,16 @@ export default {
       LOCATION_ERROR: "Location error",
       ENTER_VALID_ADDRESS: "Please enter a valid address",
     },
+    NO_RESULT: {
+      NO_RESULT_FOUND: "No Result Found...",
+    },
+    REGISTER: {
+      EMAIL: "Email",
+      PASSWORD: "Password",
+      CONFIRM_PASSWORD: "Confirm Password",
+      NAME: "Name",
+      SURNAME: "Surname",
+      PHONE: "Tel",
+    },
   },
 };

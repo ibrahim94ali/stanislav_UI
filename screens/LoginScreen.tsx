@@ -9,9 +9,11 @@ import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useTranslation } from "react-i18next";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const store = useStore();
+  const { t } = useTranslation();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
 
@@ -46,13 +48,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   return (
     <View style={styles.container}>
       {loading && <LoadingSpinner />}
-      <Text style={styles.title}>Login</Text>
+      <Text style={styles.title}>{t("PROFILE.LOGIN")}</Text>
       <View style={styles.actions}>
         <TextInput
           style={styles.input}
           onChangeText={(text) => onEmailChange(text)}
           value={email}
-          placeholder="Email"
+          placeholder={t("REGISTER.EMAIL")}
           placeholderTextColor={Colors.gray}
           textContentType="emailAddress"
           keyboardType="email-address"
@@ -62,14 +64,14 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onPasswordChange(text)}
           value={password}
-          placeholder="Password"
+          placeholder={t("REGISTER.PASSWORD")}
           placeholderTextColor={Colors.gray}
           secureTextEntry
           textContentType="password"
         ></TextInput>
         <View style={styles.buttonContainer}>
           <Button
-            title="Login"
+            title={t("PROFILE.LOGIN")}
             color={Colors.primary}
             onPress={handleSubmit}
             disabled={!email || !password}

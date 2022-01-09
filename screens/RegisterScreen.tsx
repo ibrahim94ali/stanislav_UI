@@ -10,10 +10,12 @@ import { dpx } from "../constants/Spacings";
 import { ScrollView } from "react-native-gesture-handler";
 import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { useTranslation } from "react-i18next";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const store = useStore();
 
+  const { t } = useTranslation();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
   const [confirmPassword, onConfirmPasswordChange] = useState("");
@@ -55,13 +57,13 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   return (
     <View style={styles.container}>
       {loading && <LoadingSpinner />}
-      <Text style={styles.title}>Register</Text>
+      <Text style={styles.title}>{t("PROFILE.REGISTER")}</Text>
       <ScrollView contentContainerStyle={styles.actions}>
         <TextInput
           style={styles.input}
           onChangeText={(text) => onEmailChange(text)}
           value={email}
-          placeholder="Email *"
+          placeholder={t("REGISTER.EMAIL") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="emailAddress"
           keyboardType="email-address"
@@ -71,7 +73,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onPasswordChange(text)}
           value={password}
-          placeholder="Password *"
+          placeholder={t("REGISTER.PASSWORD") + " *"}
           placeholderTextColor={Colors.gray}
           secureTextEntry
           textContentType="password"
@@ -81,7 +83,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onConfirmPasswordChange(text)}
           value={confirmPassword}
-          placeholder="Confirm Password *"
+          placeholder={t("REGISTER.CONFIRM_PASSWORD") + " *"}
           placeholderTextColor={Colors.gray}
           secureTextEntry
           textContentType="password"
@@ -91,7 +93,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onNameChange(text)}
           value={name}
-          placeholder="Name *"
+          placeholder={t("REGISTER.NAME") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="name"
         ></TextInput>
@@ -99,7 +101,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onSurnameChange(text)}
           value={surname}
-          placeholder="Surname *"
+          placeholder={t("REGISTER.SURNAME") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="name"
         ></TextInput>
@@ -107,7 +109,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           style={styles.input}
           onChangeText={(text) => onPhoneChange(text)}
           value={phone}
-          placeholder="Phone"
+          placeholder={t("REGISTER.PHONE") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="telephoneNumber"
           keyboardType="number-pad"
@@ -115,7 +117,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         ></TextInput>
         <View style={styles.buttonContainer}>
           <Button
-            title="Register"
+            title={t("PROFILE.REGISTER")}
             color={Colors.primary}
             onPress={handleSubmit}
             disabled={
@@ -123,6 +125,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
               !password ||
               !name ||
               !surname ||
+              !phone ||
               password !== confirmPassword
             }
           />
