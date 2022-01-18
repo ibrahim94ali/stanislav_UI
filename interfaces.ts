@@ -10,6 +10,7 @@ export interface ApartmentI {
   buildingType: BuildingType;
   adType: AdType;
   heatingType: HeatingType;
+  amenities: AmenityType[];
   photos: string[];
   msquare: number;
   roomCount: number;
@@ -37,6 +38,7 @@ export interface SearchFiltersI {
   buildingType?: BuildingType;
   adType?: AdType;
   heatingType?: HeatingType;
+  amenities?: AmenityType[];
   minPrice?: number;
   maxPrice?: number;
   minArea?: number;
@@ -86,4 +88,12 @@ export enum HeatingType {
   PALETTE = "palette",
   COAL = "coal",
   GAS = "gas",
+}
+
+export enum AmenityType {
+  POOL = "pool",
+  PARKING = "parking",
+  GARDEN = "garden",
+  FIREPLACE = "fireplace",
+  GOOD_ISOLATION = "good-isolation",
 }

@@ -1,4 +1,10 @@
-import { BuildingType, AdType, CityType, HeatingType } from "../interfaces";
+import {
+  BuildingType,
+  AdType,
+  CityType,
+  HeatingType,
+  AmenityType,
+} from "../interfaces";
 
 export const sortFields = [
   { value: "date", label: "Date" },
@@ -23,6 +29,14 @@ export const heatingTypes = [
   { value: HeatingType.CENTRAL },
   { value: HeatingType.COAL },
   { value: HeatingType.GAS },
+];
+
+export const amenityTypes = [
+  { value: AmenityType.POOL },
+  { value: AmenityType.PARKING },
+  { value: AmenityType.FIREPLACE },
+  { value: AmenityType.GARDEN },
+  { value: AmenityType.GOOD_ISOLATION },
 ];
 
 export const furnishingTypes = [

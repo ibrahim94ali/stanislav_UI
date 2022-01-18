@@ -59,6 +59,7 @@ export const ADD_APARTMENT = gql`
     $roomCount: Int!
     $floor: Int!
     $isFurnished: Boolean!
+    $amenities: [String]!
   ) {
     addApartment(
       title: $title
@@ -76,6 +77,7 @@ export const ADD_APARTMENT = gql`
       roomCount: $roomCount
       floor: $floor
       isFurnished: $isFurnished
+      amenities: $amenities
     ) {
       id
       ownerId
@@ -95,6 +97,7 @@ export const ADD_APARTMENT = gql`
       floor
       isFurnished
       isFeatured
+      amenities
       owner {
         name
         surname
@@ -124,6 +127,7 @@ export const UPDATE_APARTMENT = gql`
     $roomCount: Int
     $floor: Int
     $isFurnished: Boolean
+    $amenities: [String]
   ) {
     updateApartment(
       id: $id
@@ -143,6 +147,7 @@ export const UPDATE_APARTMENT = gql`
       roomCount: $roomCount
       floor: $floor
       isFurnished: $isFurnished
+      amenities: $amenities
     ) {
       id
       ownerId
@@ -162,6 +167,7 @@ export const UPDATE_APARTMENT = gql`
       floor
       isFurnished
       isFeatured
+      amenities
       owner {
         name
         surname
@@ -207,6 +213,7 @@ export const ADD_FAV_APARTMENT = gql`
       floor
       isFurnished
       isFeatured
+      amenities
     }
   }
 `;
@@ -238,6 +245,7 @@ export const REMOVE_FAV_APARTMENT = gql`
       floor
       isFurnished
       isFeatured
+      amenities
     }
   }
 `;

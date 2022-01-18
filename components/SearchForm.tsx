@@ -6,6 +6,7 @@ import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import {
   AdType,
+  AmenityType,
   BuildingType,
   CityType,
   HeatingType,
@@ -14,6 +15,7 @@ import {
 import { ScrollView } from "react-native-gesture-handler";
 import {
   adTypes,
+  amenityTypes,
   buildingTypes,
   cityTypes,
   furnishingTypes,
@@ -68,6 +70,11 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       ? store.filters.isFurnished
       : undefined
   );
+  const [selectedAmenities, setSelectedAmenities] = useState<
+    AmenityType[] | undefined
+  >(
+    store.filters.amenities !== undefined ? store.filters.amenities : undefined
+  );
 
   //price
   const [minPrice, setMinPrice] = useState<number>(store.filters.minPrice || 0);
@@ -105,6 +112,10 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       buildingType: selectedBuildingType,
       adType: selectedAdType,
       heatingType: selectedHeatingType,
+      amenities:
+        selectedAmenities !== undefined && selectedAmenities.length > 0
+          ? selectedAmenities
+          : undefined,
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice:
         (selectedAdType === AdType.RENT && maxPrice < 1000) ||
@@ -201,6 +212,18 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             value={selectedHeatingType}
             onValueChange={(itemValue: HeatingType | undefined) => {
               setSelectedHeatingType(itemValue);
+            }}
+          />
+        </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title={t("ADD_EDIT_APT.AMENITIES")}
+            any
+            multiple
+            items={amenityTypes}
+            value={selectedAmenities || []}
+            onValueChange={(itemValues: AmenityType[]) => {
+              setSelectedAmenities(itemValues);
             }}
           />
         </View>

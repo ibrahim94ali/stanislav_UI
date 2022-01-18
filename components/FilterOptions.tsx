@@ -8,6 +8,7 @@ import FilterBadge from "./FilterBadge";
 interface Props {
   title?: string;
   any?: boolean;
+  multiple?: boolean;
   items: {
     value: any;
     label?: string;
@@ -22,9 +23,27 @@ const FilterOptions = (props: Props) => {
     props.value
   );
 
-  useEffect(() => {
-    setActiveFilter(props.value);
-  }, [props.value]);
+  const updateValue = (value: any) => {
+    if (!props.multiple) {
+      setActiveFilter(value);
+      return;
+    }
+
+    switch (value) {
+      case undefined:
+        setActiveFilter([]);
+        break;
+      default:
+        if (!activeFilter.includes(value)) {
+          setActiveFilter([...activeFilter, value]);
+        } else {
+          setActiveFilter(
+            activeFilter.filter((activeFilters: any) => activeFilters !== value)
+          );
+        }
+        break;
+    }
+  };
 
   useEffect(() => {
     props.onValueChange(activeFilter);
@@ -44,8 +63,13 @@ const FilterOptions = (props: Props) => {
           <FilterBadge
             label={t("FILTER_OPTIONS.ANY")}
             value={undefined}
-            isActive={activeFilter === undefined ? true : false}
-            onValueChange={() => setActiveFilter(undefined)}
+            isActive={
+              (!props.multiple && activeFilter === undefined) ||
+              (props.multiple && activeFilter?.length === 0)
+                ? true
+                : false
+            }
+            onValueChange={() => updateValue(undefined)}
           />
         )}
         {props.items.map((item) => (
@@ -57,9 +81,11 @@ const FilterOptions = (props: Props) => {
                 : t(`FILTER_OPTIONS.${item.value}`)
             }
             value={item.value}
-            canDeactivate={!props.any}
-            isActive={activeFilter === item.value}
-            onValueChange={(val: string) => setActiveFilter(val)}
+            isActive={
+              (!props.multiple && activeFilter === item.value) ||
+              (props.multiple && activeFilter.includes(item.value))
+            }
+            onValueChange={(val: any) => updateValue(val)}
           />
         ))}
       </ScrollView>

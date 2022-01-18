@@ -85,6 +85,11 @@ export default {
       palette: "Palet",
       coal: "Kömür",
       gas: "Gaz",
+      pool: "Havuz",
+      parking: "Park yeri",
+      garden: "Bahçe",
+      fireplace: "Şömine",
+      "good-isolation": "İyi izolasyon",
     },
     SEARCH_FORM: {
       FILTERS: "Filtreler",

@@ -16,6 +16,7 @@ export const GET_APARTMENTS = gql`
     $maxFloor: Int
     $isFeatured: Boolean
     $isFurnished: Boolean
+    $amenities: [String]
     $sortBy: String
     $sortOrder: Int
   ) {
@@ -34,6 +35,7 @@ export const GET_APARTMENTS = gql`
       maxFloor: $maxFloor
       isFeatured: $isFeatured
       isFurnished: $isFurnished
+      amenities: $amenities
       sortBy: $sortBy
       sortOrder: $sortOrder
     ) {
@@ -61,6 +63,7 @@ export const GET_APARTMENTS = gql`
       isFavorite
       isFurnished
       isFeatured
+      amenities
     }
   }
 `;
@@ -85,6 +88,7 @@ export const GET_MY_APARTMENTS = gql`
       floor
       isFurnished
       isFeatured
+      amenities
     }
   }
 `;
@@ -109,6 +113,7 @@ export const GET_FAV_APARTMENTS = gql`
       floor
       isFurnished
       isFeatured
+      amenities
       owner {
         name
         surname
@@ -138,6 +143,7 @@ export const GET_FEATURED_APARTMENTS = gql`
       roomCount
       floor
       isFurnished
+      amenities
       owner {
         name
         surname
@@ -175,6 +181,7 @@ export const GET_SEARCHED_APARTMENTS = gql`
       isFavorite
       isFurnished
       isFeatured
+      amenities
     }
   }
 `;

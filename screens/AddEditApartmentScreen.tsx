@@ -19,6 +19,7 @@ import * as Location from "expo-location";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
 import {
   AdType,
+  AmenityType,
   ApartmentI,
   BuildingType,
   CityType,
@@ -30,6 +31,7 @@ import {
   cityTypes,
   furnishingTypes,
   heatingTypes,
+  amenityTypes,
 } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -82,6 +84,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
   const [geolocation, setGeolocation] = useState<number[]>(
     itemOnEdit ? itemOnEdit.geolocation : [0, 0]
+  );
+  const [amenities, setAmenities] = useState<string[]>(
+    itemOnEdit ? itemOnEdit.amenities : []
   );
 
   const [uploadImages, setUploadImages] = useState<string[]>([]);
@@ -216,6 +221,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           buildingType,
           adType,
           heatingType,
+          amenities,
           oldPhotosLinks: oldImages,
           newPhotos: photos,
           msquare,
@@ -239,6 +245,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         buildingType,
         adType,
         heatingType,
+        amenities,
         photos,
         msquare,
         roomCount,
@@ -525,13 +532,24 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             }}
           />
         </View>
-        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+        <View style={styles.optionContainer}>
           <FilterOptions
             title={t("ADD_EDIT_APT.HEATING")}
             items={heatingTypes}
             value={heatingType}
             onValueChange={(itemValue: HeatingType) => {
               setHeatingType(itemValue);
+            }}
+          />
+        </View>
+        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+          <FilterOptions
+            title={t("ADD_EDIT_APT.AMENITIES")}
+            multiple
+            items={amenityTypes}
+            value={amenities}
+            onValueChange={(itemValues: AmenityType[]) => {
+              setAmenities(itemValues);
             }}
           />
         </View>

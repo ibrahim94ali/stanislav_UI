@@ -9,20 +9,13 @@ interface Props {
   value: any;
   isActive: boolean;
   onValueChange: any;
-  canDeactivate?: boolean;
 }
 
 const FilterBadge = (props: Props) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        props.onValueChange(
-          !props.canDeactivate
-            ? !props.isActive
-              ? props.value
-              : null
-            : props.value
-        );
+        props.onValueChange(props.value);
       }}
     >
       <View

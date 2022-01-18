@@ -85,6 +85,11 @@ export default {
       palette: "Palette",
       coal: "Coal",
       gas: "Gas",
+      pool: "Pool",
+      parking: "Parking",
+      garden: "Garden",
+      fireplace: "Fireplace",
+      "good-isolation": "Good isolation",
     },
     SEARCH_FORM: {
       FILTERS: "Filters",
