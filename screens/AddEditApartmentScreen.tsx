@@ -17,12 +17,19 @@ import { ReactNativeFile } from "apollo-upload-client";
 import ImageView from "react-native-image-viewing";
 import * as Location from "expo-location";
 import { Ionicons, MaterialIcons } from "@expo/vector-icons";
-import { AdType, ApartmentI, BuildingType, CityType } from "../interfaces";
+import {
+  AdType,
+  ApartmentI,
+  BuildingType,
+  CityType,
+  HeatingType,
+} from "../interfaces";
 import {
   buildingTypes,
   adTypes,
   cityTypes,
   furnishingTypes,
+  heatingTypes,
 } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -61,6 +68,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
   const [isFurnished, setIsFurnished] = useState<boolean>(
     itemOnEdit ? itemOnEdit.isFurnished : true
+  );
+  const [heatingType, setHeatingType] = useState<HeatingType>(
+    itemOnEdit ? itemOnEdit.heatingType : HeatingType.ELECTRIC
   );
   const [floor, setFloor] = useState(itemOnEdit ? itemOnEdit.floor : undefined);
 
@@ -205,6 +215,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           price,
           buildingType,
           adType,
+          heatingType,
           oldPhotosLinks: oldImages,
           newPhotos: photos,
           msquare,
@@ -227,6 +238,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         price,
         buildingType,
         adType,
+        heatingType,
         photos,
         msquare,
         roomCount,
@@ -503,13 +515,23 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             }}
           />
         </View>
-        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+        <View style={styles.optionContainer}>
           <FilterOptions
             title={t("ADD_EDIT_APT.FURNISHING")}
             items={furnishingTypes}
             value={isFurnished}
             onValueChange={(itemValue: boolean) => {
               setIsFurnished(itemValue);
+            }}
+          />
+        </View>
+        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
+          <FilterOptions
+            title={t("ADD_EDIT_APT.HEATING")}
+            items={heatingTypes}
+            value={heatingType}
+            onValueChange={(itemValue: HeatingType) => {
+              setHeatingType(itemValue);
             }}
           />
         </View>

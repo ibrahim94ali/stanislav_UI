@@ -9,6 +9,7 @@ export interface ApartmentI {
   price: number;
   buildingType: BuildingType;
   adType: AdType;
+  heatingType: HeatingType;
   photos: string[];
   msquare: number;
   roomCount: number;
@@ -35,6 +36,7 @@ export interface SearchFiltersI {
   city?: CityType;
   buildingType?: BuildingType;
   adType?: AdType;
+  heatingType?: HeatingType;
   minPrice?: number;
   maxPrice?: number;
   minArea?: number;
@@ -75,4 +77,13 @@ export enum CityType {
   KICEVO = "kicevo",
   STRUMICA = "strumica",
   KUMANOVO = "kumanovo",
+}
+
+export enum HeatingType {
+  WOOD = "wood",
+  CENTRAL = "central",
+  ELECTRIC = "electric",
+  PALETTE = "palette",
+  COAL = "coal",
+  GAS = "gas",
 }

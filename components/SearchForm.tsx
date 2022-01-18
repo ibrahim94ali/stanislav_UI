@@ -4,13 +4,20 @@ import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
-import { AdType, BuildingType, CityType, SearchFiltersI } from "../interfaces";
+import {
+  AdType,
+  BuildingType,
+  CityType,
+  HeatingType,
+  SearchFiltersI,
+} from "../interfaces";
 import { ScrollView } from "react-native-gesture-handler";
 import {
   adTypes,
   buildingTypes,
   cityTypes,
   furnishingTypes,
+  heatingTypes,
 } from "../constants/Selectable";
 import Header from "./Header";
 import IconButton from "./IconButton";
@@ -51,6 +58,9 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   const [selectedAdType, setSelectedAdType] = useState<AdType | undefined>(
     store.filters.adType
   );
+  const [selectedHeatingType, setSelectedHeatingType] = useState<
+    HeatingType | undefined
+  >(store.filters.heatingType);
   const [selectedFurnishingType, setSelectedFurnishingType] = useState<
     boolean | undefined
   >(
@@ -94,6 +104,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       city: selectedCity,
       buildingType: selectedBuildingType,
       adType: selectedAdType,
+      heatingType: selectedHeatingType,
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice:
         (selectedAdType === AdType.RENT && maxPrice < 1000) ||
@@ -155,7 +166,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             any
             items={buildingTypes}
             value={selectedBuildingType}
-            onValueChange={(itemValue: BuildingType) => {
+            onValueChange={(itemValue: BuildingType | undefined) => {
               setSelectedBuildingType(itemValue);
             }}
           />
@@ -166,7 +177,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             any
             items={adTypes}
             value={selectedAdType}
-            onValueChange={(itemValue: AdType) => {
+            onValueChange={(itemValue: AdType | undefined) => {
               setSelectedAdType(itemValue);
             }}
           />
@@ -179,6 +190,17 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             value={selectedFurnishingType}
             onValueChange={(itemValue: boolean | undefined) => {
               setSelectedFurnishingType(itemValue);
+            }}
+          />
+        </View>
+        <View style={styles.filterContainer}>
+          <FilterOptions
+            title={t("ADD_EDIT_APT.HEATING")}
+            any
+            items={heatingTypes}
+            value={selectedHeatingType}
+            onValueChange={(itemValue: HeatingType | undefined) => {
+              setSelectedHeatingType(itemValue);
             }}
           />
         </View>

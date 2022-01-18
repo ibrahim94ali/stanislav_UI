@@ -64,6 +64,8 @@ export default {
       PROPERTY_TYPE: "Property Type",
       AD_TYPE: "Ad Type",
       FURNISHING: "Furnishing",
+      HEATING: "Heating",
+      AMENITIES: "Amenities",
       SUBMIT: "Submit",
     },
     FILTER_OPTIONS: {
@@ -77,6 +79,12 @@ export default {
       land: "Land",
       Furnished: "Furnished",
       Unfurnished: "Unfurnished",
+      wood: "Wood",
+      central: "Central",
+      electric: "Electric",
+      palette: "Palette",
+      coal: "Coal",
+      gas: "Gas",
     },
     SEARCH_FORM: {
       FILTERS: "Filters",

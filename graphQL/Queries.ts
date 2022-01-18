@@ -5,6 +5,7 @@ export const GET_APARTMENTS = gql`
     $city: String
     $buildingType: String
     $adType: String
+    $heatingType: String
     $minPrice: Int
     $maxPrice: Int
     $minArea: Int
@@ -22,6 +23,7 @@ export const GET_APARTMENTS = gql`
       city: $city
       buildingType: $buildingType
       adType: $adType
+      heatingType: $heatingType
       minPrice: $minPrice
       maxPrice: $maxPrice
       minArea: $minArea
@@ -51,6 +53,7 @@ export const GET_APARTMENTS = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -75,6 +78,7 @@ export const GET_MY_APARTMENTS = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -98,6 +102,7 @@ export const GET_FAV_APARTMENTS = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -127,6 +132,7 @@ export const GET_FEATURED_APARTMENTS = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -161,6 +167,7 @@ export const GET_SEARCHED_APARTMENTS = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount

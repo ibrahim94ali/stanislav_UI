@@ -53,6 +53,7 @@ export const ADD_APARTMENT = gql`
     $price: Int!
     $buildingType: String!
     $adType: String!
+    $heatingType: String!
     $photos: [Upload]
     $msquare: Int!
     $roomCount: Int!
@@ -69,6 +70,7 @@ export const ADD_APARTMENT = gql`
       price: $price
       buildingType: $buildingType
       adType: $adType
+      heatingType: $heatingType
       photos: $photos
       msquare: $msquare
       roomCount: $roomCount
@@ -86,6 +88,7 @@ export const ADD_APARTMENT = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -114,6 +117,7 @@ export const UPDATE_APARTMENT = gql`
     $price: Int
     $buildingType: String
     $adType: String
+    $heatingType: String
     $oldPhotosLinks: [String]
     $newPhotos: [Upload]
     $msquare: Int
@@ -132,6 +136,7 @@ export const UPDATE_APARTMENT = gql`
       price: $price
       buildingType: $buildingType
       adType: $adType
+      heatingType: $heatingType
       oldPhotosLinks: $oldPhotosLinks
       newPhotos: $newPhotos
       msquare: $msquare
@@ -150,6 +155,7 @@ export const UPDATE_APARTMENT = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -193,6 +199,7 @@ export const ADD_FAV_APARTMENT = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
@@ -223,6 +230,7 @@ export const REMOVE_FAV_APARTMENT = gql`
       price
       buildingType
       adType
+      heatingType
       photos
       msquare
       roomCount
