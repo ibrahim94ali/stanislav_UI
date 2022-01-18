@@ -63,6 +63,7 @@ export default {
         "0_FOR_NEW": "0 for new",
         AGE: "Building age",
         NEW: "New",
+        YEARS: "years old",
       },
       PROPERTY_TYPE: "Property Type",
       AD_TYPE: "Ad Type",

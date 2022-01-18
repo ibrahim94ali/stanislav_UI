@@ -179,7 +179,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   useEffect(() => {
     (async () => {
       if (itemOnEdit) return;
-      let { status } = await Location.requestBackgroundPermissionsAsync();
+      let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         Alert.alert(t("PERMISSIONS.ADDRESS"));
         return;
@@ -259,8 +259,10 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   };
 
   const attemptGeocodeAsync = async () => {
+    if (!address) return;
+
     const { status: statusLocation } =
-      await Location.requestBackgroundPermissionsAsync();
+      await Location.requestForegroundPermissionsAsync();
 
     if (statusLocation !== "granted") {
       Alert.alert(t("PERMISSIONS.ADDRESS"));
@@ -268,7 +270,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     }
 
     try {
-      const result = await Location.geocodeAsync(address);
+      const result = await Location.geocodeAsync(address + `, ${city}`);
       const { latitude, longitude } = result[0];
       setGeolocation([latitude, longitude]);
     } catch (e) {
@@ -413,8 +415,10 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           onChangeText={(value) => setTitle(value)}
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, styles.description]}
           value={details}
+          multiline
+          numberOfLines={3}
           placeholder={t("ADD_EDIT_APT.FIELDS.DESCRIPTION") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setDetails(value)}
@@ -455,7 +459,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
-            if (parseInt(value)) {
+            if (parseInt(value) || value === "0") {
               setRoomCount(parseInt(value));
             } else {
               setRoomCount(undefined);
@@ -470,7 +474,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
-            if (parseInt(value)) {
+            if (parseInt(value) || value === "0") {
               setFloor(parseInt(value));
             } else {
               setFloor(undefined);
@@ -496,6 +500,19 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           keyboardType="numeric"
           returnKeyType="done"
         />
+
+        <View style={styles.cityContainer}>
+          <RNPickerSelect
+            placeholder={{}}
+            value={city}
+            onValueChange={(itemValue: CityType) => {
+              setCity(itemValue);
+            }}
+            items={cityTypes}
+            style={pickerSelectStyles}
+          />
+        </View>
+
         <TextInput
           style={styles.input}
           value={address}
@@ -509,18 +526,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           addressGeoCode={geolocation}
           onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
         />
-
-        <View style={styles.cityContainer}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={city}
-            onValueChange={(itemValue: CityType) => {
-              setCity(itemValue);
-            }}
-            items={cityTypes}
-            style={pickerSelectStyles}
-          />
-        </View>
 
         <View style={styles.optionContainer}>
           <FilterOptions
@@ -630,12 +635,16 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_400Regular",
     fontSize: dpx(14),
   },
+  description: {
+    height: dpx(80),
+  },
   cityContainer: {
-    marginVertical: dpx(10),
-    width: dpx(170),
+    marginBottom: dpx(10),
     borderRadius: dpx(10),
     borderWidth: 1,
     borderColor: Colors.lightGray,
+    alignSelf: "stretch",
+    marginHorizontal: dpx(20),
   },
   noImageContainer: {
     borderWidth: 1,

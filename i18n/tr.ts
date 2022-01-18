@@ -63,6 +63,7 @@ export default {
         "0_FOR_NEW": "Yeni için 0",
         AGE: "Bina yaşı",
         NEW: "Yeni",
+        YEARS: "yıllık",
       },
       PROPERTY_TYPE: "Bina Türü",
       AD_TYPE: "İlan Türü",

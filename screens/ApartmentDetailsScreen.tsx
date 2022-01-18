@@ -8,7 +8,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import { ApartmentI } from "../interfaces";
+import { AmenityType, ApartmentI } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
@@ -18,6 +18,7 @@ import {
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import { gql, useMutation } from "@apollo/client";
@@ -218,6 +219,25 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     }
   };
 
+  const amenityRender = (amenity: AmenityType) => {
+    return (
+      <View style={styles.amenityContainer} key={amenity}>
+        <MaterialCommunityIcons
+          name={
+            amenity === AmenityType.POOL ||
+            amenity === AmenityType.PARKING ||
+            amenity === AmenityType.FIREPLACE
+              ? (amenity as any)
+              : "star"
+          }
+          size={dpx(18)}
+          color={Colors.black}
+        />
+        <Text style={styles.amenity}>{t(`FILTER_OPTIONS.${amenity}`)}</Text>
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {(loadingFavorite || loadingUnfavorite || loadingDelete) && (
@@ -355,6 +375,14 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           <Text style={styles.title}>{t("APARTMENT_DETAILS.AMENITIES")}</Text>
           <View style={styles.amenityRow}>
             <View style={styles.amenityContainer}>
+              <MaterialIcons name="house" size={dpx(18)} color={Colors.black} />
+              <Text style={styles.amenity}>
+                {apartment.age === 0
+                  ? t("ADD_EDIT_APT.FIELDS.NEW")
+                  : `${apartment.age} ${t("ADD_EDIT_APT.FIELDS.YEARS")}`}
+              </Text>
+            </View>
+            <View style={styles.amenityContainer}>
               <MaterialCommunityIcons
                 name="sofa"
                 size={dpx(18)}
@@ -372,19 +400,33 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </View>
             <View style={styles.amenityContainer}>
               <MaterialCommunityIcons
-                name="parking"
+                name="air-filter"
                 size={dpx(18)}
                 color={Colors.black}
               />
-              <Text style={styles.amenity}>Parking</Text>
+              <Text style={styles.amenity}>
+                {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
+              </Text>
             </View>
           </View>
-          <View style={styles.amenityRow}>
-            <View style={styles.amenityContainer}>
-              <FontAwesome name="bathtub" size={dpx(18)} color={Colors.black} />
-              <Text style={styles.amenity}>Jaccuzi</Text>
-            </View>
-          </View>
+          {apartment.amenities?.map((_, index: number) => {
+            const am = apartment.amenities;
+            if (index % 3 === 0) {
+              return (
+                <View
+                  style={styles.amenityRow}
+                  key={apartment.amenities[index]}
+                >
+                  {am.length > index &&
+                    amenityRender(apartment.amenities[index])}
+                  {am.length > index + 1 &&
+                    amenityRender(apartment.amenities[index + 1])}
+                  {am.length > index + 2 &&
+                    amenityRender(apartment.amenities[index + 2])}
+                </View>
+              );
+            }
+          })}
         </View>
         {!showActions && (
           <View style={styles.agentContainer}>
@@ -507,15 +549,16 @@ const styles = StyleSheet.create({
   amenityRow: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-around",
     marginBottom: dpx(10),
+    borderBottomColor: Colors.lightGray,
+    borderBottomWidth: 1,
   },
 
   amenityContainer: {
     flexDirection: "row",
-    flex: 1,
     paddingBottom: dpx(10),
-    borderBottomColor: Colors.lightGray,
-    borderBottomWidth: 1,
+    alignItems: "center",
   },
   amenity: {
     marginLeft: dpx(5),
