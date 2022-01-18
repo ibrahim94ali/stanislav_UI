@@ -75,6 +75,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     itemOnEdit ? itemOnEdit.heatingType : HeatingType.ELECTRIC
   );
   const [floor, setFloor] = useState(itemOnEdit ? itemOnEdit.floor : undefined);
+  const [age, setAge] = useState(itemOnEdit ? itemOnEdit.age : undefined);
 
   const [msquare, setMsquare] = useState(
     itemOnEdit ? itemOnEdit.msquare : undefined
@@ -228,6 +229,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           roomCount,
           floor,
           isFurnished,
+          age,
         },
       });
       return;
@@ -251,6 +253,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         roomCount,
         floor,
         isFurnished,
+        age,
       },
     });
   };
@@ -471,6 +474,23 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
               setFloor(parseInt(value));
             } else {
               setFloor(undefined);
+            }
+          }}
+          keyboardType="numeric"
+          returnKeyType="done"
+        />
+        <TextInput
+          style={styles.input}
+          value={age?.toString() || ""}
+          placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
+            "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
+          )})  *`}
+          placeholderTextColor={Colors.gray}
+          onChangeText={(value) => {
+            if (parseInt(value) || value === "0") {
+              setAge(parseInt(value));
+            } else {
+              setAge(undefined);
             }
           }}
           keyboardType="numeric"

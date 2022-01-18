@@ -17,6 +17,7 @@ export const GET_APARTMENTS = gql`
     $isFeatured: Boolean
     $isFurnished: Boolean
     $amenities: [String]
+    $age: Int
     $sortBy: String
     $sortOrder: Int
   ) {
@@ -36,6 +37,7 @@ export const GET_APARTMENTS = gql`
       isFeatured: $isFeatured
       isFurnished: $isFurnished
       amenities: $amenities
+      age: $age
       sortBy: $sortBy
       sortOrder: $sortOrder
     ) {
@@ -64,6 +66,7 @@ export const GET_APARTMENTS = gql`
       isFurnished
       isFeatured
       amenities
+      age
     }
   }
 `;
@@ -89,6 +92,7 @@ export const GET_MY_APARTMENTS = gql`
       isFurnished
       isFeatured
       amenities
+      age
     }
   }
 `;
@@ -114,6 +118,7 @@ export const GET_FAV_APARTMENTS = gql`
       isFurnished
       isFeatured
       amenities
+      age
       owner {
         name
         surname
@@ -144,6 +149,7 @@ export const GET_FEATURED_APARTMENTS = gql`
       floor
       isFurnished
       amenities
+      age
       owner {
         name
         surname
@@ -182,6 +188,7 @@ export const GET_SEARCHED_APARTMENTS = gql`
       isFurnished
       isFeatured
       amenities
+      age
     }
   }
 `;

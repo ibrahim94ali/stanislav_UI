@@ -16,6 +16,7 @@ export interface ApartmentI {
   roomCount: number;
   ownerId: string;
   floor: number;
+  age: number;
   owner?: UserI;
   isFavorite?: boolean;
   isFurnished: boolean;
@@ -47,6 +48,7 @@ export interface SearchFiltersI {
   maxRoom?: number;
   minFloor?: number;
   maxFloor?: number;
+  age?: number;
   isFeatured?: boolean;
   isFurnished?: boolean;
   sortBy?: string;

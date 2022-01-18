@@ -82,6 +82,8 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     store.filters.maxPrice || 1000000
   );
 
+  const [age, setAge] = useState<number>(store.filters.age || 50);
+
   //area
   const [minArea, setMinArea] = useState<number>(store.filters.minArea || 0);
   const [maxArea, setMaxArea] = useState<number>(store.filters.maxArea || 300);
@@ -128,6 +130,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       maxRoom: maxRoom < 10 ? maxRoom : undefined,
       minFloor: minFloor > 0 ? minFloor : undefined,
       maxFloor: maxFloor < 30 ? maxFloor : undefined,
+      age: age < 50 ? age : undefined,
       isFurnished:
         selectedFurnishingType !== undefined
           ? selectedFurnishingType
@@ -252,6 +255,33 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             onValuesChange={([min, max]) => {
               setMinPrice(min);
               setMaxPrice(max);
+            }}
+          />
+        </View>
+
+        {/* age */}
+        <View style={styles.sliderTextContainer}>
+          <Text style={styles.sliderHeader}>
+            {t("ADD_EDIT_APT.FIELDS.AGE")}
+          </Text>
+          <Text style={styles.sliderValues}>
+            {age > 0 ? "0 - " + age : t("ADD_EDIT_APT.FIELDS.NEW")}
+          </Text>
+        </View>
+        <View style={styles.sliderFilters}>
+          <MultiSlider
+            markerStyle={styles.slider}
+            selectedStyle={styles.slider}
+            min={0}
+            max={50}
+            step={1}
+            sliderLength={viewportWidth * 0.85}
+            customMarker={() => {
+              return <CustomSliderMarker />;
+            }}
+            values={[age]}
+            onValuesChange={([age]) => {
+              setAge(age);
             }}
           />
         </View>
