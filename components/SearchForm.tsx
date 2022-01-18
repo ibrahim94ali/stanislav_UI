@@ -40,25 +40,6 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     value: undefined,
   };
 
-  useEffect(() => {
-    setSelectedCity(store.filters.city);
-    setSelectedBuildingType(store.filters.buildingType);
-    setSelectedAdType(store.filters.adType);
-    setMinPrice(store.filters.minPrice || 0);
-    setMaxPrice(store.filters.maxPrice || 1000000);
-    setMinArea(store.filters.minArea || 0);
-    setMaxArea(store.filters.maxArea || 300);
-    setMinRoom(store.filters.minRoom || 0);
-    setMaxRoom(store.filters.maxRoom || 10);
-    setMinFloor(store.filters.minFloor || 0);
-    setMaxFloor(store.filters.maxFloor || 30);
-    setSelectedFurnishingType(
-      store.filters.isFurnished !== undefined
-        ? store.filters.isFurnished
-        : undefined
-    );
-  }, [store.filters]);
-
   const { width: viewportWidth } = Dimensions.get("window");
 
   const [selectedCity, setSelectedCity] = useState<CityType | undefined>(

@@ -8,19 +8,19 @@ export default {
     PROFILE: {
       HELLO: "Merhaba",
       LOGOUT: "Çıkış yap",
-      MANAGE_YOUR_APT: "Mülklerini düzenle",
+      MANAGE_YOUR_APT: "İlanlarını düzenle",
       YOUR_APT: "Mülklerim",
-      SEE_FAV_APT: "Favori mülklerini gör",
-      FAV_APT: "Favori Mülklerim",
+      SEE_FAV_APT: "Favori ilanlarını gör",
+      FAV_APT: "Favori İlanlarım",
       YOU_NOT_LOGGIN_IN: "Giriş yapmadın",
       LOGIN: "Oturum aç",
       REGISTER_HERE: "Lütfen buradan kaydolun",
       REGISTER: "Kaydol",
     },
     HOME: {
-      SEARCH_PROPERTY: "Emlak Ara",
+      SEARCH_PROPERTY: "İlan Ara",
       CITIES: "Şehirler",
-      FEATURED_PROPERTIES: "Sponsorlu Mülkler",
+      FEATURED_PROPERTIES: "Sponsorlu İlanlar",
       SEE_ALL: "Hepsini gör",
       SPONSORS: "Sponsorlar",
     },
@@ -50,8 +50,8 @@ export default {
       },
     },
     ADD_EDIT_APT: {
-      ADD: "Mülk Ekle",
-      EDIT: "Mülk Düzenle",
+      ADD: "İlan Ekle",
+      EDIT: "İlan Düzenle",
       FIELDS: {
         TITLE: "Başlık",
         DESCRIPTION: "Açıklama",
@@ -86,10 +86,11 @@ export default {
     APARTMENT_LIST_SCREEN: {
       RESULTS: "Sonuçlar",
       SORT_BY: "Sırala",
+      ACTIVE_FILTERS: "Filtreler Aktif",
       SORTS: {
         Newest: "En yeni",
         Price_LH: "Fiyat (artan)",
-        Price_HL: "Price (azalan)",
+        Price_HL: "Fiyat (azalan)",
         Area_LH: "Alan (artan)",
         Area_HL: "Alan (azalan)",
       },

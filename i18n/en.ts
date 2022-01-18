@@ -86,6 +86,7 @@ export default {
     APARTMENT_LIST_SCREEN: {
       RESULTS: "Results",
       SORT_BY: "Sort By",
+      ACTIVE_FILTERS: "Active Filters",
       SORTS: {
         Newest: "Newest",
         Price_LH: "Price (Low to High)",

@@ -1,16 +1,15 @@
-import { action, makeObservable, observable } from "mobx";
+import { action, computed, makeObservable, observable } from "mobx";
 import { SearchFiltersI, UserI } from "./interfaces";
 
 export class StoreImpl {
   user: UserI | null = null;
   filters: SearchFiltersI = {};
-  isAnyFilterActive: boolean = false;
 
   constructor() {
     makeObservable(this, {
       user: observable,
       filters: observable,
-      isAnyFilterActive: observable,
+      isAnyFilterActive: computed,
       setUser: action,
       setFilters: action,
       resetFilters: action,
@@ -24,9 +23,6 @@ export class StoreImpl {
 
   setFilters(filters: SearchFiltersI) {
     this.filters = filters;
-    if (Object.values(filters).some((value) => value !== undefined)) {
-      this.isAnyFilterActive = true;
-    }
   }
 
   resetFilters() {
@@ -34,7 +30,20 @@ export class StoreImpl {
       sortBy: "date",
       sortOrder: -1,
     };
-    this.isAnyFilterActive = false;
+  }
+
+  get isAnyFilterActive() {
+    if (
+      Object.keys(this.filters).some(
+        (key) =>
+          (this.filters as any)[key] !== undefined &&
+          key !== "sortOrder" &&
+          key !== "sortBy"
+      )
+    ) {
+      return true;
+    }
+    return false;
   }
 
   setSorting(sortBy: string, sortOrder: number) {

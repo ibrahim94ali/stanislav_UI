@@ -22,13 +22,14 @@ import { useQuery } from "@apollo/client";
 import { GET_APARTMENTS, GET_SEARCHED_APARTMENTS } from "../graphQL/Queries";
 import { observer } from "mobx-react";
 import { useStore } from "../hooks/StoreContext";
-import { ApartmentI } from "../interfaces";
+import { ApartmentI, SearchFiltersI } from "../interfaces";
 import Property from "../components/Property";
 import LoadingSpinner from "../components/LoadingSpinner";
 import BottomSheet from "@gorhom/bottom-sheet";
 import { SortTypeI, sortTypes } from "../constants/Selectable";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoResult from "../components/NoResult";
 
 interface Props {
@@ -64,6 +65,11 @@ const ApartmentListScreen = (props: Props) => {
   const removeFilters = () => {
     setQ(undefined);
     store.resetFilters();
+    storeFiltersLocally(store.filters);
+  };
+
+  const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
+    await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
   const { t } = useTranslation();
@@ -124,7 +130,7 @@ const ApartmentListScreen = (props: Props) => {
       {(store.isAnyFilterActive || q) && (
         <View style={styles.activeFiltersContainer}>
           <ActiveFilterBadge
-            name="Active Filters"
+            name={t("APARTMENT_LIST_SCREEN.ACTIVE_FILTERS")}
             onPress={() => removeFilters()}
           />
         </View>

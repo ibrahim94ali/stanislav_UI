@@ -22,13 +22,13 @@ import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 import {
-  useFonts,
   Montserrat_400Regular,
   Montserrat_500Medium,
   Montserrat_700Bold,
 } from "@expo-google-fonts/montserrat";
 import { SearchFiltersI } from "./interfaces";
 import "react-native-gesture-handler";
+import { useFonts } from "expo-font";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
