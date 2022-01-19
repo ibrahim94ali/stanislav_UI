@@ -94,6 +94,8 @@ export default {
       garden: "Garden",
       fireplace: "Fireplace",
       "good-isolation": "Good isolation",
+      MIN: "Min.",
+      MAX: "Max.",
     },
     SEARCH_FORM: {
       FILTERS: "Filters",

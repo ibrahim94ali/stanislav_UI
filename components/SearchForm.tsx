@@ -18,6 +18,7 @@ import {
   amenityTypes,
   buildingTypes,
   cityTypes,
+  filterLimits,
   furnishingTypes,
   heatingTypes,
 } from "../constants/Selectable";
@@ -30,6 +31,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
+import { observer } from "mobx-react";
 
 const CustomSliderMarker = () => {
   return (
@@ -79,32 +81,48 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   //price
   const [minPrice, setMinPrice] = useState<number>(store.filters.minPrice || 0);
   const [maxPrice, setMaxPrice] = useState<number>(
-    store.filters.maxPrice || 1000000
+    store.filters.maxPrice || filterLimits.maxPrice.purchase
   );
 
-  const [age, setAge] = useState<number>(store.filters.age || 50);
+  const [age, setAge] = useState<number>(
+    store.filters.age || filterLimits.maxAge
+  );
 
   //area
   const [minArea, setMinArea] = useState<number>(store.filters.minArea || 0);
-  const [maxArea, setMaxArea] = useState<number>(store.filters.maxArea || 300);
+  const [maxArea, setMaxArea] = useState<number>(
+    store.filters.maxArea || filterLimits.maxArea
+  );
 
   // room
   const [minRoom, setMinRoom] = useState<number>(store.filters.minRoom || 0);
-  const [maxRoom, setMaxRoom] = useState<number>(store.filters.maxRoom || 10);
+  const [maxRoom, setMaxRoom] = useState<number>(
+    store.filters.maxRoom || filterLimits.maxRoom
+  );
 
   // floor
   const [minFloor, setMinFloor] = useState<number>(store.filters.minFloor || 0);
   const [maxFloor, setMaxFloor] = useState<number>(
-    store.filters.maxFloor || 30
+    store.filters.maxFloor || filterLimits.maxFloor
   );
 
   useEffect(() => {
     if (selectedAdType === AdType.RENT) {
-      setMinPrice(minPrice < 1000 ? minPrice : 0);
-      setMaxPrice(maxPrice > 1000 ? 1000 : maxPrice);
+      setMinPrice(minPrice < filterLimits.maxPrice.rent ? minPrice : 0);
+      setMaxPrice(
+        maxPrice > filterLimits.maxPrice.rent
+          ? filterLimits.maxPrice.rent
+          : maxPrice
+      );
     } else {
-      setMinPrice(minPrice % 50000 === 0 ? minPrice : 0);
-      setMaxPrice(maxPrice <= 1000 ? 1000000 : maxPrice);
+      setMinPrice(
+        (minPrice % filterLimits.maxPrice.purchase) / 40 === 0 ? minPrice : 0
+      );
+      setMaxPrice(
+        maxPrice <= filterLimits.maxPrice.rent
+          ? filterLimits.maxPrice.purchase
+          : maxPrice
+      );
     }
   }, [selectedAdType]);
 
@@ -120,17 +138,19 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           : undefined,
       minPrice: minPrice > 0 ? minPrice : undefined,
       maxPrice:
-        (selectedAdType === AdType.RENT && maxPrice < 1000) ||
-        (selectedAdType === AdType.PURCHASE && maxPrice < 1000000)
+        (selectedAdType === AdType.RENT &&
+          maxPrice < filterLimits.maxPrice.rent) ||
+        (selectedAdType === AdType.PURCHASE &&
+          maxPrice < filterLimits.maxPrice.purchase)
           ? maxPrice
           : undefined,
       minArea: minArea > 0 ? minArea : undefined,
-      maxArea: maxArea < 300 ? maxArea : undefined,
+      maxArea: maxArea < filterLimits.maxArea ? maxArea : undefined,
       minRoom: minRoom > 0 ? minRoom : undefined,
-      maxRoom: maxRoom < 10 ? maxRoom : undefined,
+      maxRoom: maxRoom < filterLimits.maxRoom ? maxRoom : undefined,
       minFloor: minFloor > 0 ? minFloor : undefined,
-      maxFloor: maxFloor < 30 ? maxFloor : undefined,
-      age: age < 50 ? age : undefined,
+      maxFloor: maxFloor < filterLimits.maxFloor ? maxFloor : undefined,
+      age: age < filterLimits.maxAge ? age : undefined,
       isFurnished:
         selectedFurnishingType !== undefined
           ? selectedFurnishingType
@@ -147,12 +167,14 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
+  const formatPrice = (price: number) => {
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  };
+
   return (
     <View style={styles.container}>
       <Header>
-        <IconButton handlePress={() => store.resetFilters()}>
-          <MaterialCommunityIcons name="restart" size={24} color="black" />
-        </IconButton>
+        <View style={{ width: dpx(40) }}></View>
         <Text style={styles.header}>{t("SEARCH_FORM.FILTERS")}</Text>
         <IconButton handlePress={() => closeFilters()}>
           <Ionicons name="close" color={Colors.black} size={dpx(24)} />
@@ -167,7 +189,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           <RNPickerSelect
             placeholder={placeholder}
             value={selectedCity}
-            onValueChange={(itemValue: CityType) => {
+            onValueChange={(itemValue: CityType | undefined) => {
               setSelectedCity(itemValue);
             }}
             items={cityTypes}
@@ -237,7 +259,21 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             {t("ADD_EDIT_APT.FIELDS.PRICE")}
           </Text>
           <Text style={styles.sliderValues}>
-            {minPrice + " - " + maxPrice + " €"}
+            {minPrice === 0 &&
+            ((selectedAdType === AdType.RENT &&
+              maxPrice === filterLimits.maxPrice.rent) ||
+              (selectedAdType !== AdType.RENT &&
+                maxPrice === filterLimits.maxPrice.purchase))
+              ? t("FILTER_OPTIONS.ANY")
+              : minPrice > 0 &&
+                ((selectedAdType === AdType.RENT &&
+                  maxPrice < filterLimits.maxPrice.rent) ||
+                  (selectedAdType !== AdType.RENT &&
+                    maxPrice < filterLimits.maxPrice.purchase))
+              ? formatPrice(minPrice) + " - " + formatPrice(maxPrice) + " €"
+              : minPrice > 0
+              ? `${t("FILTER_OPTIONS.MIN")} ${formatPrice(minPrice)} €`
+              : `${t("FILTER_OPTIONS.MAX")} ${formatPrice(maxPrice)} €`}
           </Text>
         </View>
         <View style={styles.sliderFilters}>
@@ -245,8 +281,16 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
             min={0}
-            max={selectedAdType === AdType.RENT ? 1000 : 1000000}
-            step={selectedAdType === AdType.RENT ? 50 : 50000}
+            max={
+              selectedAdType === AdType.RENT
+                ? filterLimits.maxPrice.rent
+                : filterLimits.maxPrice.purchase
+            }
+            step={
+              selectedAdType === AdType.RENT
+                ? filterLimits.maxPrice.rent / 40
+                : filterLimits.maxPrice.purchase / 40
+            }
             sliderLength={viewportWidth * 0.85}
             customMarker={() => {
               return <CustomSliderMarker />;
@@ -265,7 +309,11 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             {t("ADD_EDIT_APT.FIELDS.AGE")}
           </Text>
           <Text style={styles.sliderValues}>
-            {age > 0 ? "0 - " + age : t("ADD_EDIT_APT.FIELDS.NEW")}
+            {age > 0 && age < filterLimits.maxAge
+              ? `${t("FILTER_OPTIONS.MAX")} ${age}`
+              : age < filterLimits.maxAge
+              ? t("ADD_EDIT_APT.FIELDS.NEW")
+              : t("FILTER_OPTIONS.ANY")}
           </Text>
         </View>
         <View style={styles.sliderFilters}>
@@ -273,7 +321,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
             min={0}
-            max={50}
+            max={filterLimits.maxAge}
             step={1}
             sliderLength={viewportWidth * 0.85}
             customMarker={() => {
@@ -292,7 +340,13 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             {t("ADD_EDIT_APT.FIELDS.AREA")}
           </Text>
           <Text style={styles.sliderValues}>
-            {minArea + " - " + maxArea + " m2"}
+            {minArea === 0 && maxArea === filterLimits.maxArea
+              ? t("FILTER_OPTIONS.ANY")
+              : minArea > 0 && maxArea < filterLimits.maxArea
+              ? minArea + " - " + maxArea + " m2"
+              : minArea > 0
+              ? `${t("FILTER_OPTIONS.MIN")} ${minArea} m2`
+              : `${t("FILTER_OPTIONS.MAX")} ${maxArea} m2`}
           </Text>
         </View>
         <View style={styles.sliderFilters}>
@@ -300,8 +354,8 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
             min={0}
-            max={300}
-            step={20}
+            max={filterLimits.maxArea}
+            step={10}
             sliderLength={viewportWidth * 0.85}
             customMarker={() => {
               return <CustomSliderMarker />;
@@ -319,14 +373,22 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           <Text style={styles.sliderHeader}>
             {t("ADD_EDIT_APT.FIELDS.ROOMS")}
           </Text>
-          <Text style={styles.sliderValues}>{minRoom + " - " + maxRoom}</Text>
+          <Text style={styles.sliderValues}>
+            {minRoom === 0 && maxRoom === filterLimits.maxRoom
+              ? t("FILTER_OPTIONS.ANY")
+              : minRoom > 0 && maxRoom < filterLimits.maxRoom
+              ? minRoom + " - " + maxRoom
+              : minRoom > 0
+              ? `${t("FILTER_OPTIONS.MIN")} ${minRoom}`
+              : `${t("FILTER_OPTIONS.MAX")} ${maxRoom}`}
+          </Text>
         </View>
         <View style={styles.sliderFilters}>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
             min={0}
-            max={10}
+            max={filterLimits.maxRoom}
             step={1}
             sliderLength={viewportWidth * 0.85}
             customMarker={() => {
@@ -345,14 +407,22 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           <Text style={styles.sliderHeader}>
             {t("ADD_EDIT_APT.FIELDS.FLOOR")}
           </Text>
-          <Text style={styles.sliderValues}>{minFloor + " - " + maxFloor}</Text>
+          <Text style={styles.sliderValues}>
+            {minFloor === 0 && maxFloor === filterLimits.maxFloor
+              ? t("FILTER_OPTIONS.ANY")
+              : minFloor > 0 && maxFloor < filterLimits.maxFloor
+              ? minFloor + " - " + maxFloor
+              : minFloor > 0
+              ? `${t("FILTER_OPTIONS.MIN")} ${minFloor}`
+              : `${t("FILTER_OPTIONS.MAX")} ${maxFloor}`}
+          </Text>
         </View>
         <View style={styles.sliderFilters}>
           <MultiSlider
             markerStyle={styles.slider}
             selectedStyle={styles.slider}
             min={0}
-            max={30}
+            max={filterLimits.maxFloor}
             step={1}
             sliderLength={viewportWidth * 0.85}
             values={[minFloor, maxFloor]}
@@ -377,7 +447,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   );
 };
 
-export default SearchForm;
+export default observer(SearchForm);
 
 const styles = StyleSheet.create({
   container: {
@@ -455,10 +525,10 @@ const styles = StyleSheet.create({
   },
   cityContainer: {
     marginVertical: dpx(10),
-    width: dpx(170),
+    alignSelf: "stretch",
+    marginHorizontal: dpx(20),
     borderRadius: dpx(10),
     borderWidth: 1,
     borderColor: Colors.lightGray,
-    alignSelf: "center",
   },
 });

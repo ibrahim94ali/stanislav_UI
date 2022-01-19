@@ -94,6 +94,8 @@ export default {
       garden: "Bahçe",
       fireplace: "Şömine",
       "good-isolation": "İyi izolasyon",
+      MIN: "En az",
+      MAX: "En fazla",
     },
     SEARCH_FORM: {
       FILTERS: "Filtreler",

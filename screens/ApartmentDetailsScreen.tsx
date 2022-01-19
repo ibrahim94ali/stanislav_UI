@@ -15,7 +15,6 @@ import { TouchableOpacity } from "react-native";
 import {
   AntDesign,
   Entypo,
-  FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
   MaterialIcons,
@@ -228,6 +227,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             amenity === AmenityType.PARKING ||
             amenity === AmenityType.FIREPLACE
               ? (amenity as any)
+              : amenity === AmenityType.GARDEN
+              ? "leaf"
               : "star"
           }
           size={dpx(18)}
@@ -400,12 +401,13 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </View>
             <View style={styles.amenityContainer}>
               <MaterialCommunityIcons
-                name="air-filter"
+                name="fire"
                 size={dpx(18)}
                 color={Colors.black}
               />
               <Text style={styles.amenity}>
                 {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
+                {` ${t("ADD_EDIT_APT.HEATING")}`}
               </Text>
             </View>
           </View>

@@ -167,7 +167,13 @@ export const sponsors = [
   },
 ];
 
-//TODO:
-// - Furnishing
-// - Heating
-// - Amenities
+export const filterLimits = {
+  maxAge: 50,
+  maxArea: 500,
+  maxRoom: 20,
+  maxFloor: 50,
+  maxPrice: {
+    rent: 2000,
+    purchase: 1000000,
+  },
+};

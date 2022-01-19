@@ -18,14 +18,16 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
             size={dpx(14)}
           />
           <Text style={styles.typeName}>
-            {t(`PROPERTY_DETAILS.BUILDINGTYPE.${apartment.buildingType}`)}
+            {t(`PROPERTY_DETAILS.ADTYPE.${apartment.adType}`)}
           </Text>
         </View>
         <Text style={styles.adType}>
-          {t(`PROPERTY_DETAILS.ADTYPE.${apartment.adType}`)}
+          {t(`PROPERTY_DETAILS.BUILDINGTYPE.${apartment.buildingType}`)}
         </Text>
       </View>
-      <Text style={styles.header}>{apartment.title}</Text>
+      <Text numberOfLines={1} style={styles.header}>
+        {apartment.title}
+      </Text>
       {apartment.adType === AdType.RENT ? (
         <Text style={styles.price}>
           {apartment.price} € / {t("PROPERTY_DETAILS.MONTH")}
@@ -80,8 +82,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   typeName: {
-    fontFamily: "Montserrat_700Bold",
-    fontSize: dpx(14),
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(12),
     color: Colors.secondary,
     marginLeft: dpx(5),
     textTransform: "capitalize",
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
   },
   header: {
     fontFamily: "Montserrat_500Medium",
-    fontSize: dpx(14),
+    fontSize: dpx(16),
     color: Colors.black,
     marginTop: dpx(5),
   },
