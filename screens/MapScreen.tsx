@@ -7,6 +7,7 @@ import { StyleSheet, View, Dimensions } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import Colors from "../constants/Colors";
 import { GET_APARTMENTS } from "../graphQL/Queries";
+import { formatPrice } from "../helperMethods";
 import { AdType, ApartmentI } from "../interfaces";
 
 const MapScreen = ({ navigation }: any) => {
@@ -33,7 +34,7 @@ const MapScreen = ({ navigation }: any) => {
               longitude: apartment.geolocation[1],
             }}
             title={apartment.title}
-            description={`${apartment.price} € ${
+            description={`${formatPrice(apartment.price)} € ${
               apartment.adType === AdType.RENT
                 ? "/ " + t("PROPERTY_DETAILS.MONTH")
                 : ""

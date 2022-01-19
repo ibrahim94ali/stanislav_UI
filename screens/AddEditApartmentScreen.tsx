@@ -72,7 +72,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     itemOnEdit ? itemOnEdit.isFurnished : true
   );
   const [heatingType, setHeatingType] = useState<HeatingType>(
-    itemOnEdit ? itemOnEdit.heatingType : HeatingType.ELECTRIC
+    itemOnEdit ? itemOnEdit.heatingType : HeatingType.NONE
   );
   const [floor, setFloor] = useState(itemOnEdit ? itemOnEdit.floor : undefined);
   const [age, setAge] = useState(itemOnEdit ? itemOnEdit.age : undefined);
@@ -226,10 +226,10 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           oldPhotosLinks: oldImages,
           newPhotos: photos,
           msquare,
-          roomCount,
-          floor,
+          roomCount: buildingType !== BuildingType.LAND ? roomCount : 0,
+          floor: buildingType !== BuildingType.LAND ? floor : 0,
+          age: buildingType !== BuildingType.LAND ? age : 0,
           isFurnished,
-          age,
         },
       });
       return;
@@ -250,10 +250,10 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         amenities,
         photos,
         msquare,
-        roomCount,
-        floor,
+        roomCount: buildingType !== BuildingType.LAND ? roomCount : 0,
+        floor: buildingType !== BuildingType.LAND ? floor : 0,
+        age: buildingType !== BuildingType.LAND ? age : 0,
         isFurnished,
-        age,
       },
     });
   };
@@ -441,60 +441,13 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <TextInput
           style={styles.input}
           value={msquare?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (ms2) *"}
+          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (m2) *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => {
             if (parseInt(value)) {
               setMsquare(parseInt(value));
             } else {
               setMsquare(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-        <TextInput
-          style={styles.input}
-          value={roomCount?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value) || value === "0") {
-              setRoomCount(parseInt(value));
-            } else {
-              setRoomCount(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-        <TextInput
-          style={styles.input}
-          value={floor?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value) || value === "0") {
-              setFloor(parseInt(value));
-            } else {
-              setFloor(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-        <TextInput
-          style={styles.input}
-          value={age?.toString() || ""}
-          placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
-            "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
-          )})  *`}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value) || value === "0") {
-              setAge(parseInt(value));
-            } else {
-              setAge(undefined);
             }
           }}
           keyboardType="numeric"
@@ -537,7 +490,16 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             }}
           />
         </View>
-        <View style={styles.optionContainer}>
+
+        <View
+          style={[
+            styles.optionContainer,
+            {
+              marginBottom:
+                buildingType === BuildingType.LAND ? dpx(20) : dpx(10),
+            },
+          ]}
+        >
           <FilterOptions
             title={t("ADD_EDIT_APT.AD_TYPE")}
             items={adTypes}
@@ -547,37 +509,88 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             }}
           />
         </View>
-        <View style={styles.optionContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.FURNISHING")}
-            items={furnishingTypes}
-            value={isFurnished}
-            onValueChange={(itemValue: boolean) => {
-              setIsFurnished(itemValue);
-            }}
-          />
-        </View>
-        <View style={styles.optionContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.HEATING")}
-            items={heatingTypes}
-            value={heatingType}
-            onValueChange={(itemValue: HeatingType) => {
-              setHeatingType(itemValue);
-            }}
-          />
-        </View>
-        <View style={[styles.optionContainer, { marginBottom: dpx(30) }]}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.AMENITIES")}
-            multiple
-            items={amenityTypes}
-            value={amenities}
-            onValueChange={(itemValues: AmenityType[]) => {
-              setAmenities(itemValues);
-            }}
-          />
-        </View>
+        {buildingType !== BuildingType.LAND && (
+          <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
+            <View style={styles.optionContainer}>
+              <FilterOptions
+                title={t("ADD_EDIT_APT.FURNISHING")}
+                items={furnishingTypes}
+                value={isFurnished}
+                onValueChange={(itemValue: boolean) => {
+                  setIsFurnished(itemValue);
+                }}
+              />
+            </View>
+            <View style={styles.optionContainer}>
+              <FilterOptions
+                title={t("ADD_EDIT_APT.HEATING")}
+                items={heatingTypes}
+                value={heatingType}
+                onValueChange={(itemValue: HeatingType) => {
+                  setHeatingType(itemValue);
+                }}
+              />
+            </View>
+            <View style={styles.optionContainer}>
+              <FilterOptions
+                title={t("ADD_EDIT_APT.AMENITIES")}
+                multiple
+                items={amenityTypes}
+                value={amenities}
+                onValueChange={(itemValues: AmenityType[]) => {
+                  setAmenities(itemValues);
+                }}
+              />
+            </View>
+            <TextInput
+              style={styles.input}
+              value={roomCount?.toString() || ""}
+              placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setRoomCount(parseInt(value));
+                } else {
+                  setRoomCount(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+            <TextInput
+              style={styles.input}
+              value={floor?.toString() || ""}
+              placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setFloor(parseInt(value));
+                } else {
+                  setFloor(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+            <TextInput
+              style={styles.input}
+              value={age?.toString() || ""}
+              placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
+                "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
+              )})  *`}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setAge(parseInt(value));
+                } else {
+                  setAge(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="done"
+            />
+          </View>
+        )}
         <Button
           color={Colors.primary}
           title={t("ADD_EDIT_APT.SUBMIT")}
@@ -589,8 +602,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             !address ||
             !price ||
             !msquare ||
-            !roomCount ||
-            !floor ||
+            (roomCount === undefined && buildingType !== BuildingType.LAND) ||
+            (floor === undefined && buildingType !== BuildingType.LAND) ||
+            (age === undefined && buildingType !== BuildingType.LAND) ||
             geolocation[0] == 0 ||
             geolocation[1] == 0 ||
             uploadImages.length + oldImages.length < 1

@@ -84,12 +84,14 @@ export enum CityType {
 }
 
 export enum HeatingType {
+  NONE = "none",
   WOOD = "wood",
   CENTRAL = "central",
   ELECTRIC = "electric",
   PALETTE = "palette",
   COAL = "coal",
   GAS = "gas",
+  OTHER = "other",
 }
 
 export enum AmenityType {

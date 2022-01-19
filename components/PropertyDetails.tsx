@@ -4,7 +4,8 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, Text, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
-import { AdType, ApartmentI } from "../interfaces";
+import { formatPrice } from "../helperMethods";
+import { AdType, ApartmentI, BuildingType } from "../interfaces";
 
 const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
   const { t } = useTranslation();
@@ -30,10 +31,10 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
       </Text>
       {apartment.adType === AdType.RENT ? (
         <Text style={styles.price}>
-          {apartment.price} € / {t("PROPERTY_DETAILS.MONTH")}
+          {formatPrice(apartment.price)} € / {t("PROPERTY_DETAILS.MONTH")}
         </Text>
       ) : (
-        <Text style={styles.price}>{apartment.price} €</Text>
+        <Text style={styles.price}>{formatPrice(apartment.price)} €</Text>
       )}
       <Text style={styles.address}>
         {apartment.address} -{" "}
@@ -44,22 +45,30 @@ const PropertyDetails = ({ apartment }: { apartment: ApartmentI }) => {
           <Entypo name="ruler" color={Colors.black} size={dpx(14)} />
           <Text style={styles.iconText}>{apartment.msquare} m2</Text>
         </View>
-        <View style={styles.iconContainer}>
-          <MaterialCommunityIcons
-            name="floor-plan"
-            color={Colors.black}
-            size={dpx(18)}
-          />
-          <Text style={styles.iconText}>
-            {apartment.roomCount} {t("PROPERTY_DETAILS.ROOMS")}
-          </Text>
-        </View>
-        <View style={styles.iconContainer}>
-          <Ionicons name="layers-outline" color={Colors.black} size={dpx(18)} />
-          <Text style={styles.iconText}>
-            {apartment.floor}. {t("PROPERTY_DETAILS.FLOOR")}
-          </Text>
-        </View>
+        {apartment.buildingType !== BuildingType.LAND && (
+          <View style={styles.iconContainer}>
+            <MaterialCommunityIcons
+              name="floor-plan"
+              color={Colors.black}
+              size={dpx(18)}
+            />
+            <Text style={styles.iconText}>
+              {apartment.roomCount} {t("PROPERTY_DETAILS.ROOMS")}
+            </Text>
+          </View>
+        )}
+        {apartment.buildingType !== BuildingType.LAND && (
+          <View style={styles.iconContainer}>
+            <Ionicons
+              name="layers-outline"
+              color={Colors.black}
+              size={dpx(18)}
+            />
+            <Text style={styles.iconText}>
+              {apartment.floor}. {t("PROPERTY_DETAILS.FLOOR")}
+            </Text>
+          </View>
+        )}
       </View>
     </View>
   );

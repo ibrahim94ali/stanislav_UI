@@ -89,6 +89,8 @@ export default {
       palette: "Palette",
       coal: "Coal",
       gas: "Gas",
+      none: "None",
+      other: "Other",
       pool: "Pool",
       parking: "Parking",
       garden: "Garden",

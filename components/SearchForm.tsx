@@ -24,7 +24,7 @@ import {
 } from "../constants/Selectable";
 import Header from "./Header";
 import IconButton from "./IconButton";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import Button from "./Button";
 import FilterOptions from "./FilterOptions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -32,6 +32,7 @@ import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { observer } from "mobx-react";
+import { formatPrice } from "../helperMethods";
 
 const CustomSliderMarker = () => {
   return (
@@ -126,6 +127,19 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
     }
   }, [selectedAdType]);
 
+  useEffect(() => {
+    if (selectedBuildingType === BuildingType.LAND) {
+      setSelectedFurnishingType(undefined);
+      setSelectedHeatingType(undefined);
+      setSelectedAmenities([]);
+      setAge(filterLimits.maxAge);
+      setMinRoom(0);
+      setMaxRoom(filterLimits.maxRoom);
+      setMinFloor(0);
+      setMaxFloor(filterLimits.maxFloor);
+    }
+  }, [selectedBuildingType]);
+
   const showProperties = () => {
     const newFilters: SearchFiltersI = {
       city: selectedCity,
@@ -140,7 +154,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
       maxPrice:
         (selectedAdType === AdType.RENT &&
           maxPrice < filterLimits.maxPrice.rent) ||
-        (selectedAdType === AdType.PURCHASE &&
+        (selectedAdType !== AdType.RENT &&
           maxPrice < filterLimits.maxPrice.purchase)
           ? maxPrice
           : undefined,
@@ -165,10 +179,6 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
 
   const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
     await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
-  };
-
-  const formatPrice = (price: number) => {
-    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
   return (
@@ -218,40 +228,46 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
             }}
           />
         </View>
-        <View style={styles.filterContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.FURNISHING")}
-            any
-            items={furnishingTypes}
-            value={selectedFurnishingType}
-            onValueChange={(itemValue: boolean | undefined) => {
-              setSelectedFurnishingType(itemValue);
-            }}
-          />
-        </View>
-        <View style={styles.filterContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.HEATING")}
-            any
-            items={heatingTypes}
-            value={selectedHeatingType}
-            onValueChange={(itemValue: HeatingType | undefined) => {
-              setSelectedHeatingType(itemValue);
-            }}
-          />
-        </View>
-        <View style={styles.filterContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.AMENITIES")}
-            any
-            multiple
-            items={amenityTypes}
-            value={selectedAmenities || []}
-            onValueChange={(itemValues: AmenityType[]) => {
-              setSelectedAmenities(itemValues);
-            }}
-          />
-        </View>
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.filterContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.FURNISHING")}
+              any
+              items={furnishingTypes}
+              value={selectedFurnishingType}
+              onValueChange={(itemValue: boolean | undefined) => {
+                setSelectedFurnishingType(itemValue);
+              }}
+            />
+          </View>
+        )}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.filterContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.HEATING")}
+              any
+              items={heatingTypes}
+              value={selectedHeatingType}
+              onValueChange={(itemValue: HeatingType | undefined) => {
+                setSelectedHeatingType(itemValue);
+              }}
+            />
+          </View>
+        )}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.filterContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.AMENITIES")}
+              any
+              multiple
+              items={amenityTypes}
+              value={selectedAmenities || []}
+              onValueChange={(itemValues: AmenityType[]) => {
+                setSelectedAmenities(itemValues);
+              }}
+            />
+          </View>
+        )}
 
         {/* price */}
         <View style={styles.sliderTextContainer}>
@@ -303,37 +319,6 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           />
         </View>
 
-        {/* age */}
-        <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>
-            {t("ADD_EDIT_APT.FIELDS.AGE")}
-          </Text>
-          <Text style={styles.sliderValues}>
-            {age > 0 && age < filterLimits.maxAge
-              ? `${t("FILTER_OPTIONS.MAX")} ${age}`
-              : age < filterLimits.maxAge
-              ? t("ADD_EDIT_APT.FIELDS.NEW")
-              : t("FILTER_OPTIONS.ANY")}
-          </Text>
-        </View>
-        <View style={styles.sliderFilters}>
-          <MultiSlider
-            markerStyle={styles.slider}
-            selectedStyle={styles.slider}
-            min={0}
-            max={filterLimits.maxAge}
-            step={1}
-            sliderLength={viewportWidth * 0.85}
-            customMarker={() => {
-              return <CustomSliderMarker />;
-            }}
-            values={[age]}
-            onValuesChange={([age]) => {
-              setAge(age);
-            }}
-          />
-        </View>
-
         {/* area */}
         <View style={styles.sliderTextContainer}>
           <Text style={styles.sliderHeader}>
@@ -368,73 +353,117 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
           />
         </View>
 
+        {/* age */}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderTextContainer}>
+            <Text style={styles.sliderHeader}>
+              {t("ADD_EDIT_APT.FIELDS.AGE")}
+            </Text>
+            <Text style={styles.sliderValues}>
+              {age > 0 && age < filterLimits.maxAge
+                ? `${t("FILTER_OPTIONS.MAX")} ${age}`
+                : age < filterLimits.maxAge
+                ? t("ADD_EDIT_APT.FIELDS.NEW")
+                : t("FILTER_OPTIONS.ANY")}
+            </Text>
+          </View>
+        )}
+
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderFilters}>
+            <MultiSlider
+              markerStyle={styles.slider}
+              selectedStyle={styles.slider}
+              min={0}
+              max={filterLimits.maxAge}
+              step={1}
+              sliderLength={viewportWidth * 0.85}
+              customMarker={() => {
+                return <CustomSliderMarker />;
+              }}
+              values={[age]}
+              onValuesChange={([age]) => {
+                setAge(age);
+              }}
+            />
+          </View>
+        )}
+
         {/* room */}
-        <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>
-            {t("ADD_EDIT_APT.FIELDS.ROOMS")}
-          </Text>
-          <Text style={styles.sliderValues}>
-            {minRoom === 0 && maxRoom === filterLimits.maxRoom
-              ? t("FILTER_OPTIONS.ANY")
-              : minRoom > 0 && maxRoom < filterLimits.maxRoom
-              ? minRoom + " - " + maxRoom
-              : minRoom > 0
-              ? `${t("FILTER_OPTIONS.MIN")} ${minRoom}`
-              : `${t("FILTER_OPTIONS.MAX")} ${maxRoom}`}
-          </Text>
-        </View>
-        <View style={styles.sliderFilters}>
-          <MultiSlider
-            markerStyle={styles.slider}
-            selectedStyle={styles.slider}
-            min={0}
-            max={filterLimits.maxRoom}
-            step={1}
-            sliderLength={viewportWidth * 0.85}
-            customMarker={() => {
-              return <CustomSliderMarker />;
-            }}
-            values={[minRoom, maxRoom]}
-            onValuesChange={([min, max]) => {
-              setMinRoom(min);
-              setMaxRoom(max);
-            }}
-          />
-        </View>
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderTextContainer}>
+            <Text style={styles.sliderHeader}>
+              {t("ADD_EDIT_APT.FIELDS.ROOMS")}
+            </Text>
+            <Text style={styles.sliderValues}>
+              {minRoom === 0 && maxRoom === filterLimits.maxRoom
+                ? t("FILTER_OPTIONS.ANY")
+                : minRoom > 0 && maxRoom < filterLimits.maxRoom
+                ? minRoom + " - " + maxRoom
+                : minRoom > 0
+                ? `${t("FILTER_OPTIONS.MIN")} ${minRoom}`
+                : `${t("FILTER_OPTIONS.MAX")} ${maxRoom}`}
+            </Text>
+          </View>
+        )}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderFilters}>
+            <MultiSlider
+              markerStyle={styles.slider}
+              selectedStyle={styles.slider}
+              min={0}
+              max={filterLimits.maxRoom}
+              step={1}
+              sliderLength={viewportWidth * 0.85}
+              customMarker={() => {
+                return <CustomSliderMarker />;
+              }}
+              values={[minRoom, maxRoom]}
+              onValuesChange={([min, max]) => {
+                setMinRoom(min);
+                setMaxRoom(max);
+              }}
+            />
+          </View>
+        )}
 
         {/* floor */}
-        <View style={styles.sliderTextContainer}>
-          <Text style={styles.sliderHeader}>
-            {t("ADD_EDIT_APT.FIELDS.FLOOR")}
-          </Text>
-          <Text style={styles.sliderValues}>
-            {minFloor === 0 && maxFloor === filterLimits.maxFloor
-              ? t("FILTER_OPTIONS.ANY")
-              : minFloor > 0 && maxFloor < filterLimits.maxFloor
-              ? minFloor + " - " + maxFloor
-              : minFloor > 0
-              ? `${t("FILTER_OPTIONS.MIN")} ${minFloor}`
-              : `${t("FILTER_OPTIONS.MAX")} ${maxFloor}`}
-          </Text>
-        </View>
-        <View style={styles.sliderFilters}>
-          <MultiSlider
-            markerStyle={styles.slider}
-            selectedStyle={styles.slider}
-            min={0}
-            max={filterLimits.maxFloor}
-            step={1}
-            sliderLength={viewportWidth * 0.85}
-            values={[minFloor, maxFloor]}
-            customMarker={() => {
-              return <CustomSliderMarker />;
-            }}
-            onValuesChange={([min, max]) => {
-              setMinFloor(min);
-              setMaxFloor(max);
-            }}
-          />
-        </View>
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderTextContainer}>
+            <Text style={styles.sliderHeader}>
+              {t("ADD_EDIT_APT.FIELDS.FLOOR")}
+            </Text>
+            <Text style={styles.sliderValues}>
+              {minFloor === 0 && maxFloor === filterLimits.maxFloor
+                ? t("FILTER_OPTIONS.ANY")
+                : minFloor > 0 && maxFloor < filterLimits.maxFloor
+                ? minFloor + " - " + maxFloor
+                : minFloor > 0
+                ? `${t("FILTER_OPTIONS.MIN")} ${minFloor}`
+                : `${t("FILTER_OPTIONS.MAX")} ${maxFloor}`}
+            </Text>
+          </View>
+        )}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.sliderFilters}>
+            <MultiSlider
+              markerStyle={styles.slider}
+              selectedStyle={styles.slider}
+              min={0}
+              max={filterLimits.maxFloor}
+              step={1}
+              sliderLength={viewportWidth * 0.85}
+              values={[minFloor, maxFloor]}
+              customMarker={() => {
+                return <CustomSliderMarker />;
+              }}
+              onValuesChange={([min, max]) => {
+                setMinFloor(min);
+                setMaxFloor(max);
+              }}
+            />
+          </View>
+        )}
       </ScrollView>
       <View style={styles.bigBtn}>
         <Button

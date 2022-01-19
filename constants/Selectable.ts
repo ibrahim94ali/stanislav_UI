@@ -23,12 +23,14 @@ export const buildingTypes = [
 
 export const adTypes = [{ value: AdType.RENT }, { value: AdType.PURCHASE }];
 export const heatingTypes = [
+  { value: HeatingType.NONE },
   { value: HeatingType.ELECTRIC },
   { value: HeatingType.WOOD },
   { value: HeatingType.PALETTE },
   { value: HeatingType.CENTRAL },
   { value: HeatingType.COAL },
   { value: HeatingType.GAS },
+  { value: HeatingType.OTHER },
 ];
 
 export const amenityTypes = [

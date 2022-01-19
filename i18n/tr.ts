@@ -89,6 +89,8 @@ export default {
       palette: "Palet",
       coal: "Kömür",
       gas: "Gaz",
+      none: "Yok",
+      other: "Başka",
       pool: "Havuz",
       parking: "Park yeri",
       garden: "Bahçe",

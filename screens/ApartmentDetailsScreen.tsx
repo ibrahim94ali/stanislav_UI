@@ -8,7 +8,7 @@ import {
   Linking,
   Alert,
 } from "react-native";
-import { AmenityType, ApartmentI } from "../interfaces";
+import { AmenityType, ApartmentI, BuildingType } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
 import { TouchableOpacity } from "react-native";
@@ -372,64 +372,70 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           <Text style={styles.title}>{t("APARTMENT_DETAILS.DESCRIPTION")}</Text>
           <Text style={styles.details}>{apartment.details}</Text>
         </View>
-        <View style={styles.amenitiesContainer}>
-          <Text style={styles.title}>{t("APARTMENT_DETAILS.AMENITIES")}</Text>
-          <View style={styles.amenityRow}>
-            <View style={styles.amenityContainer}>
-              <MaterialIcons name="house" size={dpx(18)} color={Colors.black} />
-              <Text style={styles.amenity}>
-                {apartment.age === 0
-                  ? t("ADD_EDIT_APT.FIELDS.NEW")
-                  : `${apartment.age} ${t("ADD_EDIT_APT.FIELDS.YEARS")}`}
-              </Text>
+        {apartment.buildingType !== BuildingType.LAND && (
+          <View style={styles.amenitiesContainer}>
+            <Text style={styles.title}>{t("APARTMENT_DETAILS.AMENITIES")}</Text>
+            <View style={styles.amenityRow}>
+              <View style={styles.amenityContainer}>
+                <MaterialIcons
+                  name="house"
+                  size={dpx(18)}
+                  color={Colors.black}
+                />
+                <Text style={styles.amenity}>
+                  {apartment.age === 0
+                    ? t("ADD_EDIT_APT.FIELDS.NEW")
+                    : `${apartment.age} ${t("ADD_EDIT_APT.FIELDS.YEARS")}`}
+                </Text>
+              </View>
+              <View style={styles.amenityContainer}>
+                <MaterialCommunityIcons
+                  name="sofa"
+                  size={dpx(18)}
+                  color={Colors.black}
+                />
+                <Text style={styles.amenity}>
+                  {t(
+                    `APARTMENT_DETAILS.FURNISHINGTYPE.${
+                      furnishingTypes.find(
+                        (f) => f.value === apartment.isFurnished
+                      )?.label
+                    }`
+                  )}
+                </Text>
+              </View>
+              <View style={styles.amenityContainer}>
+                <MaterialCommunityIcons
+                  name="fire"
+                  size={dpx(18)}
+                  color={Colors.black}
+                />
+                <Text style={styles.amenity}>
+                  {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
+                  {` ${t("ADD_EDIT_APT.HEATING")}`}
+                </Text>
+              </View>
             </View>
-            <View style={styles.amenityContainer}>
-              <MaterialCommunityIcons
-                name="sofa"
-                size={dpx(18)}
-                color={Colors.black}
-              />
-              <Text style={styles.amenity}>
-                {t(
-                  `APARTMENT_DETAILS.FURNISHINGTYPE.${
-                    furnishingTypes.find(
-                      (f) => f.value === apartment.isFurnished
-                    )?.label
-                  }`
-                )}
-              </Text>
-            </View>
-            <View style={styles.amenityContainer}>
-              <MaterialCommunityIcons
-                name="fire"
-                size={dpx(18)}
-                color={Colors.black}
-              />
-              <Text style={styles.amenity}>
-                {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
-                {` ${t("ADD_EDIT_APT.HEATING")}`}
-              </Text>
-            </View>
+            {apartment.amenities?.map((_, index: number) => {
+              const am = apartment.amenities;
+              if (index % 3 === 0) {
+                return (
+                  <View
+                    style={styles.amenityRow}
+                    key={apartment.amenities[index]}
+                  >
+                    {am.length > index &&
+                      amenityRender(apartment.amenities[index])}
+                    {am.length > index + 1 &&
+                      amenityRender(apartment.amenities[index + 1])}
+                    {am.length > index + 2 &&
+                      amenityRender(apartment.amenities[index + 2])}
+                  </View>
+                );
+              }
+            })}
           </View>
-          {apartment.amenities?.map((_, index: number) => {
-            const am = apartment.amenities;
-            if (index % 3 === 0) {
-              return (
-                <View
-                  style={styles.amenityRow}
-                  key={apartment.amenities[index]}
-                >
-                  {am.length > index &&
-                    amenityRender(apartment.amenities[index])}
-                  {am.length > index + 1 &&
-                    amenityRender(apartment.amenities[index + 1])}
-                  {am.length > index + 2 &&
-                    amenityRender(apartment.amenities[index + 2])}
-                </View>
-              );
-            }
-          })}
-        </View>
+        )}
         {!showActions && (
           <View style={styles.agentContainer}>
             <Text style={styles.title}>
