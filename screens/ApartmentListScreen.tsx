@@ -2,7 +2,6 @@ import {
   FontAwesome5,
   Ionicons,
   MaterialCommunityIcons,
-  MaterialIcons,
 } from "@expo/vector-icons";
 import React, {
   useCallback,
@@ -12,7 +11,6 @@ import React, {
   useState,
 } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import Colors from "../constants/Colors";
@@ -111,7 +109,7 @@ const ApartmentListScreen = (props: Props) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
       <Header>
         <IconButton handlePress={() => props.navigation.goBack()}>
@@ -206,7 +204,7 @@ const ApartmentListScreen = (props: Props) => {
           </View>
         </View>
       </BottomSheet>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -215,6 +213,7 @@ export default observer(ApartmentListScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: dpx(10),
   },
   header: {
     fontFamily: "Montserrat_500Medium",

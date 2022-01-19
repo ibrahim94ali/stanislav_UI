@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { Platform, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useStore } from "../hooks/StoreContext";
 import { observer } from "mobx-react";
@@ -9,16 +9,18 @@ import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { dpx } from "../constants/Spacings";
 import { useApolloClient } from "@apollo/client";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Button from "../components/Button";
 import { MaterialIcons } from "@expo/vector-icons";
 import IconButton from "../components/IconButton";
 import Header from "../components/Header";
+import { useState } from "react";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
   const store = useStore();
   const client = useApolloClient();
+
+  const [selectedLang, setSelectedLang] = useState(i18n.language || "en");
 
   const handleRegister = () => {
     navigation.navigate("RegisterScreen");
@@ -38,19 +40,27 @@ function ProfileScreen({ navigation }: any) {
     }
   };
 
+  const onLangValueChange = (lang: string) => {
+    setSelectedLang(lang);
+    if (Platform.OS === "android") {
+      handleLanguageChange(lang);
+    }
+  };
+
   const handleLanguageChange = async (lang: string) => {
     i18n.changeLanguage(lang);
     await AsyncStorage.setItem("lang", lang);
   };
 
   return (
-    <SafeAreaView edges={["top"]} style={styles.container}>
+    <View style={styles.container}>
       <Header>
         <View style={styles.langContainer}>
           <RNPickerSelect
             placeholder={{}}
-            value={i18n.language}
-            onValueChange={handleLanguageChange}
+            value={selectedLang}
+            onValueChange={onLangValueChange}
+            onClose={() => handleLanguageChange(selectedLang)}
             itemKey="value"
             items={[
               { label: "English", value: "en" },
@@ -110,7 +120,7 @@ function ProfileScreen({ navigation }: any) {
           />
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -119,6 +129,7 @@ export default observer(ProfileScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: dpx(10),
   },
   nameContainer: {
     flexDirection: "row",

@@ -1,24 +1,22 @@
 import { StyleSheet } from "react-native";
 import Colors from "./Colors";
+import { dpx } from "./Spacings";
 
 export const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: Colors.gray,
-    borderRadius: 4,
+    fontSize: dpx(14),
+    fontFamily: "Montserrat_500Medium",
+    paddingHorizontal: dpx(10),
+    paddingVertical: dpx(10),
+    borderRadius: dpx(4),
     color: Colors.black,
-    paddingRight: 30, // to ensure the text is never behind the icon
   },
   inputAndroid: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 0.5,
-    borderRadius: 8,
+    fontSize: dpx(14),
+    fontFamily: "Montserrat_500Medium",
     color: Colors.black,
-    paddingRight: 30, // to ensure the text is never behind the icon
+  },
+  placeholder: {
+    color: Colors.gray,
   },
 });

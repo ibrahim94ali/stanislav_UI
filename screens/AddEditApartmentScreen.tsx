@@ -1,14 +1,7 @@
 import { gql, useMutation } from "@apollo/client";
 import React, { useEffect, useState } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  ScrollView,
-  TouchableOpacity,
-  Alert,
-  Text,
-} from "react-native";
+import { StyleSheet, View, Image, ScrollView, Alert, Text } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { ADD_APARTMENT, UPDATE_APARTMENT } from "../graphQL/Mutations";
@@ -39,7 +32,6 @@ import { dpx } from "../constants/Spacings";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
-import { SafeAreaView } from "react-native-safe-area-context";
 import LocationPicker from "../components/LocationPicker";
 import FilterOptions from "../components/FilterOptions";
 import RNPickerSelect from "react-native-picker-select";
@@ -329,7 +321,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
 
   return (
-    <SafeAreaView edges={["top"]} style={styles.container}>
+    <View style={styles.container}>
       {(loadingNewApartment || loadingUpatedApartment) && <LoadingSpinner />}
       <Header>
         <IconButton handlePress={() => navigation.goBack()}>
@@ -611,7 +603,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           }
         />
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -620,6 +612,7 @@ export default AddEditApartmentScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: dpx(10),
   },
   header: {
     fontFamily: "Montserrat_500Medium",

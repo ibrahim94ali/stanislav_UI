@@ -3,7 +3,6 @@ import { Ionicons } from "@expo/vector-icons";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -20,7 +19,7 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
     useQuery(GET_FAV_APARTMENTS);
 
   return (
-    <SafeAreaView edges={["top"]} style={styles.container}>
+    <View style={styles.container}>
       {loadingApartments ? <LoadingSpinner /> : null}
       <Header>
         <IconButton handlePress={() => navigation.goBack()}>
@@ -46,7 +45,7 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
             </View>
           ))}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -55,6 +54,7 @@ export default MyFavoriteApartmentsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: dpx(10),
   },
   header: {
     fontFamily: "Montserrat_500Medium",

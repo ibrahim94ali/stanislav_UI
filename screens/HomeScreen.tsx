@@ -3,7 +3,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import React, { useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
 import SearchBox from "../components/SearchBox";
@@ -31,7 +30,7 @@ function HomeScreen({ navigation }: any) {
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={["top"]}>
+    <View style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
       {isFiltersOpen ? (
         <SearchForm
@@ -123,7 +122,7 @@ function HomeScreen({ navigation }: any) {
           </ScrollView>
         </View>
       )}
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -132,6 +131,7 @@ export default observer(HomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    paddingTop: dpx(10),
   },
 
   searchField: {

@@ -1,14 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useState } from "react";
-import {
-  Dimensions,
-  Modal,
-  StyleSheet,
-  View,
-  Pressable,
-  TouchableOpacity,
-} from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { Dimensions, Modal, StyleSheet, View, Pressable } from "react-native";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import Button from "./Button";
@@ -16,9 +9,8 @@ import Button from "./Button";
 const LocationPicker = ({ addressGeoCode, onSave }: any) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [geolocation, setGeolocation] = useState<number[]>(addressGeoCode);
-  const [newGeolocation, setNewGeolocation] = useState<number[]>(
-    addressGeoCode
-  );
+  const [newGeolocation, setNewGeolocation] =
+    useState<number[]>(addressGeoCode);
 
   useEffect(() => {
     setGeolocation(addressGeoCode);
@@ -33,31 +25,31 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
   };
   return (
     <View style={styles.container}>
-      <TouchableOpacity onPress={() => setModalVisible(true)}>
-        <MapView
-          style={styles.smallMap}
-          loadingEnabled={false}
-          pitchEnabled={false}
-          rotateEnabled={false}
-          scrollEnabled={false}
-          zoomEnabled={false}
-          region={{
+      <MapView
+        style={styles.smallMap}
+        provider={PROVIDER_GOOGLE}
+        loadingEnabled={false}
+        pitchEnabled={false}
+        rotateEnabled={false}
+        scrollEnabled={false}
+        zoomEnabled={false}
+        onPress={() => setModalVisible(true)}
+        region={{
+          latitude: geolocation[0],
+          longitude: geolocation[1],
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        }}
+      >
+        <Marker
+          coordinate={{
             latitude: geolocation[0],
             longitude: geolocation[1],
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
           }}
         >
-          <Marker
-            coordinate={{
-              latitude: geolocation[0],
-              longitude: geolocation[1],
-            }}
-          >
-            <Ionicons name="home" size={30} color={Colors.primary} />
-          </Marker>
-        </MapView>
-      </TouchableOpacity>
+          <Ionicons name="home" size={30} color={Colors.primary} />
+        </Marker>
+      </MapView>
       <Modal
         animationType="slide"
         visible={modalVisible}
@@ -67,6 +59,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
           style={styles.map}
           loadingEnabled={true}
           rotateEnabled={false}
+          provider={PROVIDER_GOOGLE}
           onPress={(e) => addMarker(e)}
           initialRegion={{
             latitude: newGeolocation[0],

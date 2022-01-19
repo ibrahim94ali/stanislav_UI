@@ -11,7 +11,6 @@ import {
 import { AmenityType, ApartmentI, BuildingType } from "../interfaces";
 import Colors from "../constants/Colors";
 import ImageView from "react-native-image-viewing";
-import { TouchableOpacity } from "react-native";
 import {
   AntDesign,
   Entypo,
@@ -30,12 +29,12 @@ import { useStore } from "../hooks/StoreContext";
 import { dpx } from "../constants/Spacings";
 import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { SafeAreaView } from "react-native-safe-area-context";
 import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { furnishingTypes } from "../constants/Selectable";
 import { useTranslation } from "react-i18next";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -240,7 +239,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       {(loadingFavorite || loadingUnfavorite || loadingDelete) && (
         <LoadingSpinner />
       )}
@@ -337,37 +336,35 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         <View style={styles.propertyDetailsContainer}>
           <PropertyDetails apartment={apartment} />
         </View>
-        <TouchableOpacity
+        <MapView
+          style={styles.map}
+          loadingEnabled={false}
+          pitchEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          zoomEnabled={false}
+          provider={PROVIDER_GOOGLE}
           onPress={() =>
             Linking.openURL(
-              `http://maps.google.com/maps?z=18&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+              `http://maps.google.com/maps?z=16&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
             )
           }
+          region={{
+            latitude: apartment.geolocation[0],
+            longitude: apartment.geolocation[1],
+            latitudeDelta: 0.005,
+            longitudeDelta: 0.005,
+          }}
         >
-          <MapView
-            style={styles.map}
-            loadingEnabled={false}
-            pitchEnabled={false}
-            rotateEnabled={false}
-            scrollEnabled={false}
-            zoomEnabled={false}
-            region={{
+          <Marker
+            coordinate={{
               latitude: apartment.geolocation[0],
               longitude: apartment.geolocation[1],
-              latitudeDelta: 0.005,
-              longitudeDelta: 0.005,
             }}
           >
-            <Marker
-              coordinate={{
-                latitude: apartment.geolocation[0],
-                longitude: apartment.geolocation[1],
-              }}
-            >
-              <Ionicons name="home" size={30} color={Colors.primary} />
-            </Marker>
-          </MapView>
-        </TouchableOpacity>
+            <Ionicons name="home" size={30} color={Colors.primary} />
+          </Marker>
+        </MapView>
         <View style={styles.descContainer}>
           <Text style={styles.title}>{t("APARTMENT_DETAILS.DESCRIPTION")}</Text>
           <Text style={styles.details}>{apartment.details}</Text>
@@ -474,7 +471,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           </View>
         )}
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 };
 

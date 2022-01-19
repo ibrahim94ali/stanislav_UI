@@ -26,7 +26,7 @@ const SearchBox = (props: Props) => {
           props.searchTextEntered(search);
           setSearch("");
         }}
-        returnKeyType="done"
+        returnKeyType="search"
         returnKeyLabel="Search"
       />
     </View>

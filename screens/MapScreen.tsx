@@ -3,9 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { observer } from "mobx-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { StyleSheet, View, Dimensions } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import { StyleSheet, View, Dimensions, Text, Platform } from "react-native";
+import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Colors from "../constants/Colors";
+import { dpx } from "../constants/Spacings";
 import { GET_APARTMENTS } from "../graphQL/Queries";
 import { formatPrice } from "../helperMethods";
 import { AdType, ApartmentI } from "../interfaces";
@@ -18,6 +19,7 @@ const MapScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <MapView
         style={styles.map}
+        provider={PROVIDER_GOOGLE}
         loadingEnabled
         region={{
           latitude: 41.8,
@@ -43,6 +45,24 @@ const MapScreen = ({ navigation }: any) => {
               navigation.push("ApartmentDetailsScreen", { apartment })
             }
           >
+            {Platform.OS === "ios" && (
+              <Callout
+                style={styles.calloutContainer}
+                onPress={() =>
+                  navigation.push("ApartmentDetailsScreen", { apartment })
+                }
+              >
+                <Text style={styles.calloutTitle}>{apartment.title}</Text>
+                <Text style={styles.calloutDescription}>{`${formatPrice(
+                  apartment.price
+                )} € ${
+                  apartment.adType === AdType.RENT
+                    ? "/ " + t("PROPERTY_DETAILS.MONTH")
+                    : ""
+                }`}</Text>
+              </Callout>
+            )}
+
             <Ionicons name="home" size={30} color={Colors.primary} />
           </Marker>
         ))}
@@ -62,5 +82,17 @@ const styles = StyleSheet.create({
   map: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
+  },
+  calloutContainer: {
+    width: dpx(200),
+  },
+  calloutTitle: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(14),
+    marginBottom: dpx(5),
+  },
+  calloutDescription: {
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(12),
   },
 });

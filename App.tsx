@@ -1,6 +1,5 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import {
   ApolloClient,
@@ -121,16 +120,14 @@ export default function App() {
     cache: new InMemoryCache(inMemoryCacheConfig),
   });
 
-  if (!isLoadingComplete) {
+  if (!isLoadingComplete || !fontsLoaded) {
     return null;
   } else {
     return (
       <ApolloProvider client={client}>
         <StoreContextProvider>
-          <SafeAreaProvider>
-            <Navigation />
-            <StatusBar style="inverted" />
-          </SafeAreaProvider>
+          <Navigation />
+          <StatusBar style="dark" />
         </StoreContextProvider>
       </ApolloProvider>
     );
