@@ -133,5 +133,11 @@ export default {
       SURNAME: "Surname",
       PHONE: "Tel",
     },
+    DELETE_MODAL: {
+      TITLE: "Are you sure?",
+      MSG: "This property will be deleted permanently.",
+    },
+    CANCEL: "Cancel",
+    OK: "Ok",
   },
 };

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Dimensions, Modal, StyleSheet, View, Pressable } from "react-native";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Colors from "../constants/Colors";
+import { customMapStyle } from "../constants/googleMapsStyle";
 import { dpx } from "../constants/Spacings";
 import Button from "./Button";
 
@@ -28,6 +29,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
       <MapView
         style={styles.smallMap}
         provider={PROVIDER_GOOGLE}
+        customMapStyle={customMapStyle}
         loadingEnabled={false}
         pitchEnabled={false}
         rotateEnabled={false}
@@ -53,6 +55,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
       <Modal
         animationType="slide"
         visible={modalVisible}
+        style={styles.modal}
         onRequestClose={() => setModalVisible(false)}
       >
         <MapView
@@ -60,6 +63,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
           loadingEnabled={true}
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
+          customMapStyle={customMapStyle}
           onPress={(e) => addMarker(e)}
           initialRegion={{
             latitude: newGeolocation[0],
@@ -134,5 +138,8 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: "center",
     zIndex: 1,
+  },
+  modal: {
+    margin: 0,
   },
 });

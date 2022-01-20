@@ -35,6 +35,7 @@ import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import { furnishingTypes } from "../constants/Selectable";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { customMapStyle } from "../constants/googleMapsStyle";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -172,12 +173,12 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   };
 
   const handleDelete = () => {
-    Alert.alert("Are you sure", "This apartment will be deleted permenantely", [
+    Alert.alert(t("DELETE_MODAL.TITLE"), t("DELETE_MODAL.MSG"), [
       {
-        text: "Cancel",
+        text: t("CANCEL"),
       },
       {
-        text: "OK",
+        text: t("OK"),
         onPress: () => {
           deleteApartment({
             variables: {
@@ -331,6 +332,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           imageIndex={fullScreenPhotoIndex}
           visible={isFullScreen}
           swipeToCloseEnabled={false}
+          presentationStyle="overFullScreen"
           onRequestClose={() => setIsFullScreen(false)}
         />
         <View style={styles.propertyDetailsContainer}>
@@ -344,6 +346,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           scrollEnabled={false}
           zoomEnabled={false}
           provider={PROVIDER_GOOGLE}
+          customMapStyle={customMapStyle}
           onPress={() =>
             Linking.openURL(
               `http://maps.google.com/maps?z=16&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
@@ -569,6 +572,7 @@ const styles = StyleSheet.create({
     marginLeft: dpx(5),
     fontSize: dpx(12),
     fontFamily: "Montserrat_400Regular",
+    color: Colors.black,
   },
   agentContainer: {
     padding: dpx(20),
@@ -581,6 +585,7 @@ const styles = StyleSheet.create({
   person: {
     fontFamily: "Montserrat_700Bold",
     fontSize: dpx(16),
+    color: Colors.black,
   },
   personIcons: {
     flexDirection: "row",

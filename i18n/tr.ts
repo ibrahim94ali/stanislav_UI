@@ -135,5 +135,11 @@ export default {
       SURNAME: "Soyad",
       PHONE: "Tel",
     },
+    DELETE_MODAL: {
+      TITLE: "Emin misiniz?",
+      MSG: "Bu ilan tamamen silinecektir.",
+    },
+    CANCEL: "İptal",
+    OK: "Evet",
   },
 };

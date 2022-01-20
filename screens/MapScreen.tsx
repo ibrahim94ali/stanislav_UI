@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Dimensions, Text, Platform } from "react-native";
 import MapView, { Callout, Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import Colors from "../constants/Colors";
+import { customMapStyle } from "../constants/googleMapsStyle";
 import { dpx } from "../constants/Spacings";
 import { GET_APARTMENTS } from "../graphQL/Queries";
 import { formatPrice } from "../helperMethods";
@@ -20,6 +21,7 @@ const MapScreen = ({ navigation }: any) => {
       <MapView
         style={styles.map}
         provider={PROVIDER_GOOGLE}
+        customMapStyle={customMapStyle}
         loadingEnabled
         region={{
           latitude: 41.8,

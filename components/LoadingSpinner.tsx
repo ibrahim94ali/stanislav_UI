@@ -4,7 +4,7 @@ import Colors from "../constants/Colors";
 
 const LoadingSpinner = () => {
   return (
-    <Modal animationType="fade" transparent={true} visible={true}>
+    <Modal animationType="fade" transparent visible style={styles.modal}>
       <View style={[styles.container, styles.horizontal]}>
         <ActivityIndicator size="large" color={Colors.secondary} />
       </View>
@@ -24,5 +24,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     padding: 10,
+  },
+  modal: {
+    margin: 0,
   },
 });

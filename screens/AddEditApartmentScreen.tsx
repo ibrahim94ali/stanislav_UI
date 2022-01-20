@@ -1,6 +1,14 @@
 import { gql, useMutation } from "@apollo/client";
-import React, { useEffect, useState } from "react";
-import { StyleSheet, View, Image, ScrollView, Alert, Text } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  StyleSheet,
+  View,
+  Image,
+  ScrollView,
+  Alert,
+  Text,
+  Platform,
+} from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { TextInput } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
@@ -90,6 +98,14 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
+
+  //refs for inputs
+  const ref_description = useRef<TextInput>();
+  const ref_address = useRef<TextInput>();
+  const ref_area = useRef<TextInput>();
+  const ref_room = useRef<TextInput>();
+  const ref_floor = useRef<TextInput>();
+  const ref_age = useRef<TextInput>();
 
   const pickImage = async () => {
     const { status: statusImagePicker } =
@@ -405,45 +421,18 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           placeholder={t("ADD_EDIT_APT.FIELDS.TITLE") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setTitle(value)}
+          returnKeyType="next"
+          onSubmitEditing={() => ref_description.current?.focus()}
         />
         <TextInput
           style={[styles.input, styles.description]}
           value={details}
           multiline
-          numberOfLines={3}
           placeholder={t("ADD_EDIT_APT.FIELDS.DESCRIPTION") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setDetails(value)}
-        />
-        <TextInput
-          style={styles.input}
-          value={price?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.PRICE") + " (euro) *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value)) {
-              setPrice(parseInt(value));
-            } else {
-              setPrice(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="done"
-        />
-        <TextInput
-          style={styles.input}
-          value={msquare?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (m2) *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value)) {
-              setMsquare(parseInt(value));
-            } else {
-              setMsquare(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="done"
+          ref={ref_description as any}
+          returnKeyType="next"
         />
 
         <View style={styles.cityContainer}>
@@ -452,9 +441,13 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             value={city}
             onValueChange={(itemValue: CityType) => {
               setCity(itemValue);
+              if (Platform.OS === "android") {
+                ref_address.current?.focus();
+              }
             }}
             items={cityTypes}
             style={pickerSelectStyles}
+            onDonePress={() => ref_address.current?.focus()}
           />
         </View>
 
@@ -464,7 +457,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           placeholder={t("ADD_EDIT_APT.FIELDS.ADDRESS") + " *"}
           placeholderTextColor={Colors.gray}
           onChangeText={(value) => setAddress(value)}
-          onEndEditing={attemptGeocodeAsync}
+          onSubmitEditing={attemptGeocodeAsync}
+          ref={ref_address as any}
+          returnKeyType="search"
         />
 
         <LocationPicker
@@ -483,12 +478,107 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           />
         </View>
 
+        <TextInput
+          style={styles.input}
+          value={price?.toString() || ""}
+          placeholder={t("ADD_EDIT_APT.FIELDS.PRICE") + " (euro) *"}
+          placeholderTextColor={Colors.gray}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setPrice(parseInt(value));
+            } else {
+              setPrice(undefined);
+            }
+          }}
+          keyboardType="numeric"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_area.current?.focus()}
+        />
+        <TextInput
+          style={styles.input}
+          value={msquare?.toString() || ""}
+          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (m2) *"}
+          placeholderTextColor={Colors.gray}
+          onChangeText={(value) => {
+            if (parseInt(value)) {
+              setMsquare(parseInt(value));
+            } else {
+              setMsquare(undefined);
+            }
+          }}
+          keyboardType="numeric"
+          returnKeyType="next"
+          ref={ref_area as any}
+          onSubmitEditing={() =>
+            buildingType !== BuildingType.LAND
+              ? ref_room.current?.focus()
+              : null
+          }
+        />
+
+        {buildingType !== BuildingType.LAND && (
+          <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
+            <TextInput
+              style={styles.input}
+              value={roomCount?.toString() || ""}
+              placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setRoomCount(parseInt(value));
+                } else {
+                  setRoomCount(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="next"
+              ref={ref_room as any}
+              onSubmitEditing={() => ref_floor.current?.focus()}
+            />
+            <TextInput
+              style={styles.input}
+              value={floor?.toString() || ""}
+              placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setFloor(parseInt(value));
+                } else {
+                  setFloor(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="next"
+              ref={ref_floor as any}
+              onSubmitEditing={() => ref_age.current?.focus()}
+            />
+            <TextInput
+              style={styles.input}
+              value={age?.toString() || ""}
+              placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
+                "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
+              )})  *`}
+              placeholderTextColor={Colors.gray}
+              onChangeText={(value) => {
+                if (parseInt(value) || value === "0") {
+                  setAge(parseInt(value));
+                } else {
+                  setAge(undefined);
+                }
+              }}
+              keyboardType="numeric"
+              returnKeyType="next"
+              ref={ref_age as any}
+            />
+          </View>
+        )}
+
         <View
           style={[
             styles.optionContainer,
             {
               marginBottom:
-                buildingType === BuildingType.LAND ? dpx(20) : dpx(10),
+                buildingType === BuildingType.LAND ? dpx(110) : dpx(10),
             },
           ]}
         >
@@ -534,53 +624,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
                 }}
               />
             </View>
-            <TextInput
-              style={styles.input}
-              value={roomCount?.toString() || ""}
-              placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setRoomCount(parseInt(value));
-                } else {
-                  setRoomCount(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="done"
-            />
-            <TextInput
-              style={styles.input}
-              value={floor?.toString() || ""}
-              placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setFloor(parseInt(value));
-                } else {
-                  setFloor(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="done"
-            />
-            <TextInput
-              style={styles.input}
-              value={age?.toString() || ""}
-              placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
-                "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
-              )})  *`}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setAge(parseInt(value));
-                } else {
-                  setAge(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="done"
-            />
           </View>
         )}
         <Button
