@@ -139,6 +139,8 @@ export default {
     DELETE_MODAL: {
       TITLE: "Are you sure?",
       MSG: "This property will be deleted permanently.",
+      PHOTO_TITLE: "Delete photo?",
+      PHOTO_MSG: "This photo will be deleted",
     },
     CANCEL: "Cancel",
     OK: "Ok",

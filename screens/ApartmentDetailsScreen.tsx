@@ -190,6 +190,12 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     ]);
   };
 
+  const redirectToMap = (apartment: ApartmentI) => {
+    Linking.openURL(
+      `http://maps.google.com/maps?z=16&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+    );
+  };
+
   useEffect(() => {
     if (isNowFavorite?.addFavorite) {
       setIsFav(true);
@@ -347,11 +353,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           zoomEnabled={false}
           provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}
-          onPress={() =>
-            Linking.openURL(
-              `http://maps.google.com/maps?z=16&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
-            )
-          }
+          onPress={() => redirectToMap(apartment)}
           region={{
             latitude: apartment.geolocation[0],
             longitude: apartment.geolocation[1],
@@ -364,6 +366,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               latitude: apartment.geolocation[0],
               longitude: apartment.geolocation[1],
             }}
+            onPress={() => redirectToMap(apartment)}
           >
             <Ionicons name="home" size={30} color={Colors.primary} />
           </Marker>

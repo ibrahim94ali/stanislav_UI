@@ -141,6 +141,8 @@ export default {
     DELETE_MODAL: {
       TITLE: "A je i sigurt?",
       MSG: "Kjo pronë do të fshihet përgjithmonë.",
+      PHOTO_TITLE: "Të fshihet fotografia?",
+      PHOTO_MSG: "Kjo foto do të fshihet",
     },
     CANCEL: "Anulo",
     OK: "Ok",

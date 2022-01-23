@@ -141,6 +141,8 @@ export default {
     DELETE_MODAL: {
       TITLE: "Emin misiniz?",
       MSG: "Bu ilan tamamen silinecektir.",
+      PHOTO_TITLE: "Fotoğrafı sil?",
+      PHOTO_MSG: "Bu fotoğraf silinecektir",
     },
     CANCEL: "İptal",
     OK: "Evet",

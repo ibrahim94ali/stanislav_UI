@@ -208,6 +208,34 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     })();
   }, []);
 
+  const handleDeletePhotoModal = (index: number, isNew: boolean) => {
+    Alert.alert(t("DELETE_MODAL.PHOTO_TITLE"), t("DELETE_MODAL.PHOTO_MSG"), [
+      {
+        text: t("CANCEL"),
+      },
+      {
+        text: t("OK"),
+        onPress: () => {
+          deletePhoto(index, isNew);
+        },
+      },
+    ]);
+  };
+
+  const deletePhoto = (index: number, isNew: boolean) => {
+    if (isNew) {
+      setUploadImages([
+        ...uploadImages.slice(0, index),
+        ...uploadImages.slice(index + 1),
+      ]);
+    } else {
+      setOldImages([
+        ...oldImages.slice(0, index),
+        ...oldImages.slice(index + 1),
+      ]);
+    }
+  };
+
   function generateRNFile(uri: string, name: string) {
     return uri
       ? new ReactNativeFile({
@@ -307,27 +335,14 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     </TouchableOpacity>
   );
 
-  const PhotoViewer = ({ photo, index, handlePress }: any) => (
+  const PhotoViewer = ({ photo, index, isNew }: any) => (
     <View style={{ marginRight: 10 }}>
-      <TouchableOpacity
-        style={{
-          position: "absolute",
-          top: -5,
-          right: -5,
-          zIndex: 1,
-          backgroundColor: Colors.white,
-          borderRadius: 50,
-          padding: 5,
-        }}
-        onPress={() => handlePress()}
-      >
-        <Ionicons name="remove-circle" size={25} color="#f00" />
-      </TouchableOpacity>
       <TouchableOpacity
         onPress={() => {
           setFullScreenPhotoIndex(index);
           setIsFullScreen(true);
         }}
+        onLongPress={() => handleDeletePhotoModal(index, isNew)}
       >
         <Image
           style={{
@@ -382,29 +397,14 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
             }}
           >
             {oldImages.map((photo, index) => (
-              <PhotoViewer
-                key={photo}
-                photo={photo}
-                index={index}
-                handlePress={() =>
-                  setOldImages([
-                    ...oldImages.slice(0, index),
-                    ...oldImages.slice(index + 1),
-                  ])
-                }
-              />
+              <PhotoViewer key={photo} photo={photo} index={index} />
             ))}
             {uploadImages.map((photo, index) => (
               <PhotoViewer
                 key={photo}
                 photo={photo}
                 index={index}
-                handlePress={() =>
-                  setUploadImages([
-                    ...uploadImages.slice(0, index),
-                    ...uploadImages.slice(index + 1),
-                  ])
-                }
+                isNew={true}
               />
             ))}
           </ScrollView>

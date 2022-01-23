@@ -48,6 +48,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
             latitude: geolocation[0],
             longitude: geolocation[1],
           }}
+          onPress={() => setModalVisible(true)}
         >
           <Ionicons name="home" size={30} color={Colors.primary} />
         </Marker>
