@@ -11,6 +11,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useTranslation } from "react-i18next";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const store = useStore();
@@ -55,7 +56,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       {loading && <LoadingSpinner />}
       <Text style={styles.title}>{t("PROFILE.REGISTER")}</Text>
       <ScrollView contentContainerStyle={styles.actions}>
@@ -131,13 +132,14 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.bg,
   },
   title: {
     fontSize: dpx(16),

@@ -45,6 +45,9 @@ import FilterOptions from "../components/FilterOptions";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+const PHOTO_UPLOAD_LIMIT = 10;
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const { t } = useTranslation();
@@ -337,7 +340,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       {(loadingNewApartment || loadingUpatedApartment) && <LoadingSpinner />}
       <Header>
         <IconButton handlePress={() => navigation.goBack()}>
@@ -348,13 +351,15 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         </Text>
         <IconButton
           handlePress={pickImage}
-          disabled={uploadImages.length + oldImages.length > 4}
+          disabled={
+            uploadImages.length + oldImages.length >= PHOTO_UPLOAD_LIMIT
+          }
         >
           <MaterialIcons
             name="add-photo-alternate"
             size={dpx(24)}
             color={
-              uploadImages.length + oldImages.length > 4
+              uploadImages.length + oldImages.length >= PHOTO_UPLOAD_LIMIT
                 ? Colors.lightGray
                 : Colors.primary
             }
@@ -646,7 +651,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           }
         />
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -655,7 +660,7 @@ export default AddEditApartmentScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: dpx(10),
+    backgroundColor: Colors.bg,
   },
   header: {
     fontFamily: "Montserrat_500Medium",

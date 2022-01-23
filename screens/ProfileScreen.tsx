@@ -14,6 +14,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import IconButton from "../components/IconButton";
 import Header from "../components/Header";
 import { useState } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
@@ -53,7 +54,7 @@ function ProfileScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       <Header>
         <View style={styles.langContainer}>
           <RNPickerSelect
@@ -64,9 +65,9 @@ function ProfileScreen({ navigation }: any) {
             itemKey="value"
             items={[
               { label: "English", value: "en" },
-              { label: "Türkçe", value: "tr" },
-              { label: "Shqip", value: "al" },
               { label: "Македонски", value: "mk" },
+              { label: "Shqip", value: "al" },
+              { label: "Türkçe", value: "tr" },
             ]}
             style={pickerSelectStyles}
           />
@@ -120,7 +121,7 @@ function ProfileScreen({ navigation }: any) {
           />
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -129,7 +130,7 @@ export default observer(ProfileScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: dpx(10),
+    backgroundColor: Colors.bg,
   },
   nameContainer: {
     flexDirection: "row",

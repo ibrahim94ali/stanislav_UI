@@ -483,6 +483,7 @@ export default observer(ApartmentDetailsScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.bg,
   },
   photo: {
     resizeMode: "cover",
@@ -495,7 +496,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: dpx(20),
     position: "absolute",
-    top: dpx(20),
+    top: dpx(40),
     right: 0,
     left: 0,
   },

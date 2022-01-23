@@ -42,7 +42,7 @@ const CustomSliderMarker = () => {
   );
 };
 
-const SearchForm = ({ closeFilters, goToProperties }: any) => {
+const FiltersForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
   const { t } = useTranslation();
 
@@ -476,7 +476,7 @@ const SearchForm = ({ closeFilters, goToProperties }: any) => {
   );
 };
 
-export default observer(SearchForm);
+export default observer(FiltersForm);
 
 const styles = StyleSheet.create({
   container: {
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   customSliderMarkerInside: {
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.bg,
     width: dpx(17),
     height: dpx(17),
     borderRadius: 100,

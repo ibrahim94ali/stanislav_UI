@@ -15,13 +15,16 @@ import Property from "../components/Property";
 import Sponsor from "../components/Sponsor";
 import { ApartmentI } from "../interfaces";
 import Header from "../components/Header";
-import SearchForm from "../components/SearchForm";
+import FiltersForm from "../components/FiltersForm";
 import { cityTypes, sponsors } from "../constants/Selectable";
 import { useTranslation } from "react-i18next";
+import { useStore } from "../hooks/StoreContext";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 function HomeScreen({ navigation }: any) {
   const { t } = useTranslation();
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const store = useStore();
 
   const { data, loading: isDataLoading } = useQuery(GET_FEATURED_APARTMENTS);
 
@@ -30,10 +33,10 @@ function HomeScreen({ navigation }: any) {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
       {isFiltersOpen ? (
-        <SearchForm
+        <FiltersForm
           closeFilters={() => setIsFiltersOpen(false)}
           goToProperties={() => navigation.push("ApartmentListScreen")}
         />
@@ -76,11 +79,14 @@ function HomeScreen({ navigation }: any) {
             </View>
             <View style={styles.propertiesContainer}>
               <View style={styles.propertiesHeaders}>
-                <Text style={styles.header}>
+                <Text style={[styles.header, styles.featuredPropertiesHeader]}>
                   {t("HOME.FEATURED_PROPERTIES")}
                 </Text>
                 <TouchableOpacity
-                  onPress={() => navigation.push("ApartmentListScreen")}
+                  onPress={() => {
+                    store.resetFilters();
+                    navigation.push("ApartmentListScreen");
+                  }}
                 >
                   <Text style={styles.propertiesHeaderBtn}>
                     {t("HOME.SEE_ALL")}
@@ -122,7 +128,7 @@ function HomeScreen({ navigation }: any) {
           </ScrollView>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -131,7 +137,7 @@ export default observer(HomeScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: dpx(10),
+    backgroundColor: Colors.bg,
   },
 
   searchField: {
@@ -155,11 +161,16 @@ const styles = StyleSheet.create({
   propertiesHeaders: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
     marginRight: dpx(20),
+  },
+  featuredPropertiesHeader: {
+    maxWidth: dpx(250),
   },
   propertiesHeaderBtn: {
     fontFamily: "Montserrat_700Bold",
     color: Colors.secondary,
+    flex: 1,
     fontSize: dpx(14),
   },
   propertyContainer: {

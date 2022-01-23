@@ -9,6 +9,7 @@ import {
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { createUploadLink } from "apollo-upload-client";
 
@@ -126,8 +127,10 @@ export default function App() {
     return (
       <ApolloProvider client={client}>
         <StoreContextProvider>
-          <Navigation />
-          <StatusBar style="dark" />
+          <SafeAreaProvider>
+            <Navigation />
+            <StatusBar style="dark" />
+          </SafeAreaProvider>
         </StoreContextProvider>
       </ApolloProvider>
     );

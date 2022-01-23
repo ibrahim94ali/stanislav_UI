@@ -29,6 +29,7 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoResult from "../components/NoResult";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface Props {
   navigation: any;
@@ -109,7 +110,7 @@ const ApartmentListScreen = (props: Props) => {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
       <Header>
         <IconButton handlePress={() => props.navigation.goBack()}>
@@ -204,7 +205,7 @@ const ApartmentListScreen = (props: Props) => {
           </View>
         </View>
       </BottomSheet>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -213,7 +214,7 @@ export default observer(ApartmentListScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: dpx(10),
+    backgroundColor: Colors.bg,
   },
   header: {
     fontFamily: "Montserrat_500Medium",

@@ -6,12 +6,7 @@ import * as React from "react";
 import Colors from "../constants/Colors";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import {
-  BottomTabParamList,
-  HomeParamList,
-  ProfileParamList,
-  MapParamList,
-} from "../types";
+import { HomeParamList, ProfileParamList, MapParamList } from "../types";
 import MapScreen from "../screens/MapScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
@@ -32,6 +27,9 @@ export default function BottomTabNavigator() {
       tabBarOptions={{
         activeTintColor: Colors.primary,
         inactiveTintColor: Colors.gray,
+        style: {
+          backgroundColor: Colors.bg,
+        },
       }}
     >
       <BottomTab.Screen

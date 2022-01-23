@@ -34,11 +34,14 @@ export const heatingTypes = [
 ];
 
 export const amenityTypes = [
-  { value: AmenityType.POOL },
+  { value: AmenityType.LIFT },
   { value: AmenityType.PARKING },
-  { value: AmenityType.FIREPLACE },
   { value: AmenityType.GARDEN },
+  { value: AmenityType.POOL },
+  { value: AmenityType.FIREPLACE },
   { value: AmenityType.GOOD_ISOLATION },
+  { value: AmenityType.DUBLEX },
+  { value: AmenityType.BALCONY },
 ];
 
 export const furnishingTypes = [

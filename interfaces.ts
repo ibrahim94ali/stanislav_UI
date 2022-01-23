@@ -100,4 +100,7 @@ export enum AmenityType {
   GARDEN = "garden",
   FIREPLACE = "fireplace",
   GOOD_ISOLATION = "good-isolation",
+  LIFT = "lift",
+  DUBLEX = "dublex",
+  BALCONY = "balcony",
 }

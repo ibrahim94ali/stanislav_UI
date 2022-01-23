@@ -2,6 +2,7 @@
   "expo": {
     "name": "Stanislav",
     "slug": "Stanislav",
+    "description": "Stanisav is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -10,14 +11,12 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F6F1EB"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "config": {
@@ -26,8 +25,8 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#F6F1EB"
       },
       "config": {
         "googleMaps": {
@@ -37,7 +36,6 @@
     },
     "web": {
       "favicon": "./assets/images/favicon.png"
-    },
-    "description": "Stanisav is an app to find you the best apartments for you."
+    }
   }
 }
