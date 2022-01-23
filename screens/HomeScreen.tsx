@@ -130,7 +130,7 @@ function HomeScreen({ navigation }: any) {
                 showsHorizontalScrollIndicator={false}
               >
                 {sponsors &&
-                  sponsors.sponsors.map((sponsor: SponsorI) => (
+                  sponsors.sponsors?.map((sponsor: SponsorI) => (
                     <Sponsor key={sponsor.name} {...sponsor} />
                   ))}
               </ScrollView>

@@ -1,7 +1,6 @@
 TODO:
 
 - Upload API to Vercel?
-- Limit results to a limit and infinite scroll
 
 ---
 

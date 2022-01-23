@@ -1,4 +1,4 @@
-import { gql, useApolloClient, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
@@ -51,10 +51,7 @@ const PHOTO_UPLOAD_LIMIT = 10;
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const { t } = useTranslation();
-  const client = useApolloClient();
-  const { cities } = client.readQuery({
-    query: GET_CITIES,
-  });
+  const { data: cities, loading: isCityLoading } = useQuery(GET_CITIES);
 
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
   const [title, setTitle] = useState<string>(
@@ -361,7 +358,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      {(loadingNewApartment || loadingUpatedApartment) && <LoadingSpinner />}
+      {(loadingNewApartment || loadingUpatedApartment || isCityLoading) && (
+        <LoadingSpinner />
+      )}
       <Header>
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
@@ -455,7 +454,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
                 ref_address.current?.focus();
               }
             }}
-            items={cities}
+            items={cities.cities}
             style={pickerSelectStyles}
             onDonePress={() => ref_address.current?.focus()}
           />

@@ -32,8 +32,9 @@ import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { observer } from "mobx-react";
 import { formatPrice } from "../helperMethods";
-import { useApolloClient } from "@apollo/client";
+import { useQuery } from "@apollo/client";
 import { GET_CITIES } from "../graphQL/Queries";
+import LoadingSpinner from "./LoadingSpinner";
 
 const CustomSliderMarker = () => {
   return (
@@ -46,11 +47,8 @@ const CustomSliderMarker = () => {
 const FiltersForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
   const { t } = useTranslation();
-  const client = useApolloClient();
 
-  const { cities } = client.readQuery({
-    query: GET_CITIES,
-  });
+  const { data: cities, loading: isCityLoading } = useQuery(GET_CITIES);
 
   const placeholder = {
     label: t("FILTER_OPTIONS.ANY"),
@@ -189,6 +187,7 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
 
   return (
     <View style={styles.container}>
+      {isCityLoading && <LoadingSpinner />}
       <Header>
         <View style={{ width: dpx(40) }}></View>
         <Text style={styles.header}>{t("SEARCH_FORM.FILTERS")}</Text>
@@ -208,7 +207,7 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
             onValueChange={(itemValue: CityType | undefined) => {
               setSelectedCity(itemValue);
             }}
-            items={cities}
+            items={cities.cities}
             style={pickerSelectStyles}
           />
         </View>

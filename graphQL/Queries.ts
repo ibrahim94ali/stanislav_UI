@@ -20,6 +20,8 @@ export const GET_APARTMENTS = gql`
     $age: Int
     $sortBy: String
     $sortOrder: Int
+    $limit: Int
+    $offset: Int
   ) {
     apartments(
       city: $city
@@ -40,6 +42,8 @@ export const GET_APARTMENTS = gql`
       age: $age
       sortBy: $sortBy
       sortOrder: $sortOrder
+      limit: $limit
+      offset: $offset
     ) {
       id
       title

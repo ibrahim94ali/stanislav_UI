@@ -36,10 +36,12 @@ interface Props {
   route: any;
 }
 
+const DATA_LIMIT = 20;
+
 const ApartmentListScreen = (props: Props) => {
   const store = useStore();
 
-  let filteredData, isDataLoading;
+  let filteredData: any, isDataLoading, fetchMoreData: any;
 
   const [q, setQ] = useState<string | undefined>(
     props.route?.params?.q || undefined
@@ -54,11 +56,15 @@ const ApartmentListScreen = (props: Props) => {
     filteredData = data;
     isDataLoading = loading;
   } else {
-    const { data, loading } = useQuery(GET_APARTMENTS, {
-      variables: store.filters,
+    const { data, loading, fetchMore } = useQuery(GET_APARTMENTS, {
+      variables: {
+        ...store.filters,
+        limit: DATA_LIMIT,
+      },
     });
     filteredData = data;
     isDataLoading = loading;
+    fetchMoreData = fetchMore;
   }
 
   const removeFilters = () => {
@@ -148,6 +154,24 @@ const ApartmentListScreen = (props: Props) => {
           alignItems: "center",
         }}
         showsVerticalScrollIndicator={false}
+        onMomentumScrollEnd={(e) => {
+          const scrollPosition = e.nativeEvent.contentOffset.y;
+          const contentHeight = e.nativeEvent.contentSize.height;
+          const isScrolledToBottom = contentHeight + scrollPosition;
+
+          const resultsLength = filteredData.apartments.length;
+
+          if (
+            resultsLength >= DATA_LIMIT &&
+            isScrolledToBottom >= contentHeight - 50
+          ) {
+            fetchMoreData({
+              variables: {
+                offset: resultsLength,
+              },
+            });
+          }
+        }}
       >
         {(filteredData &&
           !!q &&
