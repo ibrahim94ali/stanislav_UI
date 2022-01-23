@@ -1,6 +1,5 @@
 TODO:
 
-- Create sponsors to come from BE
 - Upload API to Vercel?
 - Limit results to a limit and infinite scroll
 

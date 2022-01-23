@@ -1,4 +1,4 @@
-import { gql, useMutation } from "@apollo/client";
+import { gql, useApolloClient, useMutation } from "@apollo/client";
 import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
@@ -29,7 +29,6 @@ import {
 import {
   buildingTypes,
   adTypes,
-  cityTypes,
   furnishingTypes,
   heatingTypes,
   amenityTypes,
@@ -46,11 +45,17 @@ import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { GET_CITIES } from "../graphQL/Queries";
 
 const PHOTO_UPLOAD_LIMIT = 10;
 
 const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const { t } = useTranslation();
+  const client = useApolloClient();
+  const { cities } = client.readQuery({
+    query: GET_CITIES,
+  });
+
   const itemOnEdit: ApartmentI = route.params?.itemOnEdit || null;
   const [title, setTitle] = useState<string>(
     itemOnEdit ? itemOnEdit.title : ""
@@ -450,7 +455,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
                 ref_address.current?.focus();
               }
             }}
-            items={cityTypes}
+            items={cities}
             style={pickerSelectStyles}
             onDonePress={() => ref_address.current?.focus()}
           />

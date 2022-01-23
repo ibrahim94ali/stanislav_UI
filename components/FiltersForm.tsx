@@ -17,7 +17,6 @@ import {
   adTypes,
   amenityTypes,
   buildingTypes,
-  cityTypes,
   filterLimits,
   furnishingTypes,
   heatingTypes,
@@ -33,6 +32,8 @@ import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { observer } from "mobx-react";
 import { formatPrice } from "../helperMethods";
+import { useApolloClient } from "@apollo/client";
+import { GET_CITIES } from "../graphQL/Queries";
 
 const CustomSliderMarker = () => {
   return (
@@ -45,6 +46,11 @@ const CustomSliderMarker = () => {
 const FiltersForm = ({ closeFilters, goToProperties }: any) => {
   const store = useStore();
   const { t } = useTranslation();
+  const client = useApolloClient();
+
+  const { cities } = client.readQuery({
+    query: GET_CITIES,
+  });
 
   const placeholder = {
     label: t("FILTER_OPTIONS.ANY"),
@@ -202,7 +208,7 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
             onValueChange={(itemValue: CityType | undefined) => {
               setSelectedCity(itemValue);
             }}
-            items={cityTypes}
+            items={cities}
             style={pickerSelectStyles}
           />
         </View>

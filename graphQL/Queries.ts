@@ -192,3 +192,23 @@ export const GET_SEARCHED_APARTMENTS = gql`
     }
   }
 `;
+
+export const GET_CITIES = gql`
+  query {
+    cities {
+      value
+      label
+      url
+    }
+  }
+`;
+
+export const GET_SPONSORS = gql`
+  query {
+    sponsors {
+      name
+      logoUrl
+      redirectUrl
+    }
+  }
+`;

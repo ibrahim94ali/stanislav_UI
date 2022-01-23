@@ -7,7 +7,7 @@ import { useStore } from "../hooks/StoreContext";
 import { CityType, SearchFiltersI } from "../interfaces";
 
 interface Props {
-  title: string;
+  label: string;
   value: CityType;
   url: string;
   onPress: any;
@@ -40,7 +40,7 @@ const City = (props: Props) => {
           opacity: 0.5,
         }}
       ></ImageBackground>
-      <Text style={styles.title}>{props.title}</Text>
+      <Text style={styles.title}>{props.label}</Text>
     </TouchableOpacity>
   );
 };

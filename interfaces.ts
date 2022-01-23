@@ -55,6 +55,18 @@ export interface SearchFiltersI {
   sortOrder?: number;
 }
 
+export interface CityI {
+  value: CityType;
+  label: string;
+  url: string;
+}
+
+export interface SponsorI {
+  name: string;
+  logoUrl: string;
+  redirectUrl: string;
+}
+
 export enum BuildingType {
   HOUSE = "house",
   FLAT = "flat",
