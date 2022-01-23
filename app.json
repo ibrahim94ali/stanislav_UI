@@ -5,7 +5,7 @@
     "description": "Stanisav is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/s_icon_bg.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "splash": {
@@ -25,7 +25,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/icon.png",
+        "foregroundImage": "./assets/images/s_icon_bg.png",
         "backgroundColor": "#F6F1EB"
       },
       "config": {

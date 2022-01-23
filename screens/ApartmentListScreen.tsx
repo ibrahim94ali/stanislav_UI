@@ -47,6 +47,8 @@ const ApartmentListScreen = (props: Props) => {
     props.route?.params?.q || undefined
   );
 
+  const [shouldFetchMore, setShouldFetchMore] = useState(true);
+
   if (q) {
     const { data, loading } = useQuery(GET_SEARCHED_APARTMENTS, {
       variables: {
@@ -162,6 +164,7 @@ const ApartmentListScreen = (props: Props) => {
           const resultsLength = filteredData.apartments.length;
 
           if (
+            shouldFetchMore &&
             resultsLength >= DATA_LIMIT &&
             isScrolledToBottom >= contentHeight - 50
           ) {
@@ -169,6 +172,10 @@ const ApartmentListScreen = (props: Props) => {
               variables: {
                 offset: resultsLength,
               },
+            }).then((res: any) => {
+              if (res.data.apartments.length === 0) {
+                setShouldFetchMore(false);
+              }
             });
           }
         }}

@@ -15,6 +15,7 @@ import AddEditApartmentScreen from "../screens/AddEditApartmentScreen";
 import MyApartmentsScreen from "../screens/MyApartmentsScreen";
 import MyFavoriteApartmentsScreen from "../screens/MyFavoriteApartmentsScreen";
 import ApartmentListScreen from "../screens/ApartmentListScreen";
+import FiltersScreen from "../screens/FiltersScreen";
 import { useTranslation } from "react-i18next";
 
 const BottomTab = createBottomTabNavigator();
@@ -77,6 +78,7 @@ function HomeNavigator() {
   return (
     <HomeStack.Navigator screenOptions={{ headerShown: false }}>
       <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+      <HomeStack.Screen name="FiltersScreen" component={FiltersScreen} />
       <HomeStack.Screen
         name="ApartmentListScreen"
         component={ApartmentListScreen}

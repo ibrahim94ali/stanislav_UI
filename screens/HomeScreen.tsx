@@ -19,14 +19,12 @@ import Property from "../components/Property";
 import Sponsor from "../components/Sponsor";
 import { ApartmentI, CityI, SponsorI } from "../interfaces";
 import Header from "../components/Header";
-import FiltersForm from "../components/FiltersForm";
 import { useTranslation } from "react-i18next";
 import { useStore } from "../hooks/StoreContext";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 function HomeScreen({ navigation }: any) {
   const { t } = useTranslation();
-  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const store = useStore();
 
   const { data: featuredProperties, loading: isFeaturedPropertyLoading } =
@@ -43,101 +41,94 @@ function HomeScreen({ navigation }: any) {
       {isFeaturedPropertyLoading || isCityLoading || isSponsorLoading ? (
         <LoadingSpinner />
       ) : null}
-      {isFiltersOpen ? (
-        <FiltersForm
-          closeFilters={() => setIsFiltersOpen(false)}
-          goToProperties={() => navigation.push("ApartmentListScreen")}
-        />
-      ) : (
-        <View style={styles.container}>
-          <Header>
-            <View style={styles.searchField}>
-              <SearchBox searchTextEntered={(q: string) => handleSearch(q)} />
-            </View>
-            <IconButton handlePress={() => setIsFiltersOpen(!isFiltersOpen)}>
-              <Ionicons name="options" color={Colors.black} size={dpx(24)} />
-            </IconButton>
-          </Header>
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingBottom: dpx(20),
-            }}
-          >
-            <View>
-              <Text style={styles.header}>{t("HOME.CITIES")}</Text>
-              <ScrollView
-                style={styles.cityContainer}
-                contentContainerStyle={{
-                  paddingRight: dpx(20),
+      <View style={styles.container}>
+        <Header>
+          <View style={styles.searchField}>
+            <SearchBox searchTextEntered={(q: string) => handleSearch(q)} />
+          </View>
+          <IconButton handlePress={() => navigation.push("FiltersScreen")}>
+            <Ionicons name="options" color={Colors.black} size={dpx(24)} />
+          </IconButton>
+        </Header>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingBottom: dpx(20),
+          }}
+        >
+          <View>
+            <Text style={styles.header}>{t("HOME.CITIES")}</Text>
+            <ScrollView
+              style={styles.cityContainer}
+              contentContainerStyle={{
+                paddingRight: dpx(20),
+              }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              {cities &&
+                cities.cities?.map((city: CityI) => (
+                  <City
+                    key={city.label}
+                    {...city}
+                    onPress={() => navigation.push("ApartmentListScreen")}
+                  />
+                ))}
+            </ScrollView>
+          </View>
+          <View style={styles.propertiesContainer}>
+            <View style={styles.propertiesHeaders}>
+              <Text style={[styles.header, styles.featuredPropertiesHeader]}>
+                {t("HOME.FEATURED_PROPERTIES")}
+              </Text>
+              <TouchableOpacity
+                onPress={() => {
+                  store.resetFilters();
+                  navigation.push("ApartmentListScreen");
                 }}
-                horizontal
-                showsHorizontalScrollIndicator={false}
               >
-                {cities &&
-                  cities.cities?.map((city: CityI) => (
-                    <City
-                      key={city.label}
-                      {...city}
-                      onPress={() => navigation.push("ApartmentListScreen")}
-                    />
-                  ))}
-              </ScrollView>
-            </View>
-            <View style={styles.propertiesContainer}>
-              <View style={styles.propertiesHeaders}>
-                <Text style={[styles.header, styles.featuredPropertiesHeader]}>
-                  {t("HOME.FEATURED_PROPERTIES")}
+                <Text style={styles.propertiesHeaderBtn}>
+                  {t("HOME.SEE_ALL")}
                 </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    store.resetFilters();
-                    navigation.push("ApartmentListScreen");
-                  }}
-                >
-                  <Text style={styles.propertiesHeaderBtn}>
-                    {t("HOME.SEE_ALL")}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <ScrollView
-                style={styles.propertyContainer}
-                contentContainerStyle={{
-                  paddingBottom: dpx(10),
-                  paddingRight: dpx(20),
-                }}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-              >
-                {featuredProperties &&
-                  featuredProperties.featuredApartments.map(
-                    (apart: ApartmentI) => (
-                      <View key={apart.id} style={styles.property}>
-                        <Property apartment={apart} />
-                      </View>
-                    )
-                  )}
-              </ScrollView>
+              </TouchableOpacity>
             </View>
-            <View style={styles.sponsorContainer}>
-              <Text style={styles.header}>{t("HOME.SPONSORS")}</Text>
-              <ScrollView
-                style={styles.propertyContainer}
-                contentContainerStyle={{
-                  paddingRight: dpx(20),
-                }}
-                horizontal
-                showsHorizontalScrollIndicator={false}
-              >
-                {sponsors &&
-                  sponsors.sponsors?.map((sponsor: SponsorI) => (
-                    <Sponsor key={sponsor.name} {...sponsor} />
-                  ))}
-              </ScrollView>
-            </View>
-          </ScrollView>
-        </View>
-      )}
+            <ScrollView
+              style={styles.propertyContainer}
+              contentContainerStyle={{
+                paddingBottom: dpx(10),
+                paddingRight: dpx(20),
+              }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              {featuredProperties &&
+                featuredProperties.featuredApartments.map(
+                  (apart: ApartmentI) => (
+                    <View key={apart.id} style={styles.property}>
+                      <Property apartment={apart} />
+                    </View>
+                  )
+                )}
+            </ScrollView>
+          </View>
+          <View style={styles.sponsorContainer}>
+            <Text style={styles.header}>{t("HOME.SPONSORS")}</Text>
+            <ScrollView
+              style={styles.propertyContainer}
+              contentContainerStyle={{
+                paddingRight: dpx(20),
+              }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              {sponsors &&
+                sponsors.sponsors?.map((sponsor: SponsorI) => (
+                  <Sponsor key={sponsor.name} {...sponsor} />
+                ))}
+            </ScrollView>
+          </View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }

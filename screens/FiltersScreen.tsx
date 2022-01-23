@@ -21,11 +21,6 @@ import {
   furnishingTypes,
   heatingTypes,
 } from "../constants/Selectable";
-import Header from "./Header";
-import IconButton from "./IconButton";
-import { Ionicons } from "@expo/vector-icons";
-import Button from "./Button";
-import FilterOptions from "./FilterOptions";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
@@ -34,7 +29,13 @@ import { observer } from "mobx-react";
 import { formatPrice } from "../helperMethods";
 import { useQuery } from "@apollo/client";
 import { GET_CITIES } from "../graphQL/Queries";
-import LoadingSpinner from "./LoadingSpinner";
+import LoadingSpinner from "../components/LoadingSpinner";
+import Header from "../components/Header";
+import IconButton from "../components/IconButton";
+import { Ionicons } from "@expo/vector-icons";
+import FilterOptions from "../components/FilterOptions";
+import Button from "../components/Button";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const CustomSliderMarker = () => {
   return (
@@ -44,7 +45,7 @@ const CustomSliderMarker = () => {
   );
 };
 
-const FiltersForm = ({ closeFilters, goToProperties }: any) => {
+const FiltersScreen = ({ navigation }: any) => {
   const store = useStore();
   const { t } = useTranslation();
 
@@ -178,7 +179,7 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
 
     storeFiltersLocally(newFilters);
 
-    goToProperties();
+    navigation.push("ApartmentListScreen");
   };
 
   const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
@@ -186,12 +187,12 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView edges={["top"]} style={styles.container}>
       {isCityLoading && <LoadingSpinner />}
       <Header>
         <View style={{ width: dpx(40) }}></View>
         <Text style={styles.header}>{t("SEARCH_FORM.FILTERS")}</Text>
-        <IconButton handlePress={() => closeFilters()}>
+        <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="close" color={Colors.black} size={dpx(24)} />
         </IconButton>
       </Header>
@@ -477,15 +478,16 @@ const FiltersForm = ({ closeFilters, goToProperties }: any) => {
           onPress={() => showProperties()}
         ></Button>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default observer(FiltersForm);
+export default observer(FiltersScreen);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.bg,
   },
   header: {
     fontFamily: "Montserrat_500Medium",
