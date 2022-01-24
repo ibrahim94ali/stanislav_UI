@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
@@ -11,12 +11,18 @@ import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "../components/Header";
+import IconButton from "../components/IconButton";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const store = useStore();
   const { t } = useTranslation();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
+
+  //refs for inputs
+  const ref_password = useRef<TextInput>();
 
   const [loginUser, { data, loading }] = useMutation(LOGIN_USER);
 
@@ -49,7 +55,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       {loading && <LoadingSpinner />}
-      <Text style={styles.title}>{t("PROFILE.LOGIN")}</Text>
+      <Header>
+        <IconButton handlePress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
+        </IconButton>
+        <Text style={styles.title}>{t("PROFILE.LOGIN")}</Text>
+        <View style={{ width: dpx(40) }}></View>
+      </Header>
       <View style={styles.actions}>
         <TextInput
           style={styles.input}
@@ -60,6 +72,9 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           textContentType="emailAddress"
           keyboardType="email-address"
           autoCapitalize="none"
+          returnKeyType="next"
+          autoFocus
+          onSubmitEditing={() => ref_password.current?.focus()}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -69,6 +84,8 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           placeholderTextColor={Colors.gray}
           secureTextEntry
           textContentType="password"
+          returnKeyType="done"
+          ref={ref_password as any}
         ></TextInput>
         <View style={styles.buttonContainer}>
           <Button
@@ -91,8 +108,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: dpx(16),
     fontFamily: "Montserrat_500Medium",
-    marginTop: dpx(40),
-    textAlign: "center",
+    color: Colors.black,
   },
   actions: {
     flex: 1,

@@ -44,7 +44,29 @@ export const GET_APARTMENTS = gql`
       sortOrder: $sortOrder
       limit: $limit
       offset: $offset
-    ) {
+    )
+      @connection(
+        key: "apartments"
+        filter: [
+          "city"
+          "buildingType"
+          "adType"
+          "heatingType"
+          "minPrice"
+          "maxPrice"
+          "minArea"
+          "maxArea"
+          "minRoom"
+          "maxRoom"
+          "minFloor"
+          "maxFloor"
+          "isFurnished"
+          "amenities"
+          "age"
+          "sortBy"
+          "sortOrder"
+        ]
+      ) {
       id
       title
       details

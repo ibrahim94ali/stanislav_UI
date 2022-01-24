@@ -1,8 +1,8 @@
 {
   "expo": {
     "name": "Stanislove",
-    "slug": "Stanislove",
-    "description": "Stanisav is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
+    "slug": "stanislove",
+    "description": "Stanisove is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/s_icon_bg.png",
@@ -24,6 +24,14 @@
       }
     },
     "android": {
+      "package": "com.ibrahimaliu.stanislove",
+      "versionCode": 3,
+      "permissions": [
+        "ACCESS_BACKGROUND_LOCATION",
+        "READ_EXTERNAL_STORAGE",
+        "CAMERA",
+        "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/s_icon_bg.png",
         "backgroundColor": "#F6F1EB"

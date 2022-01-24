@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { REGISTER_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
@@ -12,6 +12,9 @@ import Button from "../components/Button";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Header from "../components/Header";
+import IconButton from "../components/IconButton";
+import { Ionicons } from "@expo/vector-icons";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const store = useStore();
@@ -23,6 +26,13 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   const [name, onNameChange] = useState("");
   const [surname, onSurnameChange] = useState("");
   const [phone, onPhoneChange] = useState("");
+
+  //refs for inputs
+  const ref_password = useRef<TextInput>();
+  const ref_confirmPassword = useRef<TextInput>();
+  const ref_name = useRef<TextInput>();
+  const ref_surname = useRef<TextInput>();
+  const ref_phone = useRef<TextInput>();
 
   const [createUser, { data, loading }] = useMutation(REGISTER_USER);
 
@@ -58,7 +68,13 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       {loading && <LoadingSpinner />}
-      <Text style={styles.title}>{t("PROFILE.REGISTER")}</Text>
+      <Header>
+        <IconButton handlePress={() => navigation.goBack()}>
+          <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
+        </IconButton>
+        <Text style={styles.title}>{t("PROFILE.REGISTER")}</Text>
+        <View style={{ width: dpx(40) }}></View>
+      </Header>
       <ScrollView contentContainerStyle={styles.actions}>
         <TextInput
           style={styles.input}
@@ -69,6 +85,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           textContentType="emailAddress"
           keyboardType="email-address"
           autoCapitalize="none"
+          returnKeyType="next"
+          autoFocus
+          onSubmitEditing={() => ref_password.current?.focus()}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -79,6 +98,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           secureTextEntry
           textContentType="password"
           autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_confirmPassword.current?.focus()}
+          ref={ref_password as any}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -89,6 +111,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           secureTextEntry
           textContentType="password"
           autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_name.current?.focus()}
+          ref={ref_confirmPassword as any}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -97,6 +122,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           placeholder={t("REGISTER.NAME") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="name"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_surname.current?.focus()}
+          ref={ref_name as any}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -105,6 +133,9 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           placeholder={t("REGISTER.SURNAME") + " *"}
           placeholderTextColor={Colors.gray}
           textContentType="name"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_phone.current?.focus()}
+          ref={ref_surname as any}
         ></TextInput>
         <TextInput
           style={styles.input}
@@ -115,6 +146,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           textContentType="telephoneNumber"
           keyboardType="number-pad"
           returnKeyType="done"
+          ref={ref_phone as any}
         ></TextInput>
         <View style={styles.buttonContainer}>
           <Button
@@ -126,7 +158,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
               !password ||
               !name ||
               !surname ||
-              !phone ||
+              phone.length < 9 ||
               password !== confirmPassword
             }
           />
@@ -142,14 +174,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.bg,
   },
   title: {
-    fontSize: dpx(16),
     fontFamily: "Montserrat_500Medium",
-    marginTop: dpx(40),
-    textAlign: "center",
+    fontSize: dpx(16),
+    color: Colors.black,
   },
   actions: {
-    flex: 1,
-    justifyContent: "center",
     alignItems: "center",
   },
   input: {

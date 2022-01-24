@@ -117,6 +117,10 @@ const ApartmentListScreen = (props: Props) => {
     }
   }, []);
 
+  useEffect(() => {
+    setShouldFetchMore(true);
+  }, [store.filters]);
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       {isDataLoading ? <LoadingSpinner /> : null}
@@ -170,10 +174,10 @@ const ApartmentListScreen = (props: Props) => {
           ) {
             fetchMoreData({
               variables: {
-                offset: resultsLength,
+                limit: resultsLength + DATA_LIMIT,
               },
             }).then((res: any) => {
-              if (res.data.apartments.length === 0) {
+              if (resultsLength === res.data.apartments.length) {
                 setShouldFetchMore(false);
               }
             });

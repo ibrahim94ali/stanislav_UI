@@ -18,7 +18,6 @@ import Navigation from "./navigation";
 import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
-import { inMemoryCacheConfig } from "./graphQL/InMemoryCacheConfig";
 import "./i18n";
 import { useTranslation } from "react-i18next";
 import {
@@ -118,7 +117,7 @@ export default function App() {
 
   const client = new ApolloClient({
     link: authLink.concat(link),
-    cache: new InMemoryCache(inMemoryCacheConfig),
+    cache: new InMemoryCache(),
   });
 
   if (!isLoadingComplete || !fontsLoaded) {
