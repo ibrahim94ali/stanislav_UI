@@ -1,58 +1,31 @@
-import { action, computed, makeObservable, observable } from "mobx";
 import { SearchFiltersI, UserI } from "./interfaces";
+import { ReactiveVar, makeVar } from "@apollo/client";
 
-export class StoreImpl {
-  user: UserI | null = null;
-  filters: SearchFiltersI = {};
+export const filtersVar: ReactiveVar<SearchFiltersI> = makeVar<SearchFiltersI>(
+  {}
+);
 
-  constructor() {
-    makeObservable(this, {
-      user: observable,
-      filters: observable,
-      isAnyFilterActive: computed,
-      setUser: action,
-      setFilters: action,
-      resetFilters: action,
-      setSorting: action,
-    });
-  }
+export const userVar: ReactiveVar<UserI | null> = makeVar<UserI | null>(null);
 
-  setUser(user: UserI | null) {
-    this.user = user;
-  }
+export const setUser = (user: UserI | null) => {
+  userVar(user);
+};
 
-  setFilters(filters: SearchFiltersI) {
-    this.filters = filters;
-  }
+export const setFilters = (filters: SearchFiltersI) => {
+  filtersVar(filters);
+};
 
-  resetFilters() {
-    this.filters = {
-      sortBy: "date",
-      sortOrder: -1,
-    };
-  }
+export const resetFilters = () => {
+  filtersVar({
+    sortBy: "date",
+    sortOrder: -1,
+  });
+};
 
-  get isAnyFilterActive() {
-    if (
-      Object.keys(this.filters).some(
-        (key) =>
-          (this.filters as any)[key] !== undefined &&
-          key !== "sortOrder" &&
-          key !== "sortBy"
-      )
-    ) {
-      return true;
-    }
-    return false;
-  }
-
-  setSorting(sortBy: string, sortOrder: number) {
-    this.filters = {
-      ...this.filters,
-      sortBy,
-      sortOrder,
-    };
-  }
-}
-
-export const Store = new StoreImpl();
+export const setSorting = (sortBy: string, sortOrder: number) => {
+  filtersVar({
+    ...filtersVar(),
+    sortBy,
+    sortOrder,
+  });
+};

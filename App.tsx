@@ -6,6 +6,7 @@ import {
   ApolloProvider,
   InMemoryCache,
   from,
+  useReactiveVar,
 } from "@apollo/client";
 import { setContext } from "@apollo/client/link/context";
 import { onError } from "@apollo/client/link/error";
@@ -15,7 +16,6 @@ import { createUploadLink } from "apollo-upload-client";
 
 import useCachedResources from "./hooks/useCachedResources";
 import Navigation from "./navigation";
-import StoreContextProvider, { useStore } from "./hooks/StoreContext";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Alert } from "react-native";
 import "./i18n";
@@ -28,11 +28,14 @@ import {
 import { SearchFiltersI } from "./interfaces";
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
+import { setFilters, setUser, userVar } from "./Store";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
 
   const { i18n } = useTranslation();
+
+  const user = useReactiveVar(userVar);
 
   const [fontsLoaded] = useFonts({
     Montserrat_400Regular,
@@ -40,13 +43,11 @@ export default function App() {
     Montserrat_700Bold,
   });
 
-  const store = useStore();
-
   const getStoredUserData = async () => {
     try {
       const jsonValue = await AsyncStorage.getItem("user");
       if (jsonValue) {
-        store.setUser(JSON.parse(jsonValue));
+        setUser(JSON.parse(jsonValue));
       }
     } catch (e) {
       console.log(e);
@@ -71,7 +72,7 @@ export default function App() {
       const filters = await AsyncStorage.getItem("filters");
       if (filters) {
         const filtersObj: SearchFiltersI = JSON.parse(filters);
-        store.setFilters(filtersObj);
+        setFilters(filtersObj);
       }
     } catch (e) {
       console.log(e);
@@ -106,7 +107,7 @@ export default function App() {
   ]);
 
   const authLink = setContext((_, { headers }) => {
-    const token = store.user?.token;
+    const token = user?.token;
     return {
       headers: {
         ...headers,
@@ -125,12 +126,10 @@ export default function App() {
   } else {
     return (
       <ApolloProvider client={client}>
-        <StoreContextProvider>
-          <SafeAreaProvider>
-            <Navigation />
-            <StatusBar style="dark" />
-          </SafeAreaProvider>
-        </StoreContextProvider>
+        <SafeAreaProvider>
+          <Navigation />
+          <StatusBar style="dark" />
+        </SafeAreaProvider>
       </ApolloProvider>
     );
   }

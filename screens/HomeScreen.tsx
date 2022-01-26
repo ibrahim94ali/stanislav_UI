@@ -1,7 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
-import { observer } from "mobx-react";
-import React, { useState } from "react";
+import React from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import IconButton from "../components/IconButton";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -20,12 +19,11 @@ import Sponsor from "../components/Sponsor";
 import { ApartmentI, CityI, SponsorI } from "../interfaces";
 import Header from "../components/Header";
 import { useTranslation } from "react-i18next";
-import { useStore } from "../hooks/StoreContext";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { resetFilters } from "../Store";
 
 function HomeScreen({ navigation }: any) {
   const { t } = useTranslation();
-  const store = useStore();
 
   const { data: featuredProperties, loading: isFeaturedPropertyLoading } =
     useQuery(GET_FEATURED_APARTMENTS);
@@ -83,7 +81,7 @@ function HomeScreen({ navigation }: any) {
               </Text>
               <TouchableOpacity
                 onPress={() => {
-                  store.resetFilters();
+                  resetFilters();
                   navigation.push("ApartmentListScreen");
                 }}
               >
@@ -133,7 +131,7 @@ function HomeScreen({ navigation }: any) {
   );
 }
 
-export default observer(HomeScreen);
+export default HomeScreen;
 
 const styles = StyleSheet.create({
   container: {

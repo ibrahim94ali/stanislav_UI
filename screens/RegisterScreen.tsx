@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { REGISTER_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
-import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { ScrollView } from "react-native-gesture-handler";
@@ -15,10 +14,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import { Ionicons } from "@expo/vector-icons";
+import { setUser } from "../Store";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
-  const store = useStore();
-
   const { t } = useTranslation();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
@@ -58,7 +56,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("user", jsonValue);
-      store.setUser(value);
+      setUser(value);
       navigation.goBack();
     } catch (e) {
       console.log(e);

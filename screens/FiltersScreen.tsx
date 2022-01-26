@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
-import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import {
@@ -25,9 +24,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
-import { observer } from "mobx-react";
 import { formatPrice } from "../helperMethods";
-import { useQuery } from "@apollo/client";
+import { useQuery, useReactiveVar } from "@apollo/client";
 import { GET_CITIES } from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
 import Header from "../components/Header";
@@ -36,6 +34,7 @@ import { Ionicons } from "@expo/vector-icons";
 import FilterOptions from "../components/FilterOptions";
 import Button from "../components/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { filtersVar, setFilters } from "../Store";
 
 const CustomSliderMarker = () => {
   return (
@@ -46,8 +45,9 @@ const CustomSliderMarker = () => {
 };
 
 const FiltersScreen = ({ navigation }: any) => {
-  const store = useStore();
   const { t } = useTranslation();
+
+  const filters = useReactiveVar(filtersVar);
 
   const { data: cities, loading: isCityLoading } = useQuery(GET_CITIES);
 
@@ -60,56 +60,48 @@ const FiltersScreen = ({ navigation }: any) => {
   const { width: viewportWidth } = Dimensions.get("window");
 
   const [selectedCity, setSelectedCity] = useState<CityType | undefined>(
-    store.filters.city
+    filters.city
   );
   const [selectedBuildingType, setSelectedBuildingType] = useState<
     BuildingType | undefined
-  >(store.filters.buildingType);
+  >(filters.buildingType);
   const [selectedAdType, setSelectedAdType] = useState<AdType | undefined>(
-    store.filters.adType
+    filters.adType
   );
   const [selectedHeatingType, setSelectedHeatingType] = useState<
     HeatingType | undefined
-  >(store.filters.heatingType);
+  >(filters.heatingType);
   const [selectedFurnishingType, setSelectedFurnishingType] = useState<
     boolean | undefined
-  >(
-    store.filters.isFurnished !== undefined
-      ? store.filters.isFurnished
-      : undefined
-  );
+  >(filters.isFurnished !== undefined ? filters.isFurnished : undefined);
   const [selectedAmenities, setSelectedAmenities] = useState<
     AmenityType[] | undefined
-  >(
-    store.filters.amenities !== undefined ? store.filters.amenities : undefined
-  );
+  >(filters.amenities !== undefined ? filters.amenities : undefined);
 
   //price
-  const [minPrice, setMinPrice] = useState<number>(store.filters.minPrice || 0);
+  const [minPrice, setMinPrice] = useState<number>(filters.minPrice || 0);
   const [maxPrice, setMaxPrice] = useState<number>(
-    store.filters.maxPrice || filterLimits.maxPrice.purchase
+    filters.maxPrice || filterLimits.maxPrice.purchase
   );
 
-  const [age, setAge] = useState<number>(
-    store.filters.age || filterLimits.maxAge
-  );
+  const [age, setAge] = useState<number>(filters.age || filterLimits.maxAge);
 
   //area
-  const [minArea, setMinArea] = useState<number>(store.filters.minArea || 0);
+  const [minArea, setMinArea] = useState<number>(filters.minArea || 0);
   const [maxArea, setMaxArea] = useState<number>(
-    store.filters.maxArea || filterLimits.maxArea
+    filters.maxArea || filterLimits.maxArea
   );
 
   // room
-  const [minRoom, setMinRoom] = useState<number>(store.filters.minRoom || 0);
+  const [minRoom, setMinRoom] = useState<number>(filters.minRoom || 0);
   const [maxRoom, setMaxRoom] = useState<number>(
-    store.filters.maxRoom || filterLimits.maxRoom
+    filters.maxRoom || filterLimits.maxRoom
   );
 
   // floor
-  const [minFloor, setMinFloor] = useState<number>(store.filters.minFloor || 0);
+  const [minFloor, setMinFloor] = useState<number>(filters.minFloor || 0);
   const [maxFloor, setMaxFloor] = useState<number>(
-    store.filters.maxFloor || filterLimits.maxFloor
+    filters.maxFloor || filterLimits.maxFloor
   );
 
   useEffect(() => {
@@ -175,7 +167,7 @@ const FiltersScreen = ({ navigation }: any) => {
           ? selectedFurnishingType
           : undefined,
     };
-    store.setFilters(newFilters);
+    setFilters(newFilters);
 
     storeFiltersLocally(newFilters);
 
@@ -482,7 +474,7 @@ const FiltersScreen = ({ navigation }: any) => {
   );
 };
 
-export default observer(FiltersScreen);
+export default FiltersScreen;
 
 const styles = StyleSheet.create({
   container: {

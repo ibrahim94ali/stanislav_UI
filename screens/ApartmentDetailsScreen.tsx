@@ -18,14 +18,12 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { observer } from "mobx-react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useReactiveVar } from "@apollo/client";
 import {
   ADD_FAV_APARTMENT,
   DELETE_APARTMENT,
   REMOVE_FAV_APARTMENT,
 } from "../graphQL/Mutations";
-import { useStore } from "../hooks/StoreContext";
 import { dpx } from "../constants/Spacings";
 import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -36,6 +34,7 @@ import { furnishingTypes } from "../constants/Selectable";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { customMapStyle } from "../constants/googleMapsStyle";
+import { userVar } from "../Store";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -58,7 +57,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   const { t } = useTranslation();
 
-  const store = useStore();
+  const user = useReactiveVar(userVar);
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
@@ -304,7 +303,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </View>
           ) : (
             <View style={styles.actionBtns}>
-              {store.user && (
+              {user && (
                 <TouchableOpacity
                   style={styles.actionBtnContainer}
                   onPress={() => handleFavorite()}
@@ -481,7 +480,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   );
 };
 
-export default observer(ApartmentDetailsScreen);
+export default ApartmentDetailsScreen;
 
 const styles = StyleSheet.create({
   container: {

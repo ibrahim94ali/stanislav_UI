@@ -1,25 +1,24 @@
 import * as React from "react";
 import { Platform, StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useStore } from "../hooks/StoreContext";
-import { observer } from "mobx-react";
 import Colors from "../constants/Colors";
 import { useTranslation } from "react-i18next";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { dpx } from "../constants/Spacings";
-import { useApolloClient } from "@apollo/client";
+import { useApolloClient, useReactiveVar } from "@apollo/client";
 import Button from "../components/Button";
 import { MaterialIcons } from "@expo/vector-icons";
 import IconButton from "../components/IconButton";
 import Header from "../components/Header";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { setUser, userVar } from "../Store";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
-  const store = useStore();
   const client = useApolloClient();
+  const user = useReactiveVar(userVar);
 
   const [selectedLang, setSelectedLang] = useState(i18n.language || "en");
 
@@ -34,7 +33,7 @@ function ProfileScreen({ navigation }: any) {
   const handleLogout = async () => {
     try {
       await AsyncStorage.clear();
-      store.setUser(null);
+      setUser(null);
       client.resetStore();
     } catch (e) {
       console.log(e);
@@ -72,18 +71,18 @@ function ProfileScreen({ navigation }: any) {
             style={pickerSelectStyles}
           />
         </View>
-        {store.user && (
+        {user && (
           <IconButton handlePress={handleLogout}>
             <MaterialIcons name="logout" color={Colors.black} size={dpx(20)} />
           </IconButton>
         )}
       </Header>
-      {store.user ? (
+      {user ? (
         <View style={styles.actions}>
           <View style={styles.nameContainer}>
             <Text style={styles.title}>{t("PROFILE.HELLO")},</Text>
             <Text style={styles.name}>
-              {store.user.name} {store.user.surname}
+              {user.name} {user.surname}
             </Text>
           </View>
           <Text style={[styles.title, { marginTop: 50 }]}>
@@ -125,7 +124,7 @@ function ProfileScreen({ navigation }: any) {
   );
 }
 
-export default observer(ProfileScreen);
+export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: {

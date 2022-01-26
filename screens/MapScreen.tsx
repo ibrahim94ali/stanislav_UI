@@ -1,6 +1,5 @@
 import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
-import { observer } from "mobx-react";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Dimensions, Text, Platform } from "react-native";
@@ -73,7 +72,7 @@ const MapScreen = ({ navigation }: any) => {
   );
 };
 
-export default observer(MapScreen);
+export default MapScreen;
 
 const styles = StyleSheet.create({
   container: {

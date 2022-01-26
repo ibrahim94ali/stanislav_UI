@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
-import { useStore } from "../hooks/StoreContext";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import Button from "../components/Button";
@@ -14,9 +13,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import { Ionicons } from "@expo/vector-icons";
+import { setUser } from "../Store";
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
-  const store = useStore();
   const { t } = useTranslation();
   const [email, onEmailChange] = useState("");
   const [password, onPasswordChange] = useState("");
@@ -45,7 +44,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
     try {
       const jsonValue = JSON.stringify(value);
       await AsyncStorage.setItem("user", jsonValue);
-      store.setUser(value);
+      setUser(value);
       navigation.goBack();
     } catch (e) {
       console.log(e);

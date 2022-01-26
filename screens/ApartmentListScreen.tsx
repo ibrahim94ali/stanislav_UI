@@ -16,10 +16,8 @@ import IconButton from "../components/IconButton";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import ActiveFilterBadge from "../components/ActiveFilterBadge";
-import { useQuery } from "@apollo/client";
+import { useQuery, useReactiveVar } from "@apollo/client";
 import { GET_APARTMENTS, GET_SEARCHED_APARTMENTS } from "../graphQL/Queries";
-import { observer } from "mobx-react";
-import { useStore } from "../hooks/StoreContext";
 import { ApartmentI, SearchFiltersI } from "../interfaces";
 import Property from "../components/Property";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -30,6 +28,7 @@ import { useTranslation } from "react-i18next";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoResult from "../components/NoResult";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { filtersVar, resetFilters, setSorting } from "../Store";
 
 interface Props {
   navigation: any;
@@ -39,8 +38,7 @@ interface Props {
 const DATA_LIMIT = 20;
 
 const ApartmentListScreen = (props: Props) => {
-  const store = useStore();
-
+  const filters = useReactiveVar(filtersVar);
   let filteredData: any, isDataLoading, fetchMoreData: any;
 
   const [q, setQ] = useState<string | undefined>(
@@ -60,7 +58,7 @@ const ApartmentListScreen = (props: Props) => {
   } else {
     const { data, loading, fetchMore } = useQuery(GET_APARTMENTS, {
       variables: {
-        ...store.filters,
+        ...filters,
         limit: DATA_LIMIT,
       },
     });
@@ -71,8 +69,8 @@ const ApartmentListScreen = (props: Props) => {
 
   const removeFilters = () => {
     setQ(undefined);
-    store.resetFilters();
-    storeFiltersLocally(store.filters);
+    resetFilters();
+    storeFiltersLocally(filters);
   };
 
   const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
@@ -105,21 +103,33 @@ const ApartmentListScreen = (props: Props) => {
   };
 
   const handleSortFieldChange = (selectedField: SortTypeI) => {
-    store.setSorting(selectedField.value, selectedField.order);
+    setSorting(selectedField.value, selectedField.order);
     setTimeout(() => {
       handleSortModal(false);
     }, 500);
   };
 
+  const isAnyFilterActive = () => {
+    if (
+      Object.entries(filters).some(
+        ([key, value]) =>
+          key !== "sortOrder" && key !== "sortBy" && value !== undefined
+      )
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   useEffect(() => {
-    if (!store.filters.sortBy) {
-      store.setSorting("date", -1);
+    if (!filters.sortBy) {
+      setSorting("date", -1);
     }
   }, []);
 
   useEffect(() => {
     setShouldFetchMore(true);
-  }, [store.filters]);
+  }, [filters]);
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
@@ -138,7 +148,7 @@ const ApartmentListScreen = (props: Props) => {
         </IconButton>
       </Header>
 
-      {(store.isAnyFilterActive || q) && (
+      {(isAnyFilterActive() || q) && (
         <View style={styles.activeFiltersContainer}>
           <ActiveFilterBadge
             name={t("APARTMENT_LIST_SCREEN.ACTIVE_FILTERS")}
@@ -213,8 +223,8 @@ const ApartmentListScreen = (props: Props) => {
           <View style={styles.sortListContainer}>
             {sortTypes.map((sortType) => {
               const isSelected =
-                store.filters?.sortBy === sortType.value &&
-                store.filters?.sortOrder === sortType.order;
+                filters?.sortBy === sortType.value &&
+                filters?.sortOrder === sortType.order;
               return (
                 <TouchableOpacity
                   style={styles.sortList}
@@ -244,7 +254,7 @@ const ApartmentListScreen = (props: Props) => {
   );
 };
 
-export default observer(ApartmentListScreen);
+export default ApartmentListScreen;
 
 const styles = StyleSheet.create({
   container: {
