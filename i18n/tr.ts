@@ -48,6 +48,10 @@ export default {
         Furnished: "Eşyalı",
         Unfurnished: "Eşyasız",
       },
+      WHEELCHAIRACCESSIBILITYTYPE: {
+        WheelChairAccessible: "Erişilebilir",
+        NotWheelChairAccessible: "Erişilebilir değil",
+      },
     },
     ADD_EDIT_APT: {
       ADD: "İlan Ekle",
@@ -69,6 +73,7 @@ export default {
       AD_TYPE: "İlan Türü",
       FURNISHING: "Eşya",
       HEATING: "Isıtma",
+      ACCESSIBILITY: "Tekerlekli sandalye erişilebilirliği",
       AMENITIES: "Özellikler",
       SUBMIT: "Gönder",
     },
@@ -99,6 +104,9 @@ export default {
       lift: "Asansör",
       dublex: "Dubleks",
       balcony: "Balkon",
+      "pet-friendly": "Evcil hayvan dostu",
+      WheelChairAccessible: "Erişilebilir",
+      NotWheelChairAccessible: "Erişilebilir değil",
       MIN: "En az",
       MAX: "En fazla",
     },

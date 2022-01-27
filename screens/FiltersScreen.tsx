@@ -19,6 +19,7 @@ import {
   filterLimits,
   furnishingTypes,
   heatingTypes,
+  wheelChairAccessibleTypes,
 } from "../constants/Selectable";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
@@ -77,6 +78,9 @@ const FiltersScreen = ({ navigation }: any) => {
   const [selectedAmenities, setSelectedAmenities] = useState<
     AmenityType[] | undefined
   >(filters.amenities !== undefined ? filters.amenities : undefined);
+
+  const [selectedWheelChairAccessible, setSelectedWheelChairAccessible] =
+    useState<boolean | undefined>(filters.isWheelChairAccessible || undefined);
 
   //price
   const [minPrice, setMinPrice] = useState<number>(filters.minPrice || 0);
@@ -166,6 +170,7 @@ const FiltersScreen = ({ navigation }: any) => {
         selectedFurnishingType !== undefined
           ? selectedFurnishingType
           : undefined,
+      isWheelChairAccessible: selectedWheelChairAccessible || undefined,
     };
     setFilters(newFilters);
 
@@ -235,6 +240,19 @@ const FiltersScreen = ({ navigation }: any) => {
               value={selectedFurnishingType}
               onValueChange={(itemValue: boolean | undefined) => {
                 setSelectedFurnishingType(itemValue);
+              }}
+            />
+          </View>
+        )}
+        {selectedBuildingType !== BuildingType.LAND && (
+          <View style={styles.filterContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.ACCESSIBILITY")}
+              any
+              items={[wheelChairAccessibleTypes[0]]}
+              value={selectedWheelChairAccessible}
+              onValueChange={(itemValue: boolean) => {
+                setSelectedWheelChairAccessible(itemValue);
               }}
             />
           </View>

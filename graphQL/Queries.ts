@@ -22,6 +22,7 @@ export const GET_APARTMENTS = gql`
     $sortOrder: Int
     $limit: Int
     $offset: Int
+    $isWheelChairAccessible: Boolean
   ) {
     apartments(
       city: $city
@@ -44,6 +45,7 @@ export const GET_APARTMENTS = gql`
       sortOrder: $sortOrder
       limit: $limit
       offset: $offset
+      isWheelChairAccessible: $isWheelChairAccessible
     )
       @connection(
         key: "apartments"
@@ -65,6 +67,7 @@ export const GET_APARTMENTS = gql`
           "age"
           "sortBy"
           "sortOrder"
+          "isWheelChairAccessible"
         ]
       ) {
       id
@@ -93,6 +96,7 @@ export const GET_APARTMENTS = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
     }
   }
 `;
@@ -119,6 +123,7 @@ export const GET_MY_APARTMENTS = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
     }
   }
 `;
@@ -145,6 +150,7 @@ export const GET_FAV_APARTMENTS = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
       owner {
         name
         surname
@@ -176,6 +182,7 @@ export const GET_FEATURED_APARTMENTS = gql`
       isFurnished
       amenities
       age
+      isWheelChairAccessible
       owner {
         name
         surname
@@ -215,6 +222,7 @@ export const GET_SEARCHED_APARTMENTS = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
     }
   }
 `;

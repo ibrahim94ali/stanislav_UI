@@ -48,6 +48,10 @@ export default {
         Furnished: "Наместен",
         Unfurnished: "Ненаместен",
       },
+      WHEELCHAIRACCESSIBILITYTYPE: {
+        WheelChairAccessible: " Има пристап",
+        NotWheelChairAccessible: "Нема пристап",
+      },
     },
     ADD_EDIT_APT: {
       ADD: "Додај Oбјава",
@@ -69,6 +73,7 @@ export default {
       AD_TYPE: "Тип на Pеклама",
       FURNISHING: "Опремување",
       HEATING: "Греење",
+      ACCESSIBILITY: "Пристапност за инвалидска количка",
       AMENITIES: "Удобности",
       SUBMIT: "Поднесете",
     },
@@ -99,6 +104,9 @@ export default {
       lift: "Лифт",
       dublex: "Дуплекс",
       balcony: "Балкон",
+      "pet-friendly": "Пријателски за миленичиња",
+      WheelChairAccessible: " Има пристап",
+      NotWheelChairAccessible: "Нема пристап",
       MIN: "Мин.",
       MAX: "Макс.",
     },
@@ -114,9 +122,9 @@ export default {
       SORTS: {
         Newest: "Најнова",
         Price_LH: "Цена (ниска до висока)",
-        Price_HL: "Цена (високо до ниско)",
-        Area_LH: "Површина (ниска до висока",
-        Area_HL: "Површина (високо до ниско)",
+        Price_HL: "Цена (висока до ниска)",
+        Area_LH: "Површина (ниска до висока)",
+        Area_HL: "Површина (висока до ниска)",
       },
     },
     PERMISSIONS: {

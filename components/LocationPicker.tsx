@@ -50,7 +50,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
           }}
           onPress={() => setModalVisible(true)}
         >
-          <Ionicons name="home" size={30} color={Colors.primary} />
+          <Ionicons name="home" size={dpx(30)} color={Colors.primary} />
         </Marker>
       </MapView>
       <Modal
@@ -65,12 +65,13 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
           rotateEnabled={false}
           provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}
+          mapType="hybrid"
           onPress={(e) => addMarker(e)}
           initialRegion={{
             latitude: newGeolocation[0],
             longitude: newGeolocation[1],
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
+            latitudeDelta: 0.001,
+            longitudeDelta: 0.001,
           }}
         >
           <Marker
@@ -79,7 +80,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
               longitude: newGeolocation[1],
             }}
           >
-            <Ionicons name="home" size={30} color={Colors.primary} />
+            <Ionicons name="home" size={dpx(30)} color={Colors.yellow} />
           </Marker>
         </MapView>
         <Pressable style={styles.close} onPress={() => setModalVisible(false)}>

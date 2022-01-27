@@ -28,19 +28,25 @@ export const heatingTypes = [
 ];
 
 export const amenityTypes = [
-  { value: AmenityType.LIFT },
+  { value: AmenityType.BALCONY },
   { value: AmenityType.PARKING },
+  { value: AmenityType.LIFT },
   { value: AmenityType.GARDEN },
+  { value: AmenityType.PET_FRIENDLY },
+  { value: AmenityType.GOOD_ISOLATION },
   { value: AmenityType.POOL },
   { value: AmenityType.FIREPLACE },
-  { value: AmenityType.GOOD_ISOLATION },
   { value: AmenityType.DUBLEX },
-  { value: AmenityType.BALCONY },
 ];
 
 export const furnishingTypes = [
   { value: true, label: "Furnished" },
   { value: false, label: "Unfurnished" },
+];
+
+export const wheelChairAccessibleTypes = [
+  { value: true, label: "WheelChairAccessible" },
+  { value: false, label: "NotWheelChairAccessible" },
 ];
 
 export interface SortTypeI {

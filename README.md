@@ -1,7 +1,9 @@
 TODO:
 
+- Fav icon bug to work with store
+- Improve forms
+- Add user types: Person, Agency
 - Upload API to Vercel?
-- Add empty featured property
 - Maps filters
 - Maps gather data based on geolocation boundaries
 

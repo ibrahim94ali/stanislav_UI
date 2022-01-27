@@ -61,6 +61,7 @@ export const ADD_APARTMENT = gql`
     $isFurnished: Boolean!
     $amenities: [String]!
     $age: Int!
+    $isWheelChairAccessible: Boolean!
   ) {
     addApartment(
       title: $title
@@ -80,6 +81,7 @@ export const ADD_APARTMENT = gql`
       isFurnished: $isFurnished
       amenities: $amenities
       age: $age
+      isWheelChairAccessible: $isWheelChairAccessible
     ) {
       id
       ownerId
@@ -101,6 +103,7 @@ export const ADD_APARTMENT = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
       owner {
         name
         surname
@@ -132,6 +135,7 @@ export const UPDATE_APARTMENT = gql`
     $isFurnished: Boolean
     $amenities: [String]
     $age: Int
+    $isWheelChairAccessible: Boolean
   ) {
     updateApartment(
       id: $id
@@ -153,6 +157,7 @@ export const UPDATE_APARTMENT = gql`
       isFurnished: $isFurnished
       amenities: $amenities
       age: $age
+      isWheelChairAccessible: $isWheelChairAccessible
     ) {
       id
       ownerId
@@ -174,6 +179,7 @@ export const UPDATE_APARTMENT = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
       owner {
         name
         surname
@@ -221,6 +227,7 @@ export const ADD_FAV_APARTMENT = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
     }
   }
 `;
@@ -254,6 +261,7 @@ export const REMOVE_FAV_APARTMENT = gql`
       isFeatured
       amenities
       age
+      isWheelChairAccessible
     }
   }
 `;

@@ -21,6 +21,7 @@ export interface ApartmentI {
   isFavorite?: boolean;
   isFurnished: boolean;
   isFeatured?: boolean;
+  isWheelChairAccessible: boolean;
 }
 
 export interface UserI {
@@ -53,6 +54,7 @@ export interface SearchFiltersI {
   isFurnished?: boolean;
   sortBy?: string;
   sortOrder?: number;
+  isWheelChairAccessible?: boolean;
 }
 
 export interface CityI {
@@ -115,4 +117,5 @@ export enum AmenityType {
   LIFT = "lift",
   DUBLEX = "dublex",
   BALCONY = "balcony",
+  PET_FRIENDLY = "pet-friendly",
 }

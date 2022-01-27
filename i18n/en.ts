@@ -48,6 +48,10 @@ export default {
         Furnished: "Furnished",
         Unfurnished: "Unfurnished",
       },
+      WHEELCHAIRACCESSIBILITYTYPE: {
+        WheelChairAccessible: "Accessible",
+        NotWheelChairAccessible: "Not Accessible",
+      },
     },
     ADD_EDIT_APT: {
       ADD: "Add Property",
@@ -69,6 +73,7 @@ export default {
       AD_TYPE: "Ad Type",
       FURNISHING: "Furnishing",
       HEATING: "Heating",
+      ACCESSIBILITY: "Wheelchair accessibility",
       AMENITIES: "Amenities",
       SUBMIT: "Submit",
     },
@@ -99,6 +104,9 @@ export default {
       lift: "Lift",
       dublex: "Duplex",
       balcony: "Balcony",
+      "pet-friendly": "Pet friendly",
+      WheelChairAccessible: "Accessible",
+      NotWheelChairAccessible: "Not Accessible",
       MIN: "Min.",
       MAX: "Max.",
     },

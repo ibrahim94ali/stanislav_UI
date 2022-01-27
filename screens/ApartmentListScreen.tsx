@@ -215,6 +215,7 @@ const ApartmentListScreen = (props: Props) => {
         snapPoints={snapPoints}
         onChange={handleSheetChanges}
         enablePanDownToClose
+        backgroundStyle={{ backgroundColor: Colors.bg }}
       >
         <View style={styles.sortContainer}>
           <Text style={styles.sortHeader}>

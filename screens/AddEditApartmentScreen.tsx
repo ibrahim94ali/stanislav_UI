@@ -32,6 +32,7 @@ import {
   furnishingTypes,
   heatingTypes,
   amenityTypes,
+  wheelChairAccessibleTypes,
 } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -75,6 +76,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   );
   const [isFurnished, setIsFurnished] = useState<boolean>(
     itemOnEdit ? itemOnEdit.isFurnished : true
+  );
+  const [isWheelChairAccessible, setIsWheelChairAccessible] = useState<boolean>(
+    itemOnEdit ? itemOnEdit.isWheelChairAccessible : true
   );
   const [heatingType, setHeatingType] = useState<HeatingType>(
     itemOnEdit ? itemOnEdit.heatingType : HeatingType.NONE
@@ -271,6 +275,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           floor: buildingType !== BuildingType.LAND ? floor : 0,
           age: buildingType !== BuildingType.LAND ? age : 0,
           isFurnished,
+          isWheelChairAccessible,
         },
       });
       return;
@@ -295,6 +300,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         floor: buildingType !== BuildingType.LAND ? floor : 0,
         age: buildingType !== BuildingType.LAND ? age : 0,
         isFurnished,
+        isWheelChairAccessible,
       },
     });
   };
@@ -609,6 +615,16 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
                 value={isFurnished}
                 onValueChange={(itemValue: boolean) => {
                   setIsFurnished(itemValue);
+                }}
+              />
+            </View>
+            <View style={styles.optionContainer}>
+              <FilterOptions
+                title={t("ADD_EDIT_APT.ACCESSIBILITY")}
+                items={wheelChairAccessibleTypes}
+                value={isWheelChairAccessible}
+                onValueChange={(itemValue: boolean) => {
+                  setIsWheelChairAccessible(itemValue);
                 }}
               />
             </View>

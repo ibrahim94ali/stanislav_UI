@@ -8,5 +8,6 @@ export default {
   gray: "#828282",
   lightGray: "#C4C4C4",
   red: "#EC1C24",
+  yellow: "#FFFF00",
   bg: "#F6F1EB",
 };

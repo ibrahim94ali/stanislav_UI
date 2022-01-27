@@ -30,7 +30,10 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
 import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
-import { furnishingTypes } from "../constants/Selectable";
+import {
+  furnishingTypes,
+  wheelChairAccessibleTypes,
+} from "../constants/Selectable";
 import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { customMapStyle } from "../constants/googleMapsStyle";
@@ -234,6 +237,10 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               ? (amenity as any)
               : amenity === AmenityType.GARDEN
               ? "leaf"
+              : amenity === AmenityType.PET_FRIENDLY
+              ? "paw"
+              : amenity === AmenityType.LIFT
+              ? "elevator-passenger"
               : "star"
           }
           size={dpx(18)}
@@ -406,6 +413,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                   )}
                 </Text>
               </View>
+            </View>
+            <View style={styles.amenityRow}>
               <View style={styles.amenityContainer}>
                 <MaterialCommunityIcons
                   name="fire"
@@ -417,10 +426,26 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                   {` ${t("ADD_EDIT_APT.HEATING")}`}
                 </Text>
               </View>
+              <View style={styles.amenityContainer}>
+                <MaterialCommunityIcons
+                  name="wheelchair-accessibility"
+                  size={dpx(18)}
+                  color={Colors.black}
+                />
+                <Text style={styles.amenity}>
+                  {t(
+                    `APARTMENT_DETAILS.WHEELCHAIRACCESSIBILITYTYPE.${
+                      wheelChairAccessibleTypes.find(
+                        (a) => a.value === apartment.isWheelChairAccessible
+                      )?.label
+                    }`
+                  )}
+                </Text>
+              </View>
             </View>
             {apartment.amenities?.map((_, index: number) => {
               const am = apartment.amenities;
-              if (index % 3 === 0) {
+              if (index % 2 === 0) {
                 return (
                   <View
                     style={styles.amenityRow}
@@ -430,8 +455,6 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                       amenityRender(apartment.amenities[index])}
                     {am.length > index + 1 &&
                       amenityRender(apartment.amenities[index + 1])}
-                    {am.length > index + 2 &&
-                      amenityRender(apartment.amenities[index + 2])}
                   </View>
                 );
               }
@@ -560,7 +583,6 @@ const styles = StyleSheet.create({
   amenityRow: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-around",
     marginBottom: dpx(10),
     borderBottomColor: Colors.lightGray,
     borderBottomWidth: 1,
@@ -570,6 +592,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingBottom: dpx(10),
     alignItems: "center",
+    flex: 1,
   },
   amenity: {
     marginLeft: dpx(5),
