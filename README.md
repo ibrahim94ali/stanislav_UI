@@ -3,14 +3,13 @@ TODO:
 - Create page for editing user details, deleting user
 - Fav icon bug to work with store
 - Improve forms
-- Add user types: Person, Agency
 - Upload API to Vercel?
 - Maps filters
 - Maps gather data based on geolocation boundaries
 
 ---
 
-v2 ideas:
+Ideas:
 
 - Add country
 - Skopje -> neighborhood
