@@ -107,6 +107,8 @@ export default {
       "pet-friendly": "Pet friendly",
       WheelChairAccessible: "Accessible",
       NotWheelChairAccessible: "Not Accessible",
+      person: "Person",
+      agency: "Agency",
       MIN: "Min.",
       MAX: "Max.",
     },
@@ -143,6 +145,7 @@ export default {
       NAME: "Name",
       SURNAME: "Surname",
       PHONE: "Tel",
+      TYPE: "Profile type",
     },
     DELETE_MODAL: {
       TITLE: "Are you sure?",

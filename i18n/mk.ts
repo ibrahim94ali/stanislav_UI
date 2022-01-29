@@ -107,6 +107,8 @@ export default {
       "pet-friendly": "Пријателски за миленичиња",
       WheelChairAccessible: " Има пристап",
       NotWheelChairAccessible: "Нема пристап",
+      person: "Лице",
+      agency: "Агенција",
       MIN: "Мин.",
       MAX: "Макс.",
     },
@@ -145,6 +147,7 @@ export default {
       NAME: "Име",
       SURNAME: "Презиме",
       PHONE: "Тел",
+      TYPE: "Тип на профил",
     },
     DELETE_MODAL: {
       TITLE: "Дали си сигурен?",

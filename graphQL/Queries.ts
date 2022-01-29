@@ -78,8 +78,11 @@ export const GET_APARTMENTS = gql`
         surname
         email
         phone
+        type
+        verified
       }
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -107,7 +110,8 @@ export const GET_MY_APARTMENTS = gql`
       id
       title
       details
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -134,7 +138,8 @@ export const GET_FAV_APARTMENTS = gql`
       id
       title
       details
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -156,6 +161,8 @@ export const GET_FAV_APARTMENTS = gql`
         surname
         email
         phone
+        type
+        verified
       }
     }
   }
@@ -167,7 +174,8 @@ export const GET_FEATURED_APARTMENTS = gql`
       id
       title
       details
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -188,6 +196,8 @@ export const GET_FEATURED_APARTMENTS = gql`
         surname
         email
         phone
+        type
+        verified
       }
     }
   }
@@ -204,8 +214,11 @@ export const GET_SEARCHED_APARTMENTS = gql`
         surname
         email
         phone
+        type
+        verified
       }
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city

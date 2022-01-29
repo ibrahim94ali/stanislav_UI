@@ -107,6 +107,8 @@ export default {
       "pet-friendly": "Miqësore me kafshët shtëpiake",
       WheelChairAccessible: "Qasje",
       NotWheelChairAccessible: "Ska qasje",
+      person: "Personi",
+      agency: "Agjencia",
       MIN: "Min.",
       MAX: "Maks.",
     },
@@ -145,6 +147,7 @@ export default {
       NAME: "Emri",
       SURNAME: "Mbiemri",
       PHONE: "Tel",
+      TYPE: "Lloji i profilit",
     },
     DELETE_MODAL: {
       TITLE: "A je i sigurt?",

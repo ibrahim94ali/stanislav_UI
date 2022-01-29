@@ -1,5 +1,6 @@
 TODO:
 
+- Create page for editing user details, deleting user
 - Fav icon bug to work with store
 - Improve forms
 - Add user types: Person, Agency

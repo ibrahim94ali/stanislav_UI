@@ -259,7 +259,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           id: itemOnEdit.id,
           title,
           details,
-          date: `${+new Date()}`,
           geolocation,
           address,
           city,
@@ -285,7 +284,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       variables: {
         title,
         details,
-        date: `${+new Date()}`,
         geolocation,
         address,
         city,

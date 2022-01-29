@@ -49,6 +49,11 @@ export const wheelChairAccessibleTypes = [
   { value: false, label: "NotWheelChairAccessible" },
 ];
 
+export const profileTypes = [
+  { value: "person", label: "person" },
+  { value: "agency", label: "agency" },
+];
+
 export interface SortTypeI {
   label: string;
   value: string;

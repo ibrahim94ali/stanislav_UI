@@ -15,6 +15,8 @@ import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import { Ionicons } from "@expo/vector-icons";
 import { setUser } from "../Store";
+import { profileTypes } from "../constants/Selectable";
+import FilterOptions from "../components/FilterOptions";
 
 export default function RegisterScreen({ navigation }: { navigation: any }) {
   const { t } = useTranslation();
@@ -24,6 +26,7 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   const [name, onNameChange] = useState("");
   const [surname, onSurnameChange] = useState("");
   const [phone, onPhoneChange] = useState("");
+  const [type, setType] = useState("person");
 
   //refs for inputs
   const ref_password = useRef<TextInput>();
@@ -41,7 +44,8 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         password: password,
         name: name,
         surname: surname,
-        phone: phone || null,
+        phone: phone,
+        type: type,
       },
     });
   };
@@ -146,6 +150,16 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
           returnKeyType="done"
           ref={ref_phone as any}
         ></TextInput>
+        <View style={styles.optionContainer}>
+          <FilterOptions
+            title={t("REGISTER.TYPE")}
+            items={profileTypes}
+            value={type}
+            onValueChange={(itemValue: string) => {
+              setType(itemValue);
+            }}
+          />
+        </View>
         <View style={styles.buttonContainer}>
           <Button
             title={t("PROFILE.REGISTER")}
@@ -189,6 +203,10 @@ const styles = StyleSheet.create({
     marginBottom: dpx(10),
     fontFamily: "Montserrat_400Regular",
     fontSize: dpx(14),
+  },
+  optionContainer: {
+    alignSelf: "stretch",
+    marginBottom: dpx(10),
   },
   buttonContainer: {
     marginTop: 30,

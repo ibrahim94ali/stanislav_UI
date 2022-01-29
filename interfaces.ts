@@ -2,7 +2,8 @@ export interface ApartmentI {
   id: string;
   title: string;
   details: string;
-  date: string;
+  createdAt: Date;
+  modifiedAt: Date;
   geolocation: number[];
   address: string;
   city: string;
@@ -29,10 +30,10 @@ export interface UserI {
   email: string;
   name: string;
   surname: string;
-  phone?: string;
+  phone: string;
+  verified: boolean;
+  type: string;
   token?: string;
-  verified?: boolean;
-  roles?: string[];
 }
 
 export interface SearchFiltersI {

@@ -6,7 +6,8 @@ export const REGISTER_USER = gql`
     $password: String!
     $name: String!
     $surname: String!
-    $phone: String
+    $phone: String!
+    $type: String!
   ) {
     register(
       email: $email
@@ -14,6 +15,7 @@ export const REGISTER_USER = gql`
       name: $name
       surname: $surname
       phone: $phone
+      type: $type
     ) {
       id
       email
@@ -21,7 +23,7 @@ export const REGISTER_USER = gql`
       phone
       name
       surname
-      roles
+      type
       verified
     }
   }
@@ -36,8 +38,8 @@ export const LOGIN_USER = gql`
       phone
       name
       surname
-      roles
       verified
+      type
     }
   }
 `;
@@ -46,7 +48,6 @@ export const ADD_APARTMENT = gql`
   mutation addApartment(
     $title: String!
     $details: String!
-    $date: String!
     $geolocation: [Float]!
     $address: String!
     $city: String!
@@ -66,7 +67,6 @@ export const ADD_APARTMENT = gql`
     addApartment(
       title: $title
       details: $details
-      date: $date
       geolocation: $geolocation
       address: $address
       city: $city
@@ -87,7 +87,8 @@ export const ADD_APARTMENT = gql`
       ownerId
       title
       details
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -109,6 +110,8 @@ export const ADD_APARTMENT = gql`
         surname
         phone
         email
+        verified
+        type
       }
     }
   }
@@ -119,7 +122,6 @@ export const UPDATE_APARTMENT = gql`
     $id: ID!
     $title: String
     $details: String
-    $date: String
     $geolocation: [Float]
     $address: String
     $city: String
@@ -141,7 +143,6 @@ export const UPDATE_APARTMENT = gql`
       id: $id
       title: $title
       details: $details
-      date: $date
       geolocation: $geolocation
       address: $address
       city: $city
@@ -163,7 +164,8 @@ export const UPDATE_APARTMENT = gql`
       ownerId
       title
       details
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -185,6 +187,8 @@ export const UPDATE_APARTMENT = gql`
         surname
         phone
         email
+        verified
+        type
       }
     }
   }
@@ -209,8 +213,11 @@ export const ADD_FAV_APARTMENT = gql`
         surname
         email
         phone
+        verified
+        type
       }
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city
@@ -243,8 +250,11 @@ export const REMOVE_FAV_APARTMENT = gql`
         surname
         email
         phone
+        verified
+        type
       }
-      date
+      createdAt
+      modifiedAt
       geolocation
       address
       city

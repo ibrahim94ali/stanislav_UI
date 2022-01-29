@@ -468,9 +468,14 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             </Text>
 
             <View style={styles.personContainer}>
-              <Text
-                style={styles.person}
-              >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
+              <View>
+                <Text
+                  style={styles.person}
+                >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
+                <Text style={styles.personType}>
+                  {t(`FILTER_OPTIONS.${apartment.owner?.type}`)}
+                </Text>
+              </View>
               <View style={styles.personIcons}>
                 <IconButton
                   handlePress={() =>
@@ -611,6 +616,11 @@ const styles = StyleSheet.create({
   person: {
     fontFamily: "Montserrat_700Bold",
     fontSize: dpx(16),
+    color: Colors.black,
+  },
+  personType: {
+    fontSize: dpx(14),
+    fontFamily: "Montserrat_400Regular",
     color: Colors.black,
   },
   personIcons: {

@@ -107,6 +107,8 @@ export default {
       "pet-friendly": "Evcil hayvan dostu",
       WheelChairAccessible: "Erişilebilir",
       NotWheelChairAccessible: "Erişilebilir değil",
+      person: "Kişi",
+      agency: "Ajans",
       MIN: "En az",
       MAX: "En fazla",
     },
@@ -145,6 +147,7 @@ export default {
       NAME: "Ad",
       SURNAME: "Soyad",
       PHONE: "Tel",
+      TYPE: "Profil türü",
     },
     DELETE_MODAL: {
       TITLE: "Emin misiniz?",
