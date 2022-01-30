@@ -25,7 +25,6 @@ import BottomSheet from "@gorhom/bottom-sheet";
 import { SortTypeI, sortTypes } from "../constants/Selectable";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { useTranslation } from "react-i18next";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import NoResult from "../components/NoResult";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { filtersVar, resetFilters, setSorting } from "../Store";
@@ -70,11 +69,6 @@ const ApartmentListScreen = (props: Props) => {
   const removeFilters = () => {
     setQ(undefined);
     resetFilters();
-    storeFiltersLocally(filters);
-  };
-
-  const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
-    await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
   const { t } = useTranslation();

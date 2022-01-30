@@ -29,6 +29,7 @@ import { SearchFiltersI } from "./interfaces";
 import "react-native-gesture-handler";
 import { useFonts } from "expo-font";
 import { setFilters, setUser, userVar } from "./Store";
+import * as Localization from "expo-localization";
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -60,7 +61,11 @@ export default function App() {
       if (lang) {
         i18n.changeLanguage(lang);
       } else {
-        await AsyncStorage.setItem("lang", i18n.language);
+        const currentLang = i18n?.language || Localization.locale || "en";
+        if (!i18n.language) {
+          i18n.changeLanguage(currentLang);
+        }
+        await AsyncStorage.setItem("lang", currentLang);
       }
     } catch (e) {
       console.log(e);

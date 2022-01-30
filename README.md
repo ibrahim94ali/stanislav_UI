@@ -5,7 +5,6 @@ TODO:
 - Update API with better mongoose calls
 - Create production DB and update api
 - Improve screenshots in store, add texts there
-- Add signin/register with google
 - Fix bug in first time entering, language is english even its different
 - ApartmentDetailsScreen to work with cached data
 - Improve forms
@@ -19,6 +18,7 @@ Ideas:
 
 - Add country
 - Skopje -> neighborhood
-- Amenities: pet friendly rent, number of baths, etc.
-- Add payment method
+- Add signin/register with google
+- Amenities: number of baths, etc.
+- Add google ads, subscriptions based on no ads, all filterings, adding more than 1 property monthly, translated descriptions, etc
 - Start integrating renting daily (hotel, villa, house, etc...)

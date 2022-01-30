@@ -1,6 +1,5 @@
 import { useMutation } from "@apollo/client";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import { StyleSheet, TextInput, View, Text } from "react-native";
 import { LOGIN_USER } from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
@@ -23,13 +22,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   //refs for inputs
   const ref_password = useRef<TextInput>();
 
-  const [loginUser, { data, loading }] = useMutation(LOGIN_USER);
-
-  useEffect(() => {
-    if (data) {
-      storeUsereData(data.login);
-    }
-  }, [data]);
+  const [loginUser, { loading }] = useMutation(LOGIN_USER);
 
   const handleSubmit = () => {
     loginUser({
@@ -37,18 +30,10 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
         email: email,
         password: password,
       },
-    });
-  };
-
-  const storeUsereData = async (value: UserI) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-      setUser(value);
+    }).then((data) => {
+      setUser(data.data.login);
       navigation.goBack();
-    } catch (e) {
-      console.log(e);
-    }
+    });
   };
 
   return (

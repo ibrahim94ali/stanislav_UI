@@ -31,13 +31,8 @@ function ProfileScreen({ navigation }: any) {
   };
 
   const handleLogout = async () => {
-    try {
-      await AsyncStorage.clear();
-      setUser(null);
-      client.resetStore();
-    } catch (e) {
-      console.log(e);
-    }
+    setUser(null);
+    client.resetStore();
   };
 
   const onLangValueChange = (lang: string) => {

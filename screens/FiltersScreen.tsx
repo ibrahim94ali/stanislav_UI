@@ -21,7 +21,6 @@ import {
   heatingTypes,
   wheelChairAccessibleTypes,
 } from "../constants/Selectable";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
@@ -173,14 +172,7 @@ const FiltersScreen = ({ navigation }: any) => {
       isWheelChairAccessible: selectedWheelChairAccessible || undefined,
     };
     setFilters(newFilters);
-
-    storeFiltersLocally(newFilters);
-
     navigation.push("ApartmentListScreen");
-  };
-
-  const storeFiltersLocally = async (newFilters: SearchFiltersI) => {
-    await AsyncStorage.setItem("filters", JSON.stringify(newFilters));
   };
 
   return (

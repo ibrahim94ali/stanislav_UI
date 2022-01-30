@@ -1,5 +1,4 @@
 import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useRef, useState } from "react";
 import { StyleSheet, TextInput, View, Text, Alert } from "react-native";
 import {
@@ -71,14 +70,9 @@ export default function RegisterScreen({
         text: t("OK"),
         onPress: () => {
           deleteUser().then(async () => {
-            try {
-              await AsyncStorage.clear();
-              setUser(null);
-              client.resetStore();
-              navigation.goBack();
-            } catch (e) {
-              console.log(e);
-            }
+            setUser(null);
+            client.resetStore();
+            navigation.goBack();
           });
         },
       },
@@ -99,7 +93,8 @@ export default function RegisterScreen({
           ...data.data.updateUser,
           token: user?.token,
         };
-        storeUsereData(updatedUser);
+        setUser(updatedUser);
+        navigation.goBack();
       });
     } else {
       createUser({
@@ -112,7 +107,8 @@ export default function RegisterScreen({
           type: type,
         },
       }).then((data: any) => {
-        storeUsereData(data.data.register || null);
+        setUser(data.data.register || null);
+        navigation.goBack();
       });
     }
   };
@@ -126,17 +122,6 @@ export default function RegisterScreen({
     }).then(() => {
       navigation.goBack();
     });
-  };
-
-  const storeUsereData = async (value: UserI) => {
-    try {
-      const jsonValue = JSON.stringify(value);
-      await AsyncStorage.setItem("user", jsonValue);
-      setUser(value);
-      navigation.goBack();
-    } catch (e) {
-      console.log(e);
-    }
   };
 
   return (
