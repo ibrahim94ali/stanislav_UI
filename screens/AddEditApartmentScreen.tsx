@@ -121,7 +121,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (statusImagePicker !== "granted") {
-      Alert.alert(t("PERMISSIONS.CAMERA_ROLL"));
+      Alert.alert(t("PERMISSIONS.SORRY"), t("PERMISSIONS.CAMERA_ROLL"));
       return;
     }
 
@@ -195,10 +195,12 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   //setting user location as default location
   useEffect(() => {
     (async () => {
-      if (itemOnEdit) return;
+      if (itemOnEdit) {
+        return;
+      }
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        Alert.alert(t("PERMISSIONS.ADDRESS"));
+        Alert.alert(t("PERMISSIONS.SORRY"), t("PERMISSIONS.ADDRESS"));
         return;
       }
 
@@ -310,7 +312,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       await Location.requestForegroundPermissionsAsync();
 
     if (statusLocation !== "granted") {
-      Alert.alert(t("PERMISSIONS.ADDRESS"));
+      Alert.alert(t("PERMISSIONS.SORRY"), t("PERMISSIONS.ADDRESS"));
       return;
     }
 

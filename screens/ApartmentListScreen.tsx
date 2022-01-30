@@ -123,7 +123,7 @@ const ApartmentListScreen = (props: Props) => {
 
   useEffect(() => {
     if (!filters.sortBy) {
-      setSorting("date", -1);
+      setSorting("createdAt", -1);
     }
   }, []);
 

@@ -17,7 +17,7 @@ export const setFilters = (filters: SearchFiltersI) => {
 
 export const resetFilters = () => {
   filtersVar({
-    sortBy: "date",
+    sortBy: "createdAt",
     sortOrder: -1,
   });
 };

@@ -23,11 +23,11 @@ function ProfileScreen({ navigation }: any) {
   const [selectedLang, setSelectedLang] = useState(i18n.language || "en");
 
   const handleRegister = () => {
-    navigation.navigate("RegisterScreen");
+    navigation.push("RegisterScreen");
   };
 
   const handleLogin = () => {
-    navigation.navigate("LoginScreen");
+    navigation.push("LoginScreen");
   };
 
   const handleLogout = async () => {
@@ -85,6 +85,16 @@ function ProfileScreen({ navigation }: any) {
               {user.name} {user.surname}
             </Text>
           </View>
+          <Text style={[styles.title, { marginTop: 50 }]}>
+            {t("PROFILE.MANAGE_YOUR_PROFILE")}
+          </Text>
+          <Button
+            title={t("PROFILE.YOUR_PROFILE")}
+            color={Colors.primary}
+            onPress={() =>
+              navigation.push("RegisterScreen", { isEditing: true })
+            }
+          />
           <Text style={[styles.title, { marginTop: 50 }]}>
             {t("PROFILE.MANAGE_YOUR_APT")}
           </Text>

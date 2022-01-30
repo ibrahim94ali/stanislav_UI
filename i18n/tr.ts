@@ -8,6 +8,8 @@ export default {
     PROFILE: {
       HELLO: "Merhaba",
       LOGOUT: "Çıkış yap",
+      MANAGE_YOUR_PROFILE: "Profilini düzenle",
+      YOUR_PROFILE: "Profilim",
       MANAGE_YOUR_APT: "İlanlarını düzenle",
       YOUR_APT: "İlanlarım",
       SEE_FAV_APT: "Favori ilanlarını gör",
@@ -130,10 +132,11 @@ export default {
       },
     },
     PERMISSIONS: {
+      SORRY: "Üzgünüz",
       CAMERA_ROLL:
-        "Üzgünüz, devam edebilmek içim kamera galerisi izinlerine ihtiyacımız var!",
+        "Devam edebilmek içim kamera galerisi izinlerine ihtiyacımız var!",
       ADDRESS:
-        "Üzgünüz, adresin coğrafi kodlamasını bulmak için konuma ihtiyacımız var!",
+        "Аdresin coğrafi kodlamasını bulmak için konuma ihtiyacımız var!",
       LOCATION_ERROR: "Konum hatası",
       ENTER_VALID_ADDRESS: "Lütfen geçerli bir adres girin",
     },
@@ -148,12 +151,18 @@ export default {
       SURNAME: "Soyad",
       PHONE: "Tel",
       TYPE: "Profil türü",
+      UPDATE_PASSWORD: "Şifrenizi Güncelleyin",
+      CURRENT_PASSWORD: "Şimdiki şifreniz",
+      NEW_PASSWORD: "Yeni şifre",
+      CONFIRM_NEW_PASSWORD: "Yeni şifreyi onaylayın",
     },
     DELETE_MODAL: {
       TITLE: "Emin misiniz?",
       MSG: "Bu ilan tamamen silinecektir.",
       PHOTO_TITLE: "Fotoğrafı sil?",
       PHOTO_MSG: "Bu fotoğraf silinecektir",
+      USER_MSG:
+        "Bu profil ve bu profilin tüm ilanları kalıcı olarak silinecektir.",
     },
     CANCEL: "İptal",
     OK: "Evet",

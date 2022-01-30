@@ -8,6 +8,8 @@ export default {
     PROFILE: {
       HELLO: "Përshëndetje",
       LOGOUT: "Shkyç",
+      MANAGE_YOUR_PROFILE: "Ndrysho profilin tënd",
+      YOUR_PROFILE: "Profili im",
       MANAGE_YOUR_APT: "Menaxhoni postimet",
       YOUR_APT: "Postimet tuaja",
       SEE_FAV_APT: "Shihni postimet tuaja të preferuara",
@@ -130,10 +132,10 @@ export default {
       },
     },
     PERMISSIONS: {
+      SORRY: "Na vjen keq",
       CAMERA_ROLL:
-        "Na vjen keq, na duhen lejet e filmit të kamerës për ta bërë këtë të funksionojë!",
-      ADDRESS:
-        "Na vjen keq, na duhet vendndodhja për të gjetur gjeokodimin e adresës!",
+        "Na duhen lejet e filmit të kamerës për ta bërë këtë të funksionojë!",
+      ADDRESS: "Na duhet vendndodhja për të gjetur gjeokodimin e adresës!",
       LOCATION_ERROR: "Gabim vendndodhjeje",
       ENTER_VALID_ADDRESS: "Ju lutemi shkruani një adresë të vlefshme",
     },
@@ -148,12 +150,18 @@ export default {
       SURNAME: "Mbiemri",
       PHONE: "Tel",
       TYPE: "Lloji i profilit",
+      UPDATE_PASSWORD: "Përditëso Fjalëkalimin",
+      CURRENT_PASSWORD: "Fjalëkalimi aktual",
+      NEW_PASSWORD: "Fjalëkalim i ri",
+      CONFIRM_NEW_PASSWORD: "Konfirmo fjalëkalimin e ri",
     },
     DELETE_MODAL: {
       TITLE: "A je i sigurt?",
       MSG: "Kjo pronë do të fshihet përgjithmonë.",
       PHOTO_TITLE: "Të fshihet fotografia?",
       PHOTO_MSG: "Kjo foto do të fshihet",
+      USER_MSG:
+        "Ky profil dhe të gjitha postimet e tij do të fshihen përgjithmonë.",
     },
     CANCEL: "Anulo",
     OK: "Ok",

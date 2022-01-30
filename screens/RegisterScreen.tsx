@@ -1,8 +1,13 @@
-import { useMutation } from "@apollo/client";
+import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useRef, useState } from "react";
-import { StyleSheet, TextInput, View, Text } from "react-native";
-import { REGISTER_USER } from "../graphQL/Mutations";
+import React, { useRef, useState } from "react";
+import { StyleSheet, TextInput, View, Text, Alert } from "react-native";
+import {
+  DELETE_USER,
+  REGISTER_USER,
+  UPDATE_PASSWORD,
+  UPDATE_USER,
+} from "../graphQL/Mutations";
 import { UserI } from "../interfaces";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -13,20 +18,34 @@ import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
-import { Ionicons } from "@expo/vector-icons";
-import { setUser } from "../Store";
+import { AntDesign, Ionicons } from "@expo/vector-icons";
+import { setUser, userVar } from "../Store";
 import { profileTypes } from "../constants/Selectable";
 import FilterOptions from "../components/FilterOptions";
 
-export default function RegisterScreen({ navigation }: { navigation: any }) {
+export default function RegisterScreen({
+  navigation,
+  route,
+}: {
+  navigation: any;
+  route: any;
+}) {
   const { t } = useTranslation();
+  const user = useReactiveVar(userVar);
+  const client = useApolloClient();
+
+  const isEditing = route?.params?.isEditing || null;
+
   const [email, onEmailChange] = useState("");
+  const [oldPassword, onOldPasswordChange] = useState("");
   const [password, onPasswordChange] = useState("");
   const [confirmPassword, onConfirmPasswordChange] = useState("");
-  const [name, onNameChange] = useState("");
-  const [surname, onSurnameChange] = useState("");
-  const [phone, onPhoneChange] = useState("");
-  const [type, setType] = useState("person");
+  const [name, onNameChange] = useState(isEditing && user ? user.name : "");
+  const [surname, onSurnameChange] = useState(
+    isEditing && user ? user.surname : ""
+  );
+  const [phone, onPhoneChange] = useState(isEditing && user ? user.phone : "");
+  const [type, setType] = useState(isEditing && user ? user.type : "person");
 
   //refs for inputs
   const ref_password = useRef<TextInput>();
@@ -35,26 +54,79 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
   const ref_surname = useRef<TextInput>();
   const ref_phone = useRef<TextInput>();
 
-  const [createUser, { data, loading }] = useMutation(REGISTER_USER);
+  const [createUser, { loading: loadingCreateUser }] =
+    useMutation(REGISTER_USER);
+  const [updateUser, { loading: isLoadingUpdateUser }] =
+    useMutation(UPDATE_USER);
+  const [updatePassword, { loading: isLoadingUpdatePassword }] =
+    useMutation(UPDATE_PASSWORD);
+  const [deleteUser, { loading: isDeletingUser }] = useMutation(DELETE_USER);
 
-  const handleSubmit = () => {
-    createUser({
-      variables: {
-        email: email,
-        password: password,
-        name: name,
-        surname: surname,
-        phone: phone,
-        type: type,
+  const handleDelete = () => {
+    Alert.alert(t("DELETE_MODAL.TITLE"), t("DELETE_MODAL.USER_MSG"), [
+      {
+        text: t("CANCEL"),
       },
-    });
+      {
+        text: t("OK"),
+        onPress: () => {
+          deleteUser().then(async () => {
+            try {
+              await AsyncStorage.clear();
+              setUser(null);
+              client.resetStore();
+              navigation.goBack();
+            } catch (e) {
+              console.log(e);
+            }
+          });
+        },
+      },
+    ]);
   };
 
-  useEffect(() => {
-    if (data) {
-      storeUsereData(data.register);
+  const handleSubmit = () => {
+    if (isEditing) {
+      updateUser({
+        variables: {
+          name: name,
+          surname: surname,
+          phone: phone,
+          type: type,
+        },
+      }).then((data: any) => {
+        const updatedUser = {
+          ...data.data.updateUser,
+          token: user?.token,
+        };
+        storeUsereData(updatedUser);
+      });
+    } else {
+      createUser({
+        variables: {
+          email: email,
+          password: password,
+          name: name,
+          surname: surname,
+          phone: phone,
+          type: type,
+        },
+      }).then((data: any) => {
+        storeUsereData(data.data.register || null);
+      });
     }
-  }, [data]);
+  };
+
+  const handlePasswordSubmit = () => {
+    updatePassword({
+      variables: {
+        password: oldPassword,
+        newPassword: password,
+      },
+    }).then(() => {
+      navigation.goBack();
+    });
+  };
 
   const storeUsereData = async (value: UserI) => {
     try {
@@ -69,54 +141,72 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      {loading && <LoadingSpinner />}
+      {(loadingCreateUser ||
+        isLoadingUpdatePassword ||
+        isLoadingUpdateUser ||
+        isDeletingUser) && <LoadingSpinner />}
       <Header>
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.title}>{t("PROFILE.REGISTER")}</Text>
-        <View style={{ width: dpx(40) }}></View>
+        <Text style={styles.title}>
+          {isEditing ? t("PROFILE.YOUR_PROFILE") : t("PROFILE.REGISTER")}
+        </Text>
+        {isEditing ? (
+          <IconButton handlePress={() => handleDelete()}>
+            <AntDesign name="delete" color={Colors.red} size={dpx(24)} />
+          </IconButton>
+        ) : (
+          <View style={{ width: dpx(40) }}></View>
+        )}
       </Header>
       <ScrollView contentContainerStyle={styles.actions}>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onEmailChange(text)}
-          value={email}
-          placeholder={t("REGISTER.EMAIL") + " *"}
-          placeholderTextColor={Colors.gray}
-          textContentType="emailAddress"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          returnKeyType="next"
-          autoFocus
-          onSubmitEditing={() => ref_password.current?.focus()}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onPasswordChange(text)}
-          value={password}
-          placeholder={t("REGISTER.PASSWORD") + " *"}
-          placeholderTextColor={Colors.gray}
-          secureTextEntry
-          textContentType="password"
-          autoCapitalize="none"
-          returnKeyType="next"
-          onSubmitEditing={() => ref_confirmPassword.current?.focus()}
-          ref={ref_password as any}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onConfirmPasswordChange(text)}
-          value={confirmPassword}
-          placeholder={t("REGISTER.CONFIRM_PASSWORD") + " *"}
-          placeholderTextColor={Colors.gray}
-          secureTextEntry
-          textContentType="password"
-          autoCapitalize="none"
-          returnKeyType="next"
-          onSubmitEditing={() => ref_name.current?.focus()}
-          ref={ref_confirmPassword as any}
-        ></TextInput>
+        {!isEditing && (
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onEmailChange(text)}
+            value={email}
+            placeholder={t("REGISTER.EMAIL") + " *"}
+            placeholderTextColor={Colors.gray}
+            textContentType="emailAddress"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            returnKeyType="next"
+            autoFocus={!isEditing}
+            onSubmitEditing={() => ref_password.current?.focus()}
+          ></TextInput>
+        )}
+
+        {!isEditing && (
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onPasswordChange(text)}
+            value={password}
+            placeholder={t("REGISTER.PASSWORD") + " *"}
+            placeholderTextColor={Colors.gray}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={() => ref_confirmPassword.current?.focus()}
+            ref={ref_password as any}
+          ></TextInput>
+        )}
+        {!isEditing && (
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onConfirmPasswordChange(text)}
+            value={confirmPassword}
+            placeholder={t("REGISTER.CONFIRM_PASSWORD") + " *"}
+            placeholderTextColor={Colors.gray}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={() => ref_name.current?.focus()}
+            ref={ref_confirmPassword as any}
+          ></TextInput>
+        )}
         <TextInput
           style={styles.input}
           onChangeText={(text) => onNameChange(text)}
@@ -162,19 +252,75 @@ export default function RegisterScreen({ navigation }: { navigation: any }) {
         </View>
         <View style={styles.buttonContainer}>
           <Button
-            title={t("PROFILE.REGISTER")}
+            title={isEditing ? t("ADD_EDIT_APT.SUBMIT") : t("PROFILE.REGISTER")}
             color={Colors.primary}
             onPress={handleSubmit}
             disabled={
-              !email ||
-              !password ||
+              (!isEditing && !email) ||
+              (!isEditing && !password) ||
               !name ||
               !surname ||
               phone.length < 9 ||
-              password !== confirmPassword
+              (!isEditing && password !== confirmPassword)
             }
           />
         </View>
+
+        {/* Update password */}
+        {isEditing && (
+          <View style={styles.updatePasswordContainer}>
+            <Text style={styles.updatePasswordHeader}>
+              {t("REGISTER.UPDATE_PASSWORD")}
+            </Text>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => onOldPasswordChange(text)}
+              value={oldPassword}
+              placeholder={t("REGISTER.CURRENT_PASSWORD") + " *"}
+              placeholderTextColor={Colors.gray}
+              secureTextEntry
+              textContentType="password"
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => ref_password.current?.focus()}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => onPasswordChange(text)}
+              value={password}
+              placeholder={t("REGISTER.NEW_PASSWORD") + " *"}
+              placeholderTextColor={Colors.gray}
+              secureTextEntry
+              textContentType="password"
+              autoCapitalize="none"
+              returnKeyType="next"
+              onSubmitEditing={() => ref_confirmPassword.current?.focus()}
+              ref={ref_password as any}
+            ></TextInput>
+            <TextInput
+              style={styles.input}
+              onChangeText={(text) => onConfirmPasswordChange(text)}
+              value={confirmPassword}
+              placeholder={t("REGISTER.CONFIRM_NEW_PASSWORD") + " *"}
+              placeholderTextColor={Colors.gray}
+              secureTextEntry
+              textContentType="password"
+              autoCapitalize="none"
+              returnKeyType="done"
+              ref={ref_confirmPassword as any}
+            ></TextInput>
+            <View style={styles.buttonContainer}>
+              <Button
+                title={t("ADD_EDIT_APT.SUBMIT")}
+                color={Colors.primary}
+                onPress={handlePasswordSubmit}
+                disabled={
+                  !oldPassword || !password || password !== confirmPassword
+                }
+              />
+            </View>
+          </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -209,6 +355,16 @@ const styles = StyleSheet.create({
     marginBottom: dpx(10),
   },
   buttonContainer: {
-    marginTop: 30,
+    marginVertical: dpx(20),
+  },
+  updatePasswordContainer: {
+    alignSelf: "stretch",
+    alignItems: "center",
+  },
+  updatePasswordHeader: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
+    color: Colors.black,
+    marginVertical: dpx(20),
   },
 });
