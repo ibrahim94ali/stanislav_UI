@@ -63,7 +63,7 @@ export interface SortTypeI {
 export const sortTypes: SortTypeI[] = [
   {
     label: "Newest",
-    value: "date",
+    value: "createdAt",
     order: -1,
   },
   {
