@@ -29,7 +29,7 @@ export default function BottomTabNavigator() {
         activeTintColor: Colors.primary,
         inactiveTintColor: Colors.gray,
         style: {
-          backgroundColor: Colors.bg,
+          backgroundColor: Colors.white,
         },
       }}
     >

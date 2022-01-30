@@ -11,7 +11,7 @@ export default {
       MANAGE_YOUR_PROFILE: "Уредете го вашиот профил",
       YOUR_PROFILE: "Мојот профил",
       MANAGE_YOUR_APT: "Уредете ги вашите објави",
-      YOUR_APT: "Вашите објави",
+      YOUR_APT: "Моите објави",
       SEE_FAV_APT: "Погледнете ги омилените објави",
       FAV_APT: "Омилени објави",
       YOU_NOT_LOGGIN_IN: "Не сте најавени",

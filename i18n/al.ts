@@ -11,7 +11,7 @@ export default {
       MANAGE_YOUR_PROFILE: "Ndrysho profilin tënd",
       YOUR_PROFILE: "Profili im",
       MANAGE_YOUR_APT: "Menaxhoni postimet",
-      YOUR_APT: "Postimet tuaja",
+      YOUR_APT: "Postimet im",
       SEE_FAV_APT: "Shihni postimet tuaja të preferuara",
       FAV_APT: "Postimet të Preferuara",
       YOU_NOT_LOGGIN_IN: "Ju nuk jeni të regjistruar",

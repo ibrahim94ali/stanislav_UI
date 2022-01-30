@@ -194,7 +194,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   const redirectToMap = (apartment: ApartmentI) => {
     Linking.openURL(
-      `http://maps.google.com/maps?z=16&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+      `https://maps.google.com/maps?z=18&t=h&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
     );
   };
 
@@ -488,7 +488,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                   <IconButton
                     handlePress={() =>
                       Linking.openURL(
-                        `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislav&body=Hello, I am interested in your apartment "${apartment.title}".`
+                        `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislove&body=Hello, I am interested in your apartment "${apartment.title}".`
                       )
                     }
                   >

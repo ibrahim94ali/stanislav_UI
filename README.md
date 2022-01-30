@@ -1,12 +1,12 @@
 TODO:
 
 - Add all cities of MK
+- Make small logo inverted colors and maybe stan <3
 - Update API with better mongoose calls
 - Create production DB and update api
 - Improve screenshots in store, add texts there
 - Add signin/register with google
 - Fix bug in first time entering, language is english even its different
-- Add filters to filter by person, agency,
 - ApartmentDetailsScreen to work with cached data
 - Improve forms
 - Upload API to Vercel?
