@@ -19,6 +19,7 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "com.ibrahimaliu.stanislove",
       "config": {
         "googleMapsApiKey": "AIzaSyDGXVlzF0pQCDuO0Ni3amsZhqxNKAX9Ymc"
       }
@@ -49,7 +50,7 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share your property photos."
+          "photosPermission": "The app accesses your photos to let you share your property photos when adding a new property."
         }
       ]
     ]

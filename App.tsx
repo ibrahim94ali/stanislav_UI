@@ -62,10 +62,10 @@ export default function App() {
         i18n.changeLanguage(lang);
       } else {
         const currentLang =
-          i18n?.language || Localization.locale?.split("-")[0] || "en";
-        if (!i18n.language) {
-          i18n.changeLanguage(currentLang);
-        }
+          i18n.language?.split("-")[0] ||
+          Localization.locale?.split("-")[0] ||
+          "en";
+        i18n.changeLanguage(currentLang);
         await AsyncStorage.setItem("lang", currentLang);
       }
     } catch (e) {
