@@ -1,7 +1,6 @@
 TODO:
 
 - Update API with better mongoose calls
-- Improve screenshots in store, add texts there
 - Fix bug in first time entering, language is english even its different
 - ApartmentDetailsScreen to work with cached data
 - Improve forms

@@ -58,7 +58,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     };
   });
 
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
 
   const user = useReactiveVar(userVar);
 
@@ -192,9 +192,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     ]);
   };
 
-  const redirectToMap = (apartment: ApartmentI) => {
+  const redirectToMap = () => {
     Linking.openURL(
       `https://maps.google.com/maps?z=18&t=h&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
+    );
+  };
+
+  const goToGoogleTranslate = () => {
+    const lang = i18n.language;
+    Linking.openURL(
+      `https://translate.google.com/?sl=auto&tl=${lang}&text=${encodeURI(
+        apartment.details
+      )}&op=translate`
     );
   };
 
@@ -359,7 +368,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
           zoomEnabled={false}
           provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}
-          onPress={() => redirectToMap(apartment)}
+          onPress={() => redirectToMap()}
           region={{
             latitude: apartment.geolocation[0],
             longitude: apartment.geolocation[1],
@@ -372,13 +381,23 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               latitude: apartment.geolocation[0],
               longitude: apartment.geolocation[1],
             }}
-            onPress={() => redirectToMap(apartment)}
+            onPress={() => redirectToMap()}
           >
             <Ionicons name="home" size={30} color={Colors.primary} />
           </Marker>
         </MapView>
+
         <View style={styles.descContainer}>
-          <Text style={styles.title}>{t("APARTMENT_DETAILS.DESCRIPTION")}</Text>
+          <View style={styles.descHeader}>
+            <Text style={styles.title}>
+              {t("APARTMENT_DETAILS.DESCRIPTION")}
+            </Text>
+            <TouchableOpacity onPress={() => goToGoogleTranslate()}>
+              <Text style={styles.translate}>
+                {t("APARTMENT_DETAILS.TRANSLATE")}
+              </Text>
+            </TouchableOpacity>
+          </View>
           <Text style={styles.details}>{apartment.details}</Text>
         </View>
         {apartment.buildingType !== BuildingType.LAND && (
@@ -580,6 +599,21 @@ const styles = StyleSheet.create({
   descContainer: {
     padding: dpx(20),
     paddingBottom: 0,
+  },
+  descHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  translate: {
+    fontSize: dpx(12),
+    fontFamily: "Montserrat_500Medium",
+    padding: dpx(7),
+    color: Colors.secondary,
+    borderStyle: "dashed",
+    borderColor: Colors.lightGray,
+    borderWidth: 1,
+    borderRadius: dpx(10),
   },
   amenitiesContainer: {
     padding: dpx(20),

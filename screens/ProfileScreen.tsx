@@ -60,7 +60,7 @@ function ProfileScreen({ navigation }: any) {
             items={[
               { label: "English", value: "en" },
               { label: "Македонски", value: "mk" },
-              { label: "Shqip", value: "al" },
+              { label: "Shqip", value: "sq" },
               { label: "Türkçe", value: "tr" },
             ]}
             style={pickerSelectStyles}

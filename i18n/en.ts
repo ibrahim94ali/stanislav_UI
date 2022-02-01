@@ -46,6 +46,7 @@ export default {
       DESCRIPTION: "Description",
       AMENITIES: "Amenities",
       LISTING_AGENT: "Listing Agent",
+      TRANSLATE: "Translate to English",
       FURNISHINGTYPE: {
         Furnished: "Furnished",
         Unfurnished: "Unfurnished",

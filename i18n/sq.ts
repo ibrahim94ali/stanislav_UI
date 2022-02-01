@@ -46,6 +46,7 @@ export default {
       DESCRIPTION: "Përshkrim",
       AMENITIES: "Veçoritë",
       LISTING_AGENT: "Reklamues",
+      TRANSLATE: "Përkthe në Shqip",
       FURNISHINGTYPE: {
         Furnished: "E mobiluar",
         Unfurnished: "I pamobiluar",
