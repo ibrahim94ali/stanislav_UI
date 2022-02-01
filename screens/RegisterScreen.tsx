@@ -1,6 +1,14 @@
 import { useApolloClient, useMutation, useReactiveVar } from "@apollo/client";
 import React, { useRef, useState } from "react";
-import { StyleSheet, TextInput, View, Text, Alert } from "react-native";
+import {
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
 import {
   DELETE_USER,
   REGISTER_USER,
@@ -124,6 +132,171 @@ export default function RegisterScreen({
     });
   };
 
+  const registerFormView = () => (
+    <ScrollView contentContainerStyle={styles.actions}>
+      {!isEditing && (
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => onEmailChange(text)}
+          value={email}
+          placeholder={t("REGISTER.EMAIL") + " *"}
+          placeholderTextColor={Colors.gray}
+          textContentType="emailAddress"
+          keyboardType="email-address"
+          autoCapitalize="none"
+          returnKeyType="next"
+          autoFocus={!isEditing}
+          onSubmitEditing={() => ref_password.current?.focus()}
+        ></TextInput>
+      )}
+
+      {!isEditing && (
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => onPasswordChange(text)}
+          value={password}
+          placeholder={t("REGISTER.PASSWORD") + " *"}
+          placeholderTextColor={Colors.gray}
+          secureTextEntry
+          textContentType="password"
+          autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_confirmPassword.current?.focus()}
+          ref={ref_password as any}
+        ></TextInput>
+      )}
+      {!isEditing && (
+        <TextInput
+          style={styles.input}
+          onChangeText={(text) => onConfirmPasswordChange(text)}
+          value={confirmPassword}
+          placeholder={t("REGISTER.CONFIRM_PASSWORD") + " *"}
+          placeholderTextColor={Colors.gray}
+          secureTextEntry
+          textContentType="password"
+          autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => ref_name.current?.focus()}
+          ref={ref_confirmPassword as any}
+        ></TextInput>
+      )}
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onNameChange(text)}
+        value={name}
+        placeholder={t("REGISTER.NAME") + " *"}
+        placeholderTextColor={Colors.gray}
+        textContentType="name"
+        returnKeyType="next"
+        onSubmitEditing={() => ref_surname.current?.focus()}
+        ref={ref_name as any}
+      ></TextInput>
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onSurnameChange(text)}
+        value={surname}
+        placeholder={t("REGISTER.SURNAME") + " *"}
+        placeholderTextColor={Colors.gray}
+        textContentType="name"
+        returnKeyType="next"
+        onSubmitEditing={() => ref_phone.current?.focus()}
+        ref={ref_surname as any}
+      ></TextInput>
+      <TextInput
+        style={styles.input}
+        onChangeText={(text) => onPhoneChange(text)}
+        value={phone}
+        placeholder={t("REGISTER.PHONE") + " *"}
+        placeholderTextColor={Colors.gray}
+        textContentType="telephoneNumber"
+        keyboardType="number-pad"
+        returnKeyType="done"
+        ref={ref_phone as any}
+      ></TextInput>
+      <View style={styles.optionContainer}>
+        <FilterOptions
+          title={t("REGISTER.TYPE")}
+          items={profileTypes}
+          value={type}
+          onValueChange={(itemValue: string) => {
+            setType(itemValue);
+          }}
+        />
+      </View>
+      <View style={styles.buttonContainer}>
+        <Button
+          title={isEditing ? t("ADD_EDIT_APT.SUBMIT") : t("PROFILE.REGISTER")}
+          color={Colors.primary}
+          onPress={handleSubmit}
+          disabled={
+            (!isEditing && !email) ||
+            (!isEditing && !password) ||
+            !name ||
+            !surname ||
+            phone.length < 9 ||
+            (!isEditing && password !== confirmPassword)
+          }
+        />
+      </View>
+
+      {/* Update password */}
+      {isEditing && (
+        <View style={styles.updatePasswordContainer}>
+          <Text style={styles.updatePasswordHeader}>
+            {t("REGISTER.UPDATE_PASSWORD")}
+          </Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onOldPasswordChange(text)}
+            value={oldPassword}
+            placeholder={t("REGISTER.CURRENT_PASSWORD") + " *"}
+            placeholderTextColor={Colors.gray}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={() => ref_password.current?.focus()}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onPasswordChange(text)}
+            value={password}
+            placeholder={t("REGISTER.NEW_PASSWORD") + " *"}
+            placeholderTextColor={Colors.gray}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            returnKeyType="next"
+            onSubmitEditing={() => ref_confirmPassword.current?.focus()}
+            ref={ref_password as any}
+          ></TextInput>
+          <TextInput
+            style={styles.input}
+            onChangeText={(text) => onConfirmPasswordChange(text)}
+            value={confirmPassword}
+            placeholder={t("REGISTER.CONFIRM_NEW_PASSWORD") + " *"}
+            placeholderTextColor={Colors.gray}
+            secureTextEntry
+            textContentType="password"
+            autoCapitalize="none"
+            returnKeyType="done"
+            ref={ref_confirmPassword as any}
+          ></TextInput>
+          <View style={styles.buttonContainer}>
+            <Button
+              title={t("ADD_EDIT_APT.SUBMIT")}
+              color={Colors.primary}
+              onPress={handlePasswordSubmit}
+              disabled={
+                !oldPassword || !password || password !== confirmPassword
+              }
+            />
+          </View>
+        </View>
+      )}
+    </ScrollView>
+  );
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       {(loadingCreateUser ||
@@ -145,168 +318,12 @@ export default function RegisterScreen({
           <View style={{ width: dpx(40) }}></View>
         )}
       </Header>
-      <ScrollView contentContainerStyle={styles.actions}>
-        {!isEditing && (
-          <TextInput
-            style={styles.input}
-            onChangeText={(text) => onEmailChange(text)}
-            value={email}
-            placeholder={t("REGISTER.EMAIL") + " *"}
-            placeholderTextColor={Colors.gray}
-            textContentType="emailAddress"
-            keyboardType="email-address"
-            autoCapitalize="none"
-            returnKeyType="next"
-            autoFocus={!isEditing}
-            onSubmitEditing={() => ref_password.current?.focus()}
-          ></TextInput>
-        )}
-
-        {!isEditing && (
-          <TextInput
-            style={styles.input}
-            onChangeText={(text) => onPasswordChange(text)}
-            value={password}
-            placeholder={t("REGISTER.PASSWORD") + " *"}
-            placeholderTextColor={Colors.gray}
-            secureTextEntry
-            textContentType="password"
-            autoCapitalize="none"
-            returnKeyType="next"
-            onSubmitEditing={() => ref_confirmPassword.current?.focus()}
-            ref={ref_password as any}
-          ></TextInput>
-        )}
-        {!isEditing && (
-          <TextInput
-            style={styles.input}
-            onChangeText={(text) => onConfirmPasswordChange(text)}
-            value={confirmPassword}
-            placeholder={t("REGISTER.CONFIRM_PASSWORD") + " *"}
-            placeholderTextColor={Colors.gray}
-            secureTextEntry
-            textContentType="password"
-            autoCapitalize="none"
-            returnKeyType="next"
-            onSubmitEditing={() => ref_name.current?.focus()}
-            ref={ref_confirmPassword as any}
-          ></TextInput>
-        )}
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onNameChange(text)}
-          value={name}
-          placeholder={t("REGISTER.NAME") + " *"}
-          placeholderTextColor={Colors.gray}
-          textContentType="name"
-          returnKeyType="next"
-          onSubmitEditing={() => ref_surname.current?.focus()}
-          ref={ref_name as any}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onSurnameChange(text)}
-          value={surname}
-          placeholder={t("REGISTER.SURNAME") + " *"}
-          placeholderTextColor={Colors.gray}
-          textContentType="name"
-          returnKeyType="next"
-          onSubmitEditing={() => ref_phone.current?.focus()}
-          ref={ref_surname as any}
-        ></TextInput>
-        <TextInput
-          style={styles.input}
-          onChangeText={(text) => onPhoneChange(text)}
-          value={phone}
-          placeholder={t("REGISTER.PHONE") + " *"}
-          placeholderTextColor={Colors.gray}
-          textContentType="telephoneNumber"
-          keyboardType="number-pad"
-          returnKeyType="done"
-          ref={ref_phone as any}
-        ></TextInput>
-        <View style={styles.optionContainer}>
-          <FilterOptions
-            title={t("REGISTER.TYPE")}
-            items={profileTypes}
-            value={type}
-            onValueChange={(itemValue: string) => {
-              setType(itemValue);
-            }}
-          />
-        </View>
-        <View style={styles.buttonContainer}>
-          <Button
-            title={isEditing ? t("ADD_EDIT_APT.SUBMIT") : t("PROFILE.REGISTER")}
-            color={Colors.primary}
-            onPress={handleSubmit}
-            disabled={
-              (!isEditing && !email) ||
-              (!isEditing && !password) ||
-              !name ||
-              !surname ||
-              phone.length < 9 ||
-              (!isEditing && password !== confirmPassword)
-            }
-          />
-        </View>
-
-        {/* Update password */}
-        {isEditing && (
-          <View style={styles.updatePasswordContainer}>
-            <Text style={styles.updatePasswordHeader}>
-              {t("REGISTER.UPDATE_PASSWORD")}
-            </Text>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => onOldPasswordChange(text)}
-              value={oldPassword}
-              placeholder={t("REGISTER.CURRENT_PASSWORD") + " *"}
-              placeholderTextColor={Colors.gray}
-              secureTextEntry
-              textContentType="password"
-              autoCapitalize="none"
-              returnKeyType="next"
-              onSubmitEditing={() => ref_password.current?.focus()}
-            ></TextInput>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => onPasswordChange(text)}
-              value={password}
-              placeholder={t("REGISTER.NEW_PASSWORD") + " *"}
-              placeholderTextColor={Colors.gray}
-              secureTextEntry
-              textContentType="password"
-              autoCapitalize="none"
-              returnKeyType="next"
-              onSubmitEditing={() => ref_confirmPassword.current?.focus()}
-              ref={ref_password as any}
-            ></TextInput>
-            <TextInput
-              style={styles.input}
-              onChangeText={(text) => onConfirmPasswordChange(text)}
-              value={confirmPassword}
-              placeholder={t("REGISTER.CONFIRM_NEW_PASSWORD") + " *"}
-              placeholderTextColor={Colors.gray}
-              secureTextEntry
-              textContentType="password"
-              autoCapitalize="none"
-              returnKeyType="done"
-              ref={ref_confirmPassword as any}
-            ></TextInput>
-            <View style={styles.buttonContainer}>
-              <Button
-                title={t("ADD_EDIT_APT.SUBMIT")}
-                color={Colors.primary}
-                onPress={handlePasswordSubmit}
-                disabled={
-                  !oldPassword || !password || password !== confirmPassword
-                }
-              />
-            </View>
-          </View>
-        )}
-      </ScrollView>
+      {Platform.OS === "ios" && (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+          {registerFormView()}
+        </KeyboardAvoidingView>
+      )}
+      {Platform.OS === "android" && registerFormView()}
     </SafeAreaView>
   );
 }

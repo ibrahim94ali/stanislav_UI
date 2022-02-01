@@ -8,6 +8,7 @@ import {
   Alert,
   Text,
   Platform,
+  KeyboardAvoidingView,
 } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { TextInput } from "react-native-gesture-handler";
@@ -147,50 +148,39 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     setUploadImages([...uploadImages, manipResult.uri]);
   };
 
-  const [addApartment, { data: newApartment, loading: loadingNewApartment }] =
-    useMutation(ADD_APARTMENT, {
+  const [addApartment, { loading: loadingNewApartment }] = useMutation(
+    ADD_APARTMENT,
+    {
       update(cache, { data }) {
         if (data) {
           cache.reset();
         }
       },
-    });
-
-  const [
-    updateApartment,
-    { data: updatedApartment, loading: loadingUpatedApartment },
-  ] = useMutation(UPDATE_APARTMENT, {
-    update(cache, { data }) {
-      const myUpdatedApartment: ApartmentI = data?.updateApartment;
-
-      if (!myUpdatedApartment) return;
-
-      cache.writeFragment({
-        id: `Apartment:${myUpdatedApartment.id}`,
-        fragment: gql`
-          fragment id on Apartment {
-            id
-          }
-        `,
-        data: {
-          ...myUpdatedApartment,
-        },
-      });
-    },
-  });
-
-  useEffect(() => {
-    if (newApartment) {
-      navigation.pop();
     }
-  }, [newApartment]);
+  );
 
-  useEffect(() => {
-    if (updatedApartment) {
-      navigation.pop();
-      navigation.pop();
+  const [updateApartment, { loading: loadingUpatedApartment }] = useMutation(
+    UPDATE_APARTMENT,
+    {
+      update(cache, { data }) {
+        const myUpdatedApartment: ApartmentI = data?.updateApartment;
+
+        if (!myUpdatedApartment) return;
+
+        cache.writeFragment({
+          id: `Apartment:${myUpdatedApartment.id}`,
+          fragment: gql`
+            fragment id on Apartment {
+              id
+            }
+          `,
+          data: {
+            ...myUpdatedApartment,
+          },
+        });
+      },
     }
-  }, [updatedApartment]);
+  );
 
   //setting user location as default location
   useEffect(() => {
@@ -278,6 +268,9 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           isFurnished,
           isWheelChairAccessible,
         },
+      }).then(() => {
+        navigation.pop();
+        navigation.pop();
       });
       return;
     }
@@ -302,6 +295,8 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         isFurnished,
         isWheelChairAccessible,
       },
+    }).then(() => {
+      navigation.pop();
     });
   };
 
@@ -362,6 +357,282 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     </View>
   );
 
+  const addEditAptFormView = () => (
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.imagesContainer}>
+        {oldImages.length + uploadImages.length < 1 && <NoImage />}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{
+            paddingHorizontal: dpx(20),
+          }}
+        >
+          {oldImages.map((photo, index) => (
+            <PhotoViewer key={photo} photo={photo} index={index} />
+          ))}
+          {uploadImages.map((photo, index) => (
+            <PhotoViewer key={photo} photo={photo} index={index} isNew={true} />
+          ))}
+        </ScrollView>
+        <ImageView
+          images={
+            itemOnEdit
+              ? oldImages.concat(uploadImages).map((img) => ({
+                  uri: img,
+                }))
+              : uploadImages.map((img) => ({
+                  uri: img,
+                }))
+          }
+          imageIndex={fullScreenPhotoIndex}
+          visible={isFullScreen}
+          swipeToCloseEnabled={false}
+          onRequestClose={() => setIsFullScreen(false)}
+        />
+      </View>
+
+      <TextInput
+        style={styles.input}
+        value={title}
+        placeholder={t("ADD_EDIT_APT.FIELDS.TITLE") + " *"}
+        placeholderTextColor={Colors.gray}
+        onChangeText={(value) => setTitle(value)}
+        returnKeyType="next"
+        onSubmitEditing={() => ref_description.current?.focus()}
+      />
+      <TextInput
+        style={[styles.input, styles.description]}
+        value={details}
+        multiline
+        placeholder={t("ADD_EDIT_APT.FIELDS.DESCRIPTION") + " *"}
+        placeholderTextColor={Colors.gray}
+        onChangeText={(value) => setDetails(value)}
+        ref={ref_description as any}
+        returnKeyType="next"
+      />
+
+      <View style={styles.cityContainer}>
+        <RNPickerSelect
+          placeholder={{}}
+          value={city}
+          onValueChange={(itemValue: CityType) => {
+            setCity(itemValue);
+            if (Platform.OS === "android") {
+              ref_address.current?.focus();
+            }
+          }}
+          items={cities.cities}
+          style={pickerSelectStyles}
+          onDonePress={() => ref_address.current?.focus()}
+        />
+      </View>
+
+      <TextInput
+        style={styles.input}
+        value={address}
+        placeholder={t("ADD_EDIT_APT.FIELDS.ADDRESS") + " *"}
+        placeholderTextColor={Colors.gray}
+        onChangeText={(value) => setAddress(value)}
+        onSubmitEditing={attemptGeocodeAsync}
+        ref={ref_address as any}
+        returnKeyType="search"
+      />
+
+      <LocationPicker
+        addressGeoCode={geolocation}
+        onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
+      />
+
+      <View style={styles.optionContainer}>
+        <FilterOptions
+          title={t("ADD_EDIT_APT.PROPERTY_TYPE")}
+          items={buildingTypes}
+          value={buildingType}
+          onValueChange={(itemValue: BuildingType) => {
+            setBuildingType(itemValue);
+          }}
+        />
+      </View>
+
+      <TextInput
+        style={styles.input}
+        value={price?.toString() || ""}
+        placeholder={t("ADD_EDIT_APT.FIELDS.PRICE") + " (euro) *"}
+        placeholderTextColor={Colors.gray}
+        onChangeText={(value) => {
+          if (parseInt(value)) {
+            setPrice(parseInt(value));
+          } else {
+            setPrice(undefined);
+          }
+        }}
+        keyboardType="number-pad"
+        returnKeyType={Platform.OS === "android" ? "next" : "done"}
+        onSubmitEditing={() => ref_area.current?.focus()}
+      />
+      <TextInput
+        style={styles.input}
+        value={msquare?.toString() || ""}
+        placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (m2) *"}
+        placeholderTextColor={Colors.gray}
+        onChangeText={(value) => {
+          if (parseInt(value)) {
+            setMsquare(parseInt(value));
+          } else {
+            setMsquare(undefined);
+          }
+        }}
+        keyboardType="number-pad"
+        returnKeyType={Platform.OS === "android" ? "next" : "done"}
+        ref={ref_area as any}
+        onSubmitEditing={() =>
+          buildingType !== BuildingType.LAND ? ref_room.current?.focus() : null
+        }
+      />
+
+      {buildingType !== BuildingType.LAND && (
+        <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
+          <TextInput
+            style={styles.input}
+            value={roomCount?.toString() || ""}
+            placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
+            placeholderTextColor={Colors.gray}
+            onChangeText={(value) => {
+              if (parseInt(value) || value === "0") {
+                setRoomCount(parseInt(value));
+              } else {
+                setRoomCount(undefined);
+              }
+            }}
+            keyboardType="number-pad"
+            returnKeyType={Platform.OS === "android" ? "next" : "done"}
+            ref={ref_room as any}
+            onSubmitEditing={() => ref_floor.current?.focus()}
+          />
+          <TextInput
+            style={styles.input}
+            value={floor?.toString() || ""}
+            placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
+            placeholderTextColor={Colors.gray}
+            onChangeText={(value) => {
+              if (parseInt(value) || value === "0") {
+                setFloor(parseInt(value));
+              } else {
+                setFloor(undefined);
+              }
+            }}
+            keyboardType="number-pad"
+            returnKeyType={Platform.OS === "android" ? "next" : "done"}
+            ref={ref_floor as any}
+            onSubmitEditing={() => ref_age.current?.focus()}
+          />
+          <TextInput
+            style={styles.input}
+            value={age?.toString() || ""}
+            placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
+              "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
+            )})  *`}
+            placeholderTextColor={Colors.gray}
+            onChangeText={(value) => {
+              if (parseInt(value) || value === "0") {
+                setAge(parseInt(value));
+              } else {
+                setAge(undefined);
+              }
+            }}
+            keyboardType="number-pad"
+            returnKeyType={Platform.OS === "android" ? "next" : "done"}
+            ref={ref_age as any}
+          />
+        </View>
+      )}
+
+      <View
+        style={[
+          styles.optionContainer,
+          {
+            marginBottom:
+              buildingType === BuildingType.LAND ? dpx(110) : dpx(10),
+          },
+        ]}
+      >
+        <FilterOptions
+          title={t("ADD_EDIT_APT.AD_TYPE")}
+          items={adTypes}
+          value={adType}
+          onValueChange={(itemValue: AdType) => {
+            setAdType(itemValue);
+          }}
+        />
+      </View>
+      {buildingType !== BuildingType.LAND && (
+        <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
+          <View style={styles.optionContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.FURNISHING")}
+              items={furnishingTypes}
+              value={isFurnished}
+              onValueChange={(itemValue: boolean) => {
+                setIsFurnished(itemValue);
+              }}
+            />
+          </View>
+          <View style={styles.optionContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.ACCESSIBILITY")}
+              items={wheelChairAccessibleTypes}
+              value={isWheelChairAccessible}
+              onValueChange={(itemValue: boolean) => {
+                setIsWheelChairAccessible(itemValue);
+              }}
+            />
+          </View>
+          <View style={styles.optionContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.HEATING")}
+              items={heatingTypes}
+              value={heatingType}
+              onValueChange={(itemValue: HeatingType) => {
+                setHeatingType(itemValue);
+              }}
+            />
+          </View>
+          <View style={styles.optionContainer}>
+            <FilterOptions
+              title={t("ADD_EDIT_APT.AMENITIES")}
+              multiple
+              items={amenityTypes}
+              value={amenities}
+              onValueChange={(itemValues: AmenityType[]) => {
+                setAmenities(itemValues);
+              }}
+            />
+          </View>
+        </View>
+      )}
+      <Button
+        color={Colors.primary}
+        title={t("ADD_EDIT_APT.SUBMIT")}
+        onPress={handleSubmit}
+        full
+        disabled={
+          !title ||
+          !details ||
+          !address ||
+          !price ||
+          !msquare ||
+          (roomCount === undefined && buildingType !== BuildingType.LAND) ||
+          (floor === undefined && buildingType !== BuildingType.LAND) ||
+          (age === undefined && buildingType !== BuildingType.LAND) ||
+          geolocation[0] == 0 ||
+          geolocation[1] == 0 ||
+          uploadImages.length + oldImages.length < 1
+        }
+      />
+    </ScrollView>
+  );
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       {(loadingNewApartment || loadingUpatedApartment || isCityLoading) && (
@@ -391,286 +662,13 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
           />
         </IconButton>
       </Header>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <View style={styles.imagesContainer}>
-          {oldImages.length + uploadImages.length < 1 && <NoImage />}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingHorizontal: dpx(20),
-            }}
-          >
-            {oldImages.map((photo, index) => (
-              <PhotoViewer key={photo} photo={photo} index={index} />
-            ))}
-            {uploadImages.map((photo, index) => (
-              <PhotoViewer
-                key={photo}
-                photo={photo}
-                index={index}
-                isNew={true}
-              />
-            ))}
-          </ScrollView>
-          <ImageView
-            images={
-              itemOnEdit
-                ? oldImages.concat(uploadImages).map((img) => ({
-                    uri: img,
-                  }))
-                : uploadImages.map((img) => ({
-                    uri: img,
-                  }))
-            }
-            imageIndex={fullScreenPhotoIndex}
-            visible={isFullScreen}
-            swipeToCloseEnabled={false}
-            onRequestClose={() => setIsFullScreen(false)}
-          />
-        </View>
 
-        <TextInput
-          style={styles.input}
-          value={title}
-          placeholder={t("ADD_EDIT_APT.FIELDS.TITLE") + " *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setTitle(value)}
-          returnKeyType="next"
-          onSubmitEditing={() => ref_description.current?.focus()}
-        />
-        <TextInput
-          style={[styles.input, styles.description]}
-          value={details}
-          multiline
-          placeholder={t("ADD_EDIT_APT.FIELDS.DESCRIPTION") + " *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setDetails(value)}
-          ref={ref_description as any}
-          returnKeyType="next"
-        />
-
-        <View style={styles.cityContainer}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={city}
-            onValueChange={(itemValue: CityType) => {
-              setCity(itemValue);
-              if (Platform.OS === "android") {
-                ref_address.current?.focus();
-              }
-            }}
-            items={cities.cities}
-            style={pickerSelectStyles}
-            onDonePress={() => ref_address.current?.focus()}
-          />
-        </View>
-
-        <TextInput
-          style={styles.input}
-          value={address}
-          placeholder={t("ADD_EDIT_APT.FIELDS.ADDRESS") + " *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => setAddress(value)}
-          onSubmitEditing={attemptGeocodeAsync}
-          ref={ref_address as any}
-          returnKeyType="search"
-        />
-
-        <LocationPicker
-          addressGeoCode={geolocation}
-          onSave={(lat: number, lon: number) => setGeolocation([lat, lon])}
-        />
-
-        <View style={styles.optionContainer}>
-          <FilterOptions
-            title={t("ADD_EDIT_APT.PROPERTY_TYPE")}
-            items={buildingTypes}
-            value={buildingType}
-            onValueChange={(itemValue: BuildingType) => {
-              setBuildingType(itemValue);
-            }}
-          />
-        </View>
-
-        <TextInput
-          style={styles.input}
-          value={price?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.PRICE") + " (euro) *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value)) {
-              setPrice(parseInt(value));
-            } else {
-              setPrice(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="next"
-          onSubmitEditing={() => ref_area.current?.focus()}
-        />
-        <TextInput
-          style={styles.input}
-          value={msquare?.toString() || ""}
-          placeholder={t("ADD_EDIT_APT.FIELDS.AREA") + " (m2) *"}
-          placeholderTextColor={Colors.gray}
-          onChangeText={(value) => {
-            if (parseInt(value)) {
-              setMsquare(parseInt(value));
-            } else {
-              setMsquare(undefined);
-            }
-          }}
-          keyboardType="numeric"
-          returnKeyType="next"
-          ref={ref_area as any}
-          onSubmitEditing={() =>
-            buildingType !== BuildingType.LAND
-              ? ref_room.current?.focus()
-              : null
-          }
-        />
-
-        {buildingType !== BuildingType.LAND && (
-          <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
-            <TextInput
-              style={styles.input}
-              value={roomCount?.toString() || ""}
-              placeholder={t("ADD_EDIT_APT.FIELDS.ROOMS") + " *"}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setRoomCount(parseInt(value));
-                } else {
-                  setRoomCount(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="next"
-              ref={ref_room as any}
-              onSubmitEditing={() => ref_floor.current?.focus()}
-            />
-            <TextInput
-              style={styles.input}
-              value={floor?.toString() || ""}
-              placeholder={t("ADD_EDIT_APT.FIELDS.FLOOR") + " *"}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setFloor(parseInt(value));
-                } else {
-                  setFloor(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="next"
-              ref={ref_floor as any}
-              onSubmitEditing={() => ref_age.current?.focus()}
-            />
-            <TextInput
-              style={styles.input}
-              value={age?.toString() || ""}
-              placeholder={`${t("ADD_EDIT_APT.FIELDS.AGE")} (${t(
-                "ADD_EDIT_APT.FIELDS.0_FOR_NEW"
-              )})  *`}
-              placeholderTextColor={Colors.gray}
-              onChangeText={(value) => {
-                if (parseInt(value) || value === "0") {
-                  setAge(parseInt(value));
-                } else {
-                  setAge(undefined);
-                }
-              }}
-              keyboardType="numeric"
-              returnKeyType="next"
-              ref={ref_age as any}
-            />
-          </View>
-        )}
-
-        <View
-          style={[
-            styles.optionContainer,
-            {
-              marginBottom:
-                buildingType === BuildingType.LAND ? dpx(110) : dpx(10),
-            },
-          ]}
-        >
-          <FilterOptions
-            title={t("ADD_EDIT_APT.AD_TYPE")}
-            items={adTypes}
-            value={adType}
-            onValueChange={(itemValue: AdType) => {
-              setAdType(itemValue);
-            }}
-          />
-        </View>
-        {buildingType !== BuildingType.LAND && (
-          <View style={[styles.scrollContainer, { alignSelf: "stretch" }]}>
-            <View style={styles.optionContainer}>
-              <FilterOptions
-                title={t("ADD_EDIT_APT.FURNISHING")}
-                items={furnishingTypes}
-                value={isFurnished}
-                onValueChange={(itemValue: boolean) => {
-                  setIsFurnished(itemValue);
-                }}
-              />
-            </View>
-            <View style={styles.optionContainer}>
-              <FilterOptions
-                title={t("ADD_EDIT_APT.ACCESSIBILITY")}
-                items={wheelChairAccessibleTypes}
-                value={isWheelChairAccessible}
-                onValueChange={(itemValue: boolean) => {
-                  setIsWheelChairAccessible(itemValue);
-                }}
-              />
-            </View>
-            <View style={styles.optionContainer}>
-              <FilterOptions
-                title={t("ADD_EDIT_APT.HEATING")}
-                items={heatingTypes}
-                value={heatingType}
-                onValueChange={(itemValue: HeatingType) => {
-                  setHeatingType(itemValue);
-                }}
-              />
-            </View>
-            <View style={styles.optionContainer}>
-              <FilterOptions
-                title={t("ADD_EDIT_APT.AMENITIES")}
-                multiple
-                items={amenityTypes}
-                value={amenities}
-                onValueChange={(itemValues: AmenityType[]) => {
-                  setAmenities(itemValues);
-                }}
-              />
-            </View>
-          </View>
-        )}
-        <Button
-          color={Colors.primary}
-          title={t("ADD_EDIT_APT.SUBMIT")}
-          onPress={handleSubmit}
-          full
-          disabled={
-            !title ||
-            !details ||
-            !address ||
-            !price ||
-            !msquare ||
-            (roomCount === undefined && buildingType !== BuildingType.LAND) ||
-            (floor === undefined && buildingType !== BuildingType.LAND) ||
-            (age === undefined && buildingType !== BuildingType.LAND) ||
-            geolocation[0] == 0 ||
-            geolocation[1] == 0 ||
-            uploadImages.length + oldImages.length < 1
-          }
-        />
-      </ScrollView>
+      {Platform.OS === "ios" && (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+          {addEditAptFormView()}
+        </KeyboardAvoidingView>
+      )}
+      {Platform.OS === "android" && addEditAptFormView()}
     </SafeAreaView>
   );
 };

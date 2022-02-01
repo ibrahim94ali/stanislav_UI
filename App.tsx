@@ -61,7 +61,8 @@ export default function App() {
       if (lang) {
         i18n.changeLanguage(lang);
       } else {
-        const currentLang = i18n?.language || Localization.locale || "en";
+        const currentLang =
+          i18n?.language || Localization.locale?.split("-")[0] || "en";
         if (!i18n.language) {
           i18n.changeLanguage(currentLang);
         }

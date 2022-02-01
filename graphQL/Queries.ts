@@ -191,6 +191,7 @@ export const GET_FEATURED_APARTMENTS = gql`
       amenities
       age
       isWheelChairAccessible
+      isFavorite
       owner {
         name
         surname

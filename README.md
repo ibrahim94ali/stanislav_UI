@@ -1,5 +1,6 @@
 TODO:
 
+- Is favorite on featured lists not working
 - Update API with better mongoose calls
 - Fix bug in first time entering, language is english even its different
 - ApartmentDetailsScreen to work with cached data

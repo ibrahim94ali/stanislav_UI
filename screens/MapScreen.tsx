@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
     width: dpx(200),
   },
   calloutTitle: {
-    fontFamily: "Montserrat_500Medium",
+    fontFamily: "Montserrat_700Bold",
     fontSize: dpx(14),
     marginBottom: dpx(5),
   },
