@@ -75,7 +75,6 @@ export const GET_APARTMENTS = gql`
       details
       owner {
         name
-        surname
         email
         phone
         type
@@ -158,7 +157,6 @@ export const GET_FAV_APARTMENTS = gql`
       isWheelChairAccessible
       owner {
         name
-        surname
         email
         phone
         type
@@ -194,7 +192,6 @@ export const GET_FEATURED_APARTMENTS = gql`
       isFavorite
       owner {
         name
-        surname
         email
         phone
         type
@@ -212,7 +209,6 @@ export const GET_SEARCHED_APARTMENTS = gql`
       details
       owner {
         name
-        surname
         email
         phone
         type

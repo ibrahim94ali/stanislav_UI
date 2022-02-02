@@ -76,9 +76,7 @@ function ProfileScreen({ navigation }: any) {
         <View style={styles.actions}>
           <View style={styles.nameContainer}>
             <Text style={styles.title}>{t("PROFILE.HELLO")},</Text>
-            <Text style={styles.name}>
-              {user.name} {user.surname}
-            </Text>
+            <Text style={styles.name}>{user.name}</Text>
           </View>
           <Text style={[styles.title, { marginTop: 50 }]}>
             {t("PROFILE.MANAGE_YOUR_PROFILE")}

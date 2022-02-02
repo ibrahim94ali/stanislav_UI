@@ -488,9 +488,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
             <View style={styles.personContainer}>
               <View>
-                <Text
-                  style={styles.person}
-                >{`${apartment.owner?.name} ${apartment.owner?.surname}`}</Text>
+                <Text style={styles.person}>{apartment.owner?.name}</Text>
                 <Text style={styles.personType}>
                   {t(`FILTER_OPTIONS.${apartment.owner?.type}`)}
                 </Text>

@@ -48,9 +48,6 @@ export default function RegisterScreen({
   const [password, onPasswordChange] = useState("");
   const [confirmPassword, onConfirmPasswordChange] = useState("");
   const [name, onNameChange] = useState(isEditing && user ? user.name : "");
-  const [surname, onSurnameChange] = useState(
-    isEditing && user ? user.surname : ""
-  );
   const [phone, onPhoneChange] = useState(isEditing && user ? user.phone : "");
   const [type, setType] = useState(isEditing && user ? user.type : "person");
 
@@ -58,7 +55,6 @@ export default function RegisterScreen({
   const ref_password = useRef<TextInput>();
   const ref_confirmPassword = useRef<TextInput>();
   const ref_name = useRef<TextInput>();
-  const ref_surname = useRef<TextInput>();
   const ref_phone = useRef<TextInput>();
 
   const [createUser, { loading: loadingCreateUser }] =
@@ -92,7 +88,6 @@ export default function RegisterScreen({
       updateUser({
         variables: {
           name: name,
-          surname: surname,
           phone: phone,
           type: type,
         },
@@ -110,7 +105,6 @@ export default function RegisterScreen({
           email: email,
           password: password,
           name: name,
-          surname: surname,
           phone: phone,
           type: type,
         },
@@ -188,19 +182,8 @@ export default function RegisterScreen({
         placeholderTextColor={Colors.gray}
         textContentType="name"
         returnKeyType="next"
-        onSubmitEditing={() => ref_surname.current?.focus()}
-        ref={ref_name as any}
-      ></TextInput>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => onSurnameChange(text)}
-        value={surname}
-        placeholder={t("REGISTER.SURNAME") + " *"}
-        placeholderTextColor={Colors.gray}
-        textContentType="name"
-        returnKeyType="next"
         onSubmitEditing={() => ref_phone.current?.focus()}
-        ref={ref_surname as any}
+        ref={ref_name as any}
       ></TextInput>
       <TextInput
         style={styles.input}
@@ -232,7 +215,6 @@ export default function RegisterScreen({
             (!isEditing && !email) ||
             (!isEditing && !password) ||
             !name ||
-            !surname ||
             phone.length < 9 ||
             (!isEditing && password !== confirmPassword)
           }

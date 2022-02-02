@@ -5,7 +5,6 @@ export const REGISTER_USER = gql`
     $email: String!
     $password: String!
     $name: String!
-    $surname: String!
     $phone: String!
     $type: String!
   ) {
@@ -13,7 +12,6 @@ export const REGISTER_USER = gql`
       email: $email
       password: $password
       name: $name
-      surname: $surname
       phone: $phone
       type: $type
     ) {
@@ -22,7 +20,6 @@ export const REGISTER_USER = gql`
       token
       phone
       name
-      surname
       type
       verified
     }
@@ -30,18 +27,12 @@ export const REGISTER_USER = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation updateUser(
-    $name: String!
-    $surname: String!
-    $phone: String!
-    $type: String!
-  ) {
-    updateUser(name: $name, surname: $surname, phone: $phone, type: $type) {
+  mutation updateUser($name: String!, $phone: String!, $type: String!) {
+    updateUser(name: $name, phone: $phone, type: $type) {
       id
       email
       phone
       name
-      surname
       type
       verified
     }
@@ -55,7 +46,6 @@ export const UPDATE_PASSWORD = gql`
       email
       phone
       name
-      surname
       type
       verified
     }
@@ -76,7 +66,6 @@ export const LOGIN_USER = gql`
       token
       phone
       name
-      surname
       verified
       type
     }
@@ -146,7 +135,6 @@ export const ADD_APARTMENT = gql`
       isWheelChairAccessible
       owner {
         name
-        surname
         phone
         email
         verified
@@ -223,7 +211,6 @@ export const UPDATE_APARTMENT = gql`
       isWheelChairAccessible
       owner {
         name
-        surname
         phone
         email
         verified
@@ -249,7 +236,6 @@ export const ADD_FAV_APARTMENT = gql`
       details
       owner {
         name
-        surname
         email
         phone
         verified
@@ -286,7 +272,6 @@ export const REMOVE_FAV_APARTMENT = gql`
       details
       owner {
         name
-        surname
         email
         phone
         verified
