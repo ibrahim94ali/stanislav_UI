@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
 
   property: {
     width: dpx(270),
-    height: dpx(270),
+    minHeight: dpx(270),
     marginLeft: dpx(20),
   },
   sponsorContainer: {

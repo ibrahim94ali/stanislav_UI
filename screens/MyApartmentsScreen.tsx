@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
   },
   property: {
     width: dpx(330),
-    height: dpx(270),
+    minHeight: dpx(270),
     marginBottom: dpx(20),
   },
 });

@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   photo: {
-    flex: 1,
+    height: dpx(125),
     resizeMode: "cover",
     overflow: "hidden",
     borderTopLeftRadius: dpx(10),
