@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const REGISTER_USER = gql`
-  mutation register(
+  mutation Register(
     $email: String!
     $password: String!
     $name: String!
@@ -27,7 +27,7 @@ export const REGISTER_USER = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation updateUser($name: String!, $phone: String!, $type: String!) {
+  mutation UpdateUser($name: String!, $phone: String!, $type: String!) {
     updateUser(name: $name, phone: $phone, type: $type) {
       id
       email
@@ -40,7 +40,7 @@ export const UPDATE_USER = gql`
 `;
 
 export const UPDATE_PASSWORD = gql`
-  mutation updatePassword($password: String!, $newPassword: String!) {
+  mutation UpdatePassword($password: String!, $newPassword: String!) {
     updatePassword(password: $password, newPassword: $newPassword) {
       id
       email
@@ -53,13 +53,13 @@ export const UPDATE_PASSWORD = gql`
 `;
 
 export const DELETE_USER = gql`
-  mutation deleteUser {
+  mutation DeleteUser {
     deleteUser
   }
 `;
 
 export const LOGIN_USER = gql`
-  mutation login($email: String!, $password: String!) {
+  mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
       id
       email
@@ -73,7 +73,7 @@ export const LOGIN_USER = gql`
 `;
 
 export const ADD_APARTMENT = gql`
-  mutation addApartment(
+  mutation AddApartment(
     $title: String!
     $details: String!
     $geolocation: [Float]!
@@ -145,7 +145,7 @@ export const ADD_APARTMENT = gql`
 `;
 
 export const UPDATE_APARTMENT = gql`
-  mutation updateApartment(
+  mutation UpdateApartment(
     $id: ID!
     $title: String
     $details: String
@@ -221,7 +221,7 @@ export const UPDATE_APARTMENT = gql`
 `;
 
 export const DELETE_APARTMENT = gql`
-  mutation deleteApartment($id: ID!) {
+  mutation DeleteApartment($id: ID!) {
     deleteApartment(id: $id) {
       id
     }
@@ -229,7 +229,7 @@ export const DELETE_APARTMENT = gql`
 `;
 
 export const ADD_FAV_APARTMENT = gql`
-  mutation addFavorite($id: ID!) {
+  mutation AddFavorite($id: ID!) {
     addFavorite(id: $id) {
       id
       title
@@ -265,7 +265,7 @@ export const ADD_FAV_APARTMENT = gql`
 `;
 
 export const REMOVE_FAV_APARTMENT = gql`
-  mutation removeFavorite($id: ID!) {
+  mutation RemoveFavorite($id: ID!) {
     removeFavorite(id: $id) {
       id
       title

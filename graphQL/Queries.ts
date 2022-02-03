@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const GET_APARTMENTS = gql`
-  query apartments(
+  query Apartments(
     $city: String
     $buildingType: String
     $adType: String
@@ -103,8 +103,44 @@ export const GET_APARTMENTS = gql`
   }
 `;
 
+export const GET_APARTMENT_BY_ID = gql`
+  query GetApartmentById($id: String!) {
+    getApartmentById(id: $id) {
+      id
+      title
+      details
+      owner {
+        name
+        email
+        phone
+        type
+        verified
+      }
+      createdAt
+      modifiedAt
+      geolocation
+      address
+      city
+      price
+      buildingType
+      adType
+      heatingType
+      photos
+      msquare
+      roomCount
+      floor
+      isFavorite
+      isFurnished
+      isFeatured
+      amenities
+      age
+      isWheelChairAccessible
+    }
+  }
+`;
+
 export const GET_MY_APARTMENTS = gql`
-  query {
+  query MyApartments {
     myApartments {
       id
       title
@@ -132,7 +168,7 @@ export const GET_MY_APARTMENTS = gql`
 `;
 
 export const GET_FAV_APARTMENTS = gql`
-  query {
+  query FavoriteApartments {
     favorites {
       id
       title
@@ -167,7 +203,7 @@ export const GET_FAV_APARTMENTS = gql`
 `;
 
 export const GET_FEATURED_APARTMENTS = gql`
-  query {
+  query FeaturedApartments {
     featuredApartments {
       id
       title
@@ -202,7 +238,7 @@ export const GET_FEATURED_APARTMENTS = gql`
 `;
 
 export const GET_SEARCHED_APARTMENTS = gql`
-  query searchedApartments($q: String!) {
+  query SearchedApartments($q: String!) {
     searchedApartments(q: $q) {
       id
       title
@@ -238,7 +274,7 @@ export const GET_SEARCHED_APARTMENTS = gql`
 `;
 
 export const GET_CITIES = gql`
-  query {
+  query getCities {
     cities {
       value
       label
@@ -248,7 +284,7 @@ export const GET_CITIES = gql`
 `;
 
 export const GET_SPONSORS = gql`
-  query {
+  query GetSponsors {
     sponsors {
       name
       logoUrl

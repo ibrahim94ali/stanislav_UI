@@ -18,14 +18,14 @@ import {
   MaterialCommunityIcons,
   MaterialIcons,
 } from "@expo/vector-icons";
-import { gql, useMutation, useReactiveVar } from "@apollo/client";
+import { gql, useMutation, useQuery, useReactiveVar } from "@apollo/client";
 import {
   ADD_FAV_APARTMENT,
   DELETE_APARTMENT,
   REMOVE_FAV_APARTMENT,
 } from "../graphQL/Mutations";
 import { dpx } from "../constants/Spacings";
-import { GET_FAV_APARTMENTS } from "../graphQL/Queries";
+import { GET_APARTMENT_BY_ID, GET_FAV_APARTMENTS } from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
 import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
@@ -41,26 +41,53 @@ import { userVar } from "../Store";
 import moment from "moment";
 import "moment/min/locales";
 
+interface GetApartmentByIdI {
+  getApartmentById: ApartmentI;
+}
+
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
-    apartment,
-    showActions,
-    isFavorite,
+    id,
+    apartmentParamData = undefined,
+    showActions = false,
   }: {
-    apartment: ApartmentI;
+    id: String;
+    apartmentParamData?: ApartmentI;
     showActions: Boolean;
-    isFavorite: Boolean;
   } = route.params;
 
-  const [isFav, setIsFav] = useState(isFavorite || apartment.isFavorite);
+  const [apartment, setApartment] = useState<ApartmentI | undefined>(
+    apartmentParamData
+  );
+  const [isFav, setIsFav] = useState<boolean | undefined>(
+    apartmentParamData?.isFavorite || false
+  );
 
-  let images = apartment.photos.map((a) => {
-    return {
-      uri: a,
-    };
-  });
+  const images = apartment
+    ? apartment.photos.map((a) => {
+        return {
+          uri: a,
+        };
+      })
+    : [];
 
   const { t, i18n } = useTranslation();
+
+  const { data: apartmentData, loading: loadingFetch } =
+    useQuery<GetApartmentByIdI>(GET_APARTMENT_BY_ID, {
+      variables: {
+        id,
+      },
+    });
+
+  useEffect(() => {
+    if (apartmentData) {
+      if (!apartmentParamData) {
+        setApartment(apartmentData.getApartmentById);
+      }
+      setIsFav(apartmentData.getApartmentById.isFavorite);
+    }
+  }, [apartmentData]);
 
   moment.locale(i18n.language);
 
@@ -74,7 +101,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const [addFavorite, { data: isNowFavorite, loading: loadingFavorite }] =
     useMutation(ADD_FAV_APARTMENT, {
       variables: {
-        id: apartment.id,
+        id,
       },
       update(cache, { data }) {
         const favoriteApartment: ApartmentI = data?.addFavorite;
@@ -113,7 +140,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     { data: isNowUnfavorite, loading: loadingUnfavorite },
   ] = useMutation(REMOVE_FAV_APARTMENT, {
     variables: {
-      id: apartment.id,
+      id,
     },
     update(cache, { data }) {
       const favoriteApartmentId: string = data?.removeFavorite.id;
@@ -188,7 +215,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
         onPress: () => {
           deleteApartment({
             variables: {
-              id: apartment.id,
+              id,
             },
           });
         },
@@ -197,12 +224,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   };
 
   const redirectToMap = () => {
+    if (!apartment) {
+      return;
+    }
     Linking.openURL(
       `https://maps.google.com/maps?z=18&t=h&q=${apartment.geolocation[0]},${apartment.geolocation[1]}`
     );
   };
 
   const goToGoogleTranslate = () => {
+    if (!apartment) {
+      return;
+    }
     const lang = i18n.language;
     Linking.openURL(
       `https://translate.google.com/?sl=auto&tl=${lang}&text=${encodeURI(
@@ -266,292 +299,303 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      {(loadingFavorite || loadingUnfavorite || loadingDelete) && (
-        <LoadingSpinner />
-      )}
-      <ScrollView>
-        <ScrollView
-          horizontal
-          pagingEnabled
-          onScroll={(e) => handlePhotosOnScroll(e)}
-          showsHorizontalScrollIndicator={false}
-        >
-          {apartment.photos.map((photo, i) => (
-            <View key={photo}>
-              <TouchableOpacity
-                onPress={() => {
-                  setFullScreenPhotoIndex(i);
-                  setIsFullScreen(true);
-                }}
-              >
-                <Image
-                  style={styles.photo}
-                  source={{
-                    uri: photo,
-                  }}
-                />
-              </TouchableOpacity>
-            </View>
-          ))}
-        </ScrollView>
-
-        <View style={styles.headerContainer}>
-          <TouchableOpacity
-            style={styles.actionBtnContainer}
-            onPress={() => navigation.goBack()}
+      {(loadingFetch ||
+        loadingFavorite ||
+        loadingUnfavorite ||
+        loadingDelete) && <LoadingSpinner />}
+      {apartment && (
+        <ScrollView>
+          <ScrollView
+            horizontal
+            pagingEnabled
+            onScroll={(e) => handlePhotosOnScroll(e)}
+            showsHorizontalScrollIndicator={false}
           >
-            <Ionicons name="arrow-back" color={Colors.white} size={dpx(25)} />
-          </TouchableOpacity>
-          {showActions ? (
-            <View style={styles.actionBtns}>
-              <TouchableOpacity
-                style={[styles.actionBtnContainer, { marginRight: dpx(10) }]}
-                onPress={() => handleEdit()}
-              >
-                <AntDesign name="edit" color={Colors.white} size={dpx(25)} />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={[
-                  styles.actionBtnContainer,
-                  { backgroundColor: "rgba(255,61,0,0.3)" },
-                ]}
-                onPress={() => handleDelete()}
-              >
-                <AntDesign name="delete" color={Colors.white} size={dpx(25)} />
-              </TouchableOpacity>
-            </View>
-          ) : (
-            <View style={styles.actionBtns}>
-              {user && (
+            {apartment.photos.map((photo, i) => (
+              <View key={photo}>
                 <TouchableOpacity
-                  style={styles.actionBtnContainer}
-                  onPress={() => handleFavorite()}
+                  onPress={() => {
+                    setFullScreenPhotoIndex(i);
+                    setIsFullScreen(true);
+                  }}
                 >
-                  <Ionicons
-                    name="heart"
-                    color={isFav ? Colors.secondary : Colors.white}
+                  <Image
+                    style={styles.photo}
+                    source={{
+                      uri: photo,
+                    }}
+                  />
+                </TouchableOpacity>
+              </View>
+            ))}
+          </ScrollView>
+
+          <View style={styles.headerContainer}>
+            <TouchableOpacity
+              style={styles.actionBtnContainer}
+              onPress={() => navigation.goBack()}
+            >
+              <Ionicons name="arrow-back" color={Colors.white} size={dpx(25)} />
+            </TouchableOpacity>
+            {showActions ? (
+              <View style={styles.actionBtns}>
+                <TouchableOpacity
+                  style={[styles.actionBtnContainer, { marginRight: dpx(10) }]}
+                  onPress={() => handleEdit()}
+                >
+                  <AntDesign name="edit" color={Colors.white} size={dpx(25)} />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.actionBtnContainer,
+                    { backgroundColor: "rgba(255,61,0,0.3)" },
+                  ]}
+                  onPress={() => handleDelete()}
+                >
+                  <AntDesign
+                    name="delete"
+                    color={Colors.white}
                     size={dpx(25)}
                   />
                 </TouchableOpacity>
-              )}
-            </View>
-          )}
-        </View>
+              </View>
+            ) : (
+              <View style={styles.actionBtns}>
+                {user && (
+                  <TouchableOpacity
+                    style={styles.actionBtnContainer}
+                    onPress={() => handleFavorite()}
+                  >
+                    <Ionicons
+                      name="heart"
+                      color={isFav ? Colors.secondary : Colors.white}
+                      size={dpx(25)}
+                    />
+                  </TouchableOpacity>
+                )}
+              </View>
+            )}
+          </View>
 
-        <View style={styles.photoIndexIndicatorContainer}>
-          {apartment.photos.map((photo, i) => (
-            <View
-              key={photo}
-              style={[
-                styles.photoIndexIndicator,
-                i == activePhotoIndex
-                  ? styles.photoIndexIndicatorActive
-                  : styles.photoIndexIndicatorPassive,
-              ]}
-            ></View>
-          ))}
-        </View>
-        <ImageView
-          images={images}
-          imageIndex={fullScreenPhotoIndex}
-          visible={isFullScreen}
-          swipeToCloseEnabled={false}
-          presentationStyle="overFullScreen"
-          onRequestClose={() => setIsFullScreen(false)}
-        />
-        <View style={styles.propertyDetailsContainer}>
-          <PropertyDetails apartment={apartment} />
-        </View>
-        <MapView
-          style={styles.map}
-          loadingEnabled={false}
-          pitchEnabled={false}
-          rotateEnabled={false}
-          scrollEnabled={false}
-          zoomEnabled={false}
-          provider={PROVIDER_GOOGLE}
-          customMapStyle={customMapStyle}
-          onPress={() => redirectToMap()}
-          region={{
-            latitude: apartment.geolocation[0],
-            longitude: apartment.geolocation[1],
-            latitudeDelta: 0.005,
-            longitudeDelta: 0.005,
-          }}
-        >
-          <Marker
-            coordinate={{
+          <View style={styles.photoIndexIndicatorContainer}>
+            {apartment.photos.map((photo, i) => (
+              <View
+                key={photo}
+                style={[
+                  styles.photoIndexIndicator,
+                  i == activePhotoIndex
+                    ? styles.photoIndexIndicatorActive
+                    : styles.photoIndexIndicatorPassive,
+                ]}
+              ></View>
+            ))}
+          </View>
+          <ImageView
+            images={images}
+            imageIndex={fullScreenPhotoIndex}
+            visible={isFullScreen}
+            swipeToCloseEnabled={false}
+            presentationStyle="overFullScreen"
+            onRequestClose={() => setIsFullScreen(false)}
+          />
+          <View style={styles.propertyDetailsContainer}>
+            <PropertyDetails apartment={apartment} />
+          </View>
+          <MapView
+            style={styles.map}
+            loadingEnabled={false}
+            pitchEnabled={false}
+            rotateEnabled={false}
+            scrollEnabled={false}
+            zoomEnabled={false}
+            provider={PROVIDER_GOOGLE}
+            customMapStyle={customMapStyle}
+            onPress={() => redirectToMap()}
+            region={{
               latitude: apartment.geolocation[0],
               longitude: apartment.geolocation[1],
+              latitudeDelta: 0.005,
+              longitudeDelta: 0.005,
             }}
-            onPress={() => redirectToMap()}
           >
-            <Ionicons name="home" size={30} color={Colors.primary} />
-          </Marker>
-        </MapView>
+            <Marker
+              coordinate={{
+                latitude: apartment.geolocation[0],
+                longitude: apartment.geolocation[1],
+              }}
+              onPress={() => redirectToMap()}
+            >
+              <Ionicons name="home" size={30} color={Colors.primary} />
+            </Marker>
+          </MapView>
 
-        <View style={styles.descContainer}>
-          <View style={styles.descHeader}>
-            <Text style={styles.title}>
-              {t("APARTMENT_DETAILS.DESCRIPTION")}
-            </Text>
-            <TouchableOpacity onPress={() => goToGoogleTranslate()}>
-              <Text style={styles.translate}>
-                {t("APARTMENT_DETAILS.TRANSLATE")}
+          <View style={styles.descContainer}>
+            <View style={styles.descHeader}>
+              <Text style={styles.title}>
+                {t("APARTMENT_DETAILS.DESCRIPTION")}
               </Text>
-            </TouchableOpacity>
-          </View>
-          <Text style={styles.details}>{apartment.details}</Text>
-        </View>
-        {apartment.buildingType !== BuildingType.LAND && (
-          <View style={styles.amenitiesContainer}>
-            <Text style={styles.title}>{t("APARTMENT_DETAILS.AMENITIES")}</Text>
-            <View style={styles.amenityRow}>
-              <View style={styles.amenityContainer}>
-                <MaterialIcons
-                  name="house"
-                  size={dpx(18)}
-                  color={Colors.black}
-                />
-                <Text style={styles.amenity}>
-                  {apartment.age === 0
-                    ? t("ADD_EDIT_APT.FIELDS.NEW")
-                    : `${apartment.age} ${t("ADD_EDIT_APT.FIELDS.YEARS")}`}
+              <TouchableOpacity onPress={() => goToGoogleTranslate()}>
+                <Text style={styles.translate}>
+                  {t("APARTMENT_DETAILS.TRANSLATE")}
                 </Text>
-              </View>
-              <View style={styles.amenityContainer}>
-                <MaterialCommunityIcons
-                  name="sofa"
-                  size={dpx(18)}
-                  color={Colors.black}
-                />
-                <Text style={styles.amenity}>
-                  {t(
-                    `APARTMENT_DETAILS.FURNISHINGTYPE.${
-                      furnishingTypes.find(
-                        (f) => f.value === apartment.isFurnished
-                      )?.label
-                    }`
-                  )}
-                </Text>
-              </View>
+              </TouchableOpacity>
             </View>
-            <View style={styles.amenityRow}>
-              <View style={styles.amenityContainer}>
-                <MaterialCommunityIcons
-                  name="fire"
-                  size={dpx(18)}
-                  color={Colors.black}
-                />
-                <Text style={styles.amenity}>
-                  {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
-                  {` ${t("ADD_EDIT_APT.HEATING")}`}
-                </Text>
-              </View>
-              <View style={styles.amenityContainer}>
-                <MaterialCommunityIcons
-                  name="wheelchair-accessibility"
-                  size={dpx(18)}
-                  color={Colors.black}
-                />
-                <Text style={styles.amenity}>
-                  {t(
-                    `APARTMENT_DETAILS.WHEELCHAIRACCESSIBILITYTYPE.${
-                      wheelChairAccessibleTypes.find(
-                        (a) => a.value === apartment.isWheelChairAccessible
-                      )?.label
-                    }`
-                  )}
-                </Text>
-              </View>
-            </View>
-            {apartment.amenities?.map((_, index: number) => {
-              const am = apartment.amenities;
-              if (index % 2 === 0) {
-                return (
-                  <View
-                    style={styles.amenityRow}
-                    key={apartment.amenities[index]}
-                  >
-                    {am.length > index &&
-                      amenityRender(apartment.amenities[index])}
-                    {am.length > index + 1 &&
-                      amenityRender(apartment.amenities[index + 1])}
-                  </View>
-                );
-              }
-            })}
+            <Text style={styles.details}>{apartment.details}</Text>
           </View>
-        )}
+          {apartment.buildingType !== BuildingType.LAND && (
+            <View style={styles.amenitiesContainer}>
+              <Text style={styles.title}>
+                {t("APARTMENT_DETAILS.AMENITIES")}
+              </Text>
+              <View style={styles.amenityRow}>
+                <View style={styles.amenityContainer}>
+                  <MaterialIcons
+                    name="house"
+                    size={dpx(18)}
+                    color={Colors.black}
+                  />
+                  <Text style={styles.amenity}>
+                    {apartment.age === 0
+                      ? t("ADD_EDIT_APT.FIELDS.NEW")
+                      : `${apartment.age} ${t("ADD_EDIT_APT.FIELDS.YEARS")}`}
+                  </Text>
+                </View>
+                <View style={styles.amenityContainer}>
+                  <MaterialCommunityIcons
+                    name="sofa"
+                    size={dpx(18)}
+                    color={Colors.black}
+                  />
+                  <Text style={styles.amenity}>
+                    {t(
+                      `APARTMENT_DETAILS.FURNISHINGTYPE.${
+                        furnishingTypes.find(
+                          (f) => f.value === apartment.isFurnished
+                        )?.label
+                      }`
+                    )}
+                  </Text>
+                </View>
+              </View>
+              <View style={styles.amenityRow}>
+                <View style={styles.amenityContainer}>
+                  <MaterialCommunityIcons
+                    name="fire"
+                    size={dpx(18)}
+                    color={Colors.black}
+                  />
+                  <Text style={styles.amenity}>
+                    {t(`FILTER_OPTIONS.${apartment.heatingType}`)}
+                    {` ${t("ADD_EDIT_APT.HEATING")}`}
+                  </Text>
+                </View>
+                <View style={styles.amenityContainer}>
+                  <MaterialCommunityIcons
+                    name="wheelchair-accessibility"
+                    size={dpx(18)}
+                    color={Colors.black}
+                  />
+                  <Text style={styles.amenity}>
+                    {t(
+                      `APARTMENT_DETAILS.WHEELCHAIRACCESSIBILITYTYPE.${
+                        wheelChairAccessibleTypes.find(
+                          (a) => a.value === apartment.isWheelChairAccessible
+                        )?.label
+                      }`
+                    )}
+                  </Text>
+                </View>
+              </View>
+              {apartment.amenities?.map((_, index: number) => {
+                const am = apartment.amenities;
+                if (index % 2 === 0) {
+                  return (
+                    <View
+                      style={styles.amenityRow}
+                      key={apartment.amenities[index]}
+                    >
+                      {am.length > index &&
+                        amenityRender(apartment.amenities[index])}
+                      {am.length > index + 1 &&
+                        amenityRender(apartment.amenities[index + 1])}
+                    </View>
+                  );
+                }
+              })}
+            </View>
+          )}
 
-        <View style={styles.dateContainer}>
-          <Text style={styles.titleNoMargin}>
-            {t("APARTMENT_DETAILS.CREATED_AT")}
-          </Text>
-          <Text style={styles.date}>
-            {moment(apartment.createdAt).format("LL")}
-          </Text>
-        </View>
-        {!showActions && (
-          <View style={styles.agentContainer}>
+          <View style={styles.dateContainer}>
             <Text style={styles.titleNoMargin}>
-              {t("APARTMENT_DETAILS.LISTING_AGENT")}
+              {t("APARTMENT_DETAILS.CREATED_AT")}
             </Text>
+            <Text style={styles.date}>
+              {moment(apartment.createdAt).format("LL")}
+            </Text>
+          </View>
+          {!showActions && (
+            <View style={styles.agentContainer}>
+              <Text style={styles.titleNoMargin}>
+                {t("APARTMENT_DETAILS.LISTING_AGENT")}
+              </Text>
 
-            <View style={styles.personContainer}>
-              <View>
-                <Text style={styles.person}>{apartment.owner?.name}</Text>
-                <Text style={styles.personType}>
-                  {t(`FILTER_OPTIONS.${apartment.owner?.type}`)}
-                </Text>
-              </View>
-              <View style={styles.personIcons}>
-                <IconButton
-                  handlePress={() =>
-                    Linking.openURL(`tel:${apartment.owner?.phone}`)
-                  }
-                >
-                  <Entypo name="phone" color={Colors.black} size={dpx(22)} />
-                </IconButton>
-                {apartment.owner?.phone && (
+              <View style={styles.personContainer}>
+                <View>
+                  <Text style={styles.person}>{apartment.owner?.name}</Text>
+                  <Text style={styles.personType}>
+                    {t(`FILTER_OPTIONS.${apartment.owner?.type}`)}
+                  </Text>
+                </View>
+                <View style={styles.personIcons}>
+                  <IconButton
+                    handlePress={() =>
+                      Linking.openURL(`tel:${apartment.owner?.phone}`)
+                    }
+                  >
+                    <Entypo name="phone" color={Colors.black} size={dpx(22)} />
+                  </IconButton>
+                  {apartment.owner?.phone && (
+                    <View style={{ marginLeft: dpx(10) }}>
+                      <IconButton
+                        handlePress={() =>
+                          Linking.openURL(
+                            `https://wa.me/389${apartment.owner?.phone.slice(
+                              -8
+                            )}`
+                          )
+                        }
+                      >
+                        <MaterialCommunityIcons
+                          name="whatsapp"
+                          color={Colors.black}
+                          size={dpx(22)}
+                        />
+                      </IconButton>
+                    </View>
+                  )}
+
                   <View style={{ marginLeft: dpx(10) }}>
                     <IconButton
                       handlePress={() =>
                         Linking.openURL(
-                          `https://wa.me/389${apartment.owner?.phone.slice(-8)}`
+                          `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislove&body=Hello, I am interested in your apartment "${apartment.title}".`
                         )
                       }
                     >
                       <MaterialCommunityIcons
-                        name="whatsapp"
+                        name="email"
                         color={Colors.black}
                         size={dpx(22)}
                       />
                     </IconButton>
                   </View>
-                )}
-
-                <View style={{ marginLeft: dpx(10) }}>
-                  <IconButton
-                    handlePress={() =>
-                      Linking.openURL(
-                        `mailto:${apartment.owner?.email}?subject=Interest for ${apartment.title} in Stanislove&body=Hello, I am interested in your apartment "${apartment.title}".`
-                      )
-                    }
-                  >
-                    <MaterialCommunityIcons
-                      name="email"
-                      color={Colors.black}
-                      size={dpx(22)}
-                    />
-                  </IconButton>
                 </View>
               </View>
             </View>
-          </View>
-        )}
-      </ScrollView>
+          )}
+        </ScrollView>
+      )}
     </View>
   );
 };

@@ -42,7 +42,7 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
         {myFavApartments &&
           myFavApartments.favorites.map((apart: ApartmentI) => (
             <View key={apart.id} style={styles.property}>
-              <Property apartment={apart} isFavorite />
+              <Property apartment={apart} />
             </View>
           ))}
       </ScrollView>
