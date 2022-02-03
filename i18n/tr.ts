@@ -47,6 +47,7 @@ export default {
       AMENITIES: "Özellikler",
       LISTING_AGENT: "İlan sahibi",
       TRANSLATE: "Türkçe'ye çevir",
+      CREATED_AT: "İlan tarihi",
       FURNISHINGTYPE: {
         Furnished: "Eşyalı",
         Unfurnished: "Eşyasız",

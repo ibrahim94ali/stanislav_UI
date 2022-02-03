@@ -1,5 +1,7 @@
 TODO:
 
+- Create path and link and API for a specific property and export link
+- Add QR code of the property on below with its link
 - Is favorite on featured lists not working
 - Update API with better mongoose calls
 - Fix bug in first time entering, language is english even its different

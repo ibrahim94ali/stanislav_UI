@@ -47,6 +47,7 @@ export default {
       AMENITIES: "Удобности",
       LISTING_AGENT: "Огласувач",
       TRANSLATE: "Преведи на Македонски",
+      CREATED_AT: "Датум на оглас",
       FURNISHINGTYPE: {
         Furnished: "Наместен",
         Unfurnished: "Ненаместен",

@@ -38,6 +38,8 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { customMapStyle } from "../constants/googleMapsStyle";
 import { userVar } from "../Store";
+import moment from "moment";
+import "moment/min/locales";
 
 const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   const {
@@ -59,6 +61,8 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
   });
 
   const { t, i18n } = useTranslation();
+
+  moment.locale(i18n.language);
 
   const user = useReactiveVar(userVar);
 
@@ -480,9 +484,18 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
             })}
           </View>
         )}
+
+        <View style={styles.dateContainer}>
+          <Text style={styles.titleNoMargin}>
+            {t("APARTMENT_DETAILS.CREATED_AT")}
+          </Text>
+          <Text style={styles.date}>
+            {moment(apartment.createdAt).format("LL")}
+          </Text>
+        </View>
         {!showActions && (
           <View style={styles.agentContainer}>
-            <Text style={styles.title}>
+            <Text style={styles.titleNoMargin}>
               {t("APARTMENT_DETAILS.LISTING_AGENT")}
             </Text>
 
@@ -501,6 +514,24 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                 >
                   <Entypo name="phone" color={Colors.black} size={dpx(22)} />
                 </IconButton>
+                {apartment.owner?.phone && (
+                  <View style={{ marginLeft: dpx(10) }}>
+                    <IconButton
+                      handlePress={() =>
+                        Linking.openURL(
+                          `https://wa.me/389${apartment.owner?.phone.slice(-8)}`
+                        )
+                      }
+                    >
+                      <MaterialCommunityIcons
+                        name="whatsapp"
+                        color={Colors.black}
+                        size={dpx(22)}
+                      />
+                    </IconButton>
+                  </View>
+                )}
+
                 <View style={{ marginLeft: dpx(10) }}>
                   <IconButton
                     handlePress={() =>
@@ -637,6 +668,15 @@ const styles = StyleSheet.create({
     fontFamily: "Montserrat_400Regular",
     color: Colors.black,
   },
+  dateContainer: {
+    paddingLeft: dpx(20),
+    paddingTop: dpx(10),
+  },
+  date: {
+    fontSize: dpx(14),
+    fontFamily: "Montserrat_500Medium",
+    color: Colors.black,
+  },
   agentContainer: {
     padding: dpx(20),
   },
@@ -663,6 +703,11 @@ const styles = StyleSheet.create({
     fontSize: dpx(16),
     color: Colors.black,
     marginBottom: dpx(10),
+  },
+  titleNoMargin: {
+    fontFamily: "Montserrat_500Medium",
+    fontSize: dpx(16),
+    color: Colors.black,
   },
   details: {
     fontFamily: "Montserrat_400Regular",
