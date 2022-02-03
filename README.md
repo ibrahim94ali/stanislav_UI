@@ -1,6 +1,7 @@
 TODO:
 
-- Add QR code of the property on below with its link
+- Setup links to be universal links, update links
+- Add old share icon back with universal link
 - Apollo Cache, combine data for apartments with ids
 - Remove unnecessary requested data in queries and mutations
 - Update API with better mongoose calls

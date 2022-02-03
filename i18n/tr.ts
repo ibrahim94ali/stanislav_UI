@@ -48,6 +48,7 @@ export default {
       LISTING_AGENT: "İlan sahibi",
       TRANSLATE: "Türkçe'ye çevir",
       CREATED_AT: "İlan tarihi",
+      QR_CODE: "QR Kod",
       FURNISHINGTYPE: {
         Furnished: "Eşyalı",
         Unfurnished: "Eşyasız",

@@ -40,6 +40,8 @@ import { customMapStyle } from "../constants/googleMapsStyle";
 import { userVar } from "../Store";
 import moment from "moment";
 import "moment/min/locales";
+import QRCode from "react-native-qrcode-svg";
+import * as WebBrowser from "expo-web-browser";
 
 interface GetApartmentByIdI {
   getApartmentById: ApartmentI;
@@ -232,12 +234,12 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
     );
   };
 
-  const goToGoogleTranslate = () => {
+  const goToGoogleTranslate = async () => {
     if (!apartment) {
       return;
     }
     const lang = i18n.language;
-    Linking.openURL(
+    await WebBrowser.openBrowserAsync(
       `https://translate.google.com/?sl=auto&tl=${lang}&text=${encodeURI(
         apartment.details
       )}&op=translate`
@@ -534,6 +536,15 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               {moment(apartment.createdAt).format("LL")}
             </Text>
           </View>
+          <View style={styles.qrCodeContainer}>
+            <Text style={[styles.title, { textAlign: "center" }]}>
+              {t("APARTMENT_DETAILS.QR_CODE")}
+            </Text>
+            <QRCode
+              value={`stanislove://propertyDetails?id=${id}`}
+              size={dpx(150)}
+            />
+          </View>
           {!showActions && (
             <View style={styles.agentContainer}>
               <Text style={styles.titleNoMargin}>
@@ -720,6 +731,10 @@ const styles = StyleSheet.create({
     fontSize: dpx(14),
     fontFamily: "Montserrat_500Medium",
     color: Colors.black,
+  },
+  qrCodeContainer: {
+    alignSelf: "center",
+    marginVertical: dpx(20),
   },
   agentContainer: {
     padding: dpx(20),

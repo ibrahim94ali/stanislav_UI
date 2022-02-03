@@ -48,6 +48,7 @@ export default {
       LISTING_AGENT: "Reklamues",
       TRANSLATE: "Përkthe në Shqip",
       CREATED_AT: "Data e listimit",
+      QR_CODE: "Kodi QR",
       FURNISHINGTYPE: {
         Furnished: "E mobiluar",
         Unfurnished: "I pamobiluar",

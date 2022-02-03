@@ -369,7 +369,9 @@ const FiltersScreen = ({ navigation }: any) => {
             </Text>
             <Text style={styles.sliderValues}>
               {age > 0 && age < filterLimits.maxAge
-                ? `${t("FILTER_OPTIONS.MAX")} ${age}`
+                ? `${t("FILTER_OPTIONS.MAX")} ${age} ${t(
+                    "ADD_EDIT_APT.FIELDS.YEARS"
+                  )}`
                 : age < filterLimits.maxAge
                 ? t("ADD_EDIT_APT.FIELDS.NEW")
                 : t("FILTER_OPTIONS.ANY")}

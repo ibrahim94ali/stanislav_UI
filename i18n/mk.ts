@@ -48,6 +48,7 @@ export default {
       LISTING_AGENT: "Огласувач",
       TRANSLATE: "Преведи на Македонски",
       CREATED_AT: "Датум на оглас",
+      QR_CODE: "QR код",
       FURNISHINGTYPE: {
         Furnished: "Наместен",
         Unfurnished: "Ненаместен",

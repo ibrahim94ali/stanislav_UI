@@ -48,6 +48,7 @@ export default {
       LISTING_AGENT: "Listing Agent",
       TRANSLATE: "Translate to English",
       CREATED_AT: "Listing date",
+      QR_CODE: "QR Code",
       FURNISHINGTYPE: {
         Furnished: "Furnished",
         Unfurnished: "Unfurnished",
