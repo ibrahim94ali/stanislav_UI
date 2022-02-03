@@ -7,25 +7,28 @@ export default {
       Root: {
         screens: {
           Home: {
+            initialRouteName: "HomeScreen",
             screens: {
               HomeScreen: "home",
-              ApartmentListScreen: "apartmentList",
-              ApartmentDetailsScreen: "apartmentDetails",
+              ApartmentListScreen: "propertyList",
+              ApartmentDetailsScreen: "propertyDetails",
             },
           },
           Map: {
+            initialRouteName: "MapScreen",
             screens: {
               MapScreen: "map",
             },
           },
           Profile: {
+            initialRouteName: "ProfileScreen",
             screens: {
               ProfileScreen: "profile",
               RegisterScreen: "register",
               LoginScreen: "login",
-              AddEditApartmentScreen: "addEditApartment",
-              MyApartmentsScreen: "myApartments",
-              MyFavoriteApartmentsScreen: "myFavoriteApartments",
+              AddEditApartmentScreen: "addEditProperty",
+              MyApartmentsScreen: "myProperties",
+              MyFavoriteApartmentsScreen: "myFavoriteProperties",
             },
           },
         },

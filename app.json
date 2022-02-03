@@ -6,7 +6,7 @@
     "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/images/s_icon_bg.png",
-    "scheme": "myapp",
+    "scheme": "stanislove",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",

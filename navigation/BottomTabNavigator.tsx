@@ -6,7 +6,12 @@ import * as React from "react";
 import Colors from "../constants/Colors";
 import HomeScreen from "../screens/HomeScreen";
 import ProfileScreen from "../screens/ProfileScreen";
-import { HomeParamList, ProfileParamList, MapParamList } from "../types";
+import {
+  HomeParamList,
+  ProfileParamList,
+  MapParamList,
+  BottomTabParamList,
+} from "../types";
 import MapScreen from "../screens/MapScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import LoginScreen from "../screens/LoginScreen";
@@ -18,13 +23,13 @@ import ApartmentListScreen from "../screens/ApartmentListScreen";
 import FiltersScreen from "../screens/FiltersScreen";
 import { useTranslation } from "react-i18next";
 
-const BottomTab = createBottomTabNavigator();
+const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
 export default function BottomTabNavigator() {
   const { t } = useTranslation();
   return (
     <BottomTab.Navigator
-      initialRouteName={t("TABS.HOME")}
+      initialRouteName="Home"
       tabBarOptions={{
         activeTintColor: Colors.primary,
         inactiveTintColor: Colors.gray,
@@ -34,25 +39,28 @@ export default function BottomTabNavigator() {
       }}
     >
       <BottomTab.Screen
-        name={t("TABS.HOME")}
+        name="Home"
         component={HomeNavigator}
         options={{
+          title: t("TABS.HOME"),
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
       <BottomTab.Screen
-        name={t("TABS.EXPLORE")}
+        name="Map"
         component={MapNavigator}
         options={{
+          title: t("TABS.EXPLORE"),
           tabBarIcon: ({ color }) => (
             <TabBarIcon name="compass" color={color} />
           ),
         }}
       />
       <BottomTab.Screen
-        name={t("TABS.PROFILE")}
+        name="Profile"
         component={ProfileNavigator}
         options={{
+          title: t("TABS.PROFILE"),
           tabBarIcon: ({ color }) => <TabBarIcon name="person" color={color} />,
         }}
       />
@@ -96,11 +104,7 @@ const MapStack = createStackNavigator<MapParamList>();
 function MapNavigator() {
   return (
     <MapStack.Navigator screenOptions={{ headerShown: false }}>
-      <MapStack.Screen
-        name="MapScreen"
-        component={MapScreen}
-        options={{ headerTitle: "Map" }}
-      />
+      <MapStack.Screen name="MapScreen" component={MapScreen} />
       <MapStack.Screen
         name="ApartmentDetailsScreen"
         component={ApartmentDetailsScreen}
