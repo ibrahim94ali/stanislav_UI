@@ -43,14 +43,20 @@ const MapScreen = ({ navigation }: any) => {
                 : ""
             }`}
             onCalloutPress={() =>
-              navigation.push("ApartmentDetailsScreen", { apartment })
+              navigation.push("ApartmentDetailsScreen", {
+                id: apartment.id,
+                apartmentParamData: apartment,
+              })
             }
           >
             {Platform.OS === "ios" && (
               <Callout
                 style={styles.calloutContainer}
                 onPress={() =>
-                  navigation.push("ApartmentDetailsScreen", { apartment })
+                  navigation.push("ApartmentDetailsScreen", {
+                    id: apartment.id,
+                    apartmentParamData: apartment,
+                  })
                 }
               >
                 <Text style={styles.calloutTitle}>{apartment.title}</Text>
