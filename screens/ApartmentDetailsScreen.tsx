@@ -541,7 +541,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               {t("APARTMENT_DETAILS.QR_CODE")}
             </Text>
             <QRCode
-              value={`stanislove://propertyDetails?id=${id}`}
+              value={`stanislove:///propertyDetails?id=${id}`}
               size={dpx(150)}
             />
           </View>
