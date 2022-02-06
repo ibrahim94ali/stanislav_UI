@@ -23,7 +23,7 @@ import IconButton from "../components/IconButton";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import ActiveFilterBadge from "../components/ActiveFilterBadge";
-import { useQuery, useReactiveVar } from "@apollo/client";
+import { useLazyQuery, useReactiveVar } from "@apollo/client";
 import { GET_APARTMENTS, GET_SEARCHED_APARTMENTS } from "../graphQL/Queries";
 import { ApartmentI } from "../interfaces";
 import Property from "../components/Property";
@@ -45,7 +45,6 @@ const DATA_LIMIT = 20;
 
 const ApartmentListScreen = (props: Props) => {
   const filters = useReactiveVar(filtersVar);
-  let filteredData: any, isDataLoading, fetchMoreData: any;
 
   const [q, setQ] = useState<string | undefined>(
     props.route?.params?.q || undefined
@@ -53,25 +52,34 @@ const ApartmentListScreen = (props: Props) => {
 
   const [shouldFetchMore, setShouldFetchMore] = useState(true);
 
-  if (q) {
-    const { data, loading } = useQuery(GET_SEARCHED_APARTMENTS, {
-      variables: {
-        q: q,
-      },
-    });
-    filteredData = data;
-    isDataLoading = loading;
-  } else {
-    const { data, loading, fetchMore } = useQuery(GET_APARTMENTS, {
-      variables: {
-        ...filters,
-        limit: DATA_LIMIT,
-      },
-    });
-    filteredData = data;
-    isDataLoading = loading;
-    fetchMoreData = fetchMore;
-  }
+  const [apartments, setApartments] = useState<ApartmentI[]>([]);
+
+  const [
+    fetchWithSearch,
+    { data: dataWithSearch, loading: isLoadingWithSearch },
+  ] = useLazyQuery(GET_SEARCHED_APARTMENTS, {
+    variables: {
+      q: q,
+    },
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      setApartments(data.searchedApartments);
+    },
+  });
+
+  const [
+    fetchNormal,
+    { data: dataNormal, loading: isLoadingNormal, fetchMore },
+  ] = useLazyQuery(GET_APARTMENTS, {
+    variables: {
+      ...filters,
+      limit: DATA_LIMIT,
+    },
+    fetchPolicy: "network-only",
+    onCompleted: (data) => {
+      setApartments(data.apartments);
+    },
+  });
 
   const removeFilters = () => {
     setQ(undefined);
@@ -123,25 +131,23 @@ const ApartmentListScreen = (props: Props) => {
   };
 
   const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (!!q) {
+    if (!fetchMore) {
       return;
     }
-    const scrollPosition = e.nativeEvent.contentOffset.y;
-    const contentHeight = e.nativeEvent.contentSize.height;
-    const isScrolledToBottom = contentHeight + scrollPosition;
 
-    const resultsLength = filteredData.apartments.length;
+    const isScrollToBottom =
+      e.nativeEvent.layoutMeasurement.height + e.nativeEvent.contentOffset.y >=
+      e.nativeEvent.contentSize.height - 500;
 
-    if (
-      shouldFetchMore &&
-      resultsLength >= DATA_LIMIT &&
-      isScrolledToBottom >= contentHeight - 50
-    ) {
-      fetchMoreData({
+    const resultsLength = apartments.length;
+
+    if (shouldFetchMore && resultsLength >= DATA_LIMIT && isScrollToBottom) {
+      fetchMore({
         variables: {
           limit: resultsLength + DATA_LIMIT,
         },
       }).then((res: any) => {
+        setApartments(res.data.apartments);
         if (resultsLength === res.data.apartments.length) {
           setShouldFetchMore(false);
         }
@@ -153,7 +159,13 @@ const ApartmentListScreen = (props: Props) => {
     if (!filters.sortBy) {
       setSorting("createdAt", -1);
     }
-  }, []);
+
+    if (q) {
+      fetchWithSearch();
+    } else {
+      fetchNormal();
+    }
+  }, [q]);
 
   useEffect(() => {
     setShouldFetchMore(true);
@@ -161,14 +173,14 @@ const ApartmentListScreen = (props: Props) => {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      {isDataLoading ? <LoadingSpinner /> : null}
+      {isLoadingNormal || isLoadingWithSearch ? <LoadingSpinner /> : null}
       <Header>
         <IconButton handlePress={() => props.navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
         <Text style={styles.header}>
           {t("APARTMENT_LIST_SCREEN.RESULTS")}
-          {!q && filteredData ? ` (${filteredData?.apartments?.length})` : ""}
+          {` (${apartments.length})`}
         </Text>
         <IconButton handlePress={() => handleSortModal()}>
           <MaterialCommunityIcons
@@ -179,7 +191,7 @@ const ApartmentListScreen = (props: Props) => {
         </IconButton>
       </Header>
 
-      {(isAnyFilterActive() || q) && (
+      {isAnyFilterActive() && !q && (
         <View style={styles.activeFiltersContainer}>
           <ActiveFilterBadge
             name={t("APARTMENT_LIST_SCREEN.ACTIVE_FILTERS")}
@@ -188,13 +200,8 @@ const ApartmentListScreen = (props: Props) => {
         </View>
       )}
 
-      {filteredData &&
-        !!q &&
-        filteredData?.searchedApartments?.length === 0 && <NoResult />}
-
-      {filteredData && !q && filteredData?.apartments?.length === 0 && (
-        <NoResult />
-      )}
+      {(dataWithSearch?.searchedApartments?.length === 0 ||
+        dataNormal?.apartments?.length === 0) && <NoResult />}
 
       <ScrollView
         contentContainerStyle={{
@@ -203,19 +210,11 @@ const ApartmentListScreen = (props: Props) => {
         showsVerticalScrollIndicator={false}
         onMomentumScrollEnd={(e) => handleScrollEnd(e)}
       >
-        {(filteredData &&
-          !!q &&
-          filteredData?.searchedApartments?.map((apart: ApartmentI) => (
-            <View key={apart.id} style={styles.property}>
-              <Property apartment={apart} />
-            </View>
-          ))) ||
-          (!q &&
-            filteredData?.apartments?.map((apart: ApartmentI) => (
-              <View key={apart.id} style={styles.property}>
-                <Property apartment={apart} />
-              </View>
-            )))}
+        {apartments.map((apart: ApartmentI) => (
+          <View key={apart.id} style={styles.property}>
+            <Property apartment={apart} />
+          </View>
+        ))}
       </ScrollView>
 
       <BottomSheet

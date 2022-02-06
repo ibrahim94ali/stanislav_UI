@@ -46,30 +46,7 @@ export const GET_APARTMENTS = gql`
       limit: $limit
       offset: $offset
       isWheelChairAccessible: $isWheelChairAccessible
-    )
-      @connection(
-        key: "apartments"
-        filter: [
-          "city"
-          "buildingType"
-          "adType"
-          "heatingType"
-          "minPrice"
-          "maxPrice"
-          "minArea"
-          "maxArea"
-          "minRoom"
-          "maxRoom"
-          "minFloor"
-          "maxFloor"
-          "isFurnished"
-          "amenities"
-          "age"
-          "sortBy"
-          "sortOrder"
-          "isWheelChairAccessible"
-        ]
-      ) {
+    ) {
       id
       title
       details
