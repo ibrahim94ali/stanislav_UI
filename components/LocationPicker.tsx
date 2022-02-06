@@ -30,7 +30,7 @@ const LocationPicker = ({ addressGeoCode, onSave }: any) => {
         style={styles.smallMap}
         provider={PROVIDER_GOOGLE}
         customMapStyle={customMapStyle}
-        loadingEnabled={false}
+        loadingEnabled={true}
         pitchEnabled={false}
         rotateEnabled={false}
         scrollEnabled={false}

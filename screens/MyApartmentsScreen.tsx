@@ -26,7 +26,10 @@ const MyApartmentsScreen = ({ navigation }: any) => {
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>{t("PROFILE.YOUR_APT")}</Text>
+        <Text style={styles.header}>
+          {t("PROFILE.YOUR_APT")}
+          {myApartments && ` (${myApartments.myApartments.length})`}
+        </Text>
         <IconButton
           handlePress={() => navigation.push("AddEditApartmentScreen")}
         >

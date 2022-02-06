@@ -22,7 +22,9 @@ export default {
     HOME: {
       SEARCH_PROPERTY: "İlan Ara",
       CITIES: "Şehirler",
+      POPULAR_CITIES: "Öne Çıkan Şehirler",
       FEATURED_PROPERTIES: "Sponsorlu İlanlar",
+      ALL_PROPERTIES: "Tüm İlanlar",
       SEE_ALL: "Hepsini gör",
       SPONSORS: "Sponsorlar",
     },

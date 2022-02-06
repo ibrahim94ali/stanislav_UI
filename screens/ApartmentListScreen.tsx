@@ -10,7 +10,14 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  NativeScrollEvent,
+  NativeSyntheticEvent,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import Colors from "../constants/Colors";
@@ -18,7 +25,7 @@ import { dpx } from "../constants/Spacings";
 import ActiveFilterBadge from "../components/ActiveFilterBadge";
 import { useQuery, useReactiveVar } from "@apollo/client";
 import { GET_APARTMENTS, GET_SEARCHED_APARTMENTS } from "../graphQL/Queries";
-import { ApartmentI, SearchFiltersI } from "../interfaces";
+import { ApartmentI } from "../interfaces";
 import Property from "../components/Property";
 import LoadingSpinner from "../components/LoadingSpinner";
 import BottomSheet from "@gorhom/bottom-sheet";
@@ -115,6 +122,33 @@ const ApartmentListScreen = (props: Props) => {
     return false;
   };
 
+  const handleScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (!!q) {
+      return;
+    }
+    const scrollPosition = e.nativeEvent.contentOffset.y;
+    const contentHeight = e.nativeEvent.contentSize.height;
+    const isScrolledToBottom = contentHeight + scrollPosition;
+
+    const resultsLength = filteredData.apartments.length;
+
+    if (
+      shouldFetchMore &&
+      resultsLength >= DATA_LIMIT &&
+      isScrolledToBottom >= contentHeight - 50
+    ) {
+      fetchMoreData({
+        variables: {
+          limit: resultsLength + DATA_LIMIT,
+        },
+      }).then((res: any) => {
+        if (resultsLength === res.data.apartments.length) {
+          setShouldFetchMore(false);
+        }
+      });
+    }
+  };
+
   useEffect(() => {
     if (!filters.sortBy) {
       setSorting("createdAt", -1);
@@ -132,7 +166,10 @@ const ApartmentListScreen = (props: Props) => {
         <IconButton handlePress={() => props.navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>{t("APARTMENT_LIST_SCREEN.RESULTS")}</Text>
+        <Text style={styles.header}>
+          {t("APARTMENT_LIST_SCREEN.RESULTS")}
+          {!q && filteredData ? ` (${filteredData?.apartments?.length})` : ""}
+        </Text>
         <IconButton handlePress={() => handleSortModal()}>
           <MaterialCommunityIcons
             name="sort-ascending"
@@ -164,29 +201,7 @@ const ApartmentListScreen = (props: Props) => {
           alignItems: "center",
         }}
         showsVerticalScrollIndicator={false}
-        onMomentumScrollEnd={(e) => {
-          const scrollPosition = e.nativeEvent.contentOffset.y;
-          const contentHeight = e.nativeEvent.contentSize.height;
-          const isScrolledToBottom = contentHeight + scrollPosition;
-
-          const resultsLength = filteredData.apartments.length;
-
-          if (
-            shouldFetchMore &&
-            resultsLength >= DATA_LIMIT &&
-            isScrolledToBottom >= contentHeight - 50
-          ) {
-            fetchMoreData({
-              variables: {
-                limit: resultsLength + DATA_LIMIT,
-              },
-            }).then((res: any) => {
-              if (resultsLength === res.data.apartments.length) {
-                setShouldFetchMore(false);
-              }
-            });
-          }
-        }}
+        onMomentumScrollEnd={(e) => handleScrollEnd(e)}
       >
         {(filteredData &&
           !!q &&

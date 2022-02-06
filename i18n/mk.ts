@@ -22,7 +22,9 @@ export default {
     HOME: {
       SEARCH_PROPERTY: "Пребарај објава",
       CITIES: "Градови",
+      POPULAR_CITIES: "Популарни градови",
       FEATURED_PROPERTIES: "Спонзорирани Oбјави",
+      ALL_PROPERTIES: "Сите Oбјави",
       SEE_ALL: "Види се",
       SPONSORS: "Спонзори",
     },

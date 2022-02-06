@@ -8,8 +8,9 @@ import SearchBox from "../components/SearchBox";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import {
-  GET_CITIES,
+  GET_APARTMENTS,
   GET_FEATURED_APARTMENTS,
+  GET_POPULAR_CITIES,
   GET_SPONSORS,
 } from "../graphQL/Queries";
 import City from "../components/City";
@@ -27,7 +28,16 @@ function HomeScreen({ navigation }: any) {
 
   const { data: featuredProperties, loading: isFeaturedPropertyLoading } =
     useQuery(GET_FEATURED_APARTMENTS);
-  const { data: cities, loading: isCityLoading } = useQuery(GET_CITIES);
+  const { data: allProperties, loading: isAllPropertyLoading } = useQuery(
+    GET_APARTMENTS,
+    {
+      variables: {
+        limit: 10,
+      },
+    }
+  );
+  const { data: popularCities, loading: isCityLoading } =
+    useQuery(GET_POPULAR_CITIES);
   const { data: sponsors, loading: isSponsorLoading } = useQuery(GET_SPONSORS);
 
   const handleSearch = (q: string) => {
@@ -36,7 +46,10 @@ function HomeScreen({ navigation }: any) {
 
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
-      {isFeaturedPropertyLoading || isCityLoading || isSponsorLoading ? (
+      {isFeaturedPropertyLoading ||
+      isAllPropertyLoading ||
+      isCityLoading ||
+      isSponsorLoading ? (
         <LoadingSpinner />
       ) : null}
       <View style={styles.container}>
@@ -55,7 +68,7 @@ function HomeScreen({ navigation }: any) {
           }}
         >
           <View>
-            <Text style={styles.header}>{t("HOME.CITIES")}</Text>
+            <Text style={styles.header}>{t("HOME.POPULAR_CITIES")}</Text>
             <ScrollView
               style={styles.cityContainer}
               contentContainerStyle={{
@@ -64,8 +77,8 @@ function HomeScreen({ navigation }: any) {
               horizontal
               showsHorizontalScrollIndicator={false}
             >
-              {cities &&
-                cities.cities?.map((city: CityI) => (
+              {popularCities &&
+                popularCities.popularCities?.map((city: CityI) => (
                   <City
                     key={city.label}
                     {...city}
@@ -76,8 +89,32 @@ function HomeScreen({ navigation }: any) {
           </View>
           <View style={styles.propertiesContainer}>
             <View style={styles.propertiesHeaders}>
+              <Text style={styles.header}>{t("HOME.FEATURED_PROPERTIES")}</Text>
+            </View>
+            <ScrollView
+              style={styles.propertyContainer}
+              contentContainerStyle={{
+                paddingBottom: dpx(10),
+                paddingRight: dpx(20),
+              }}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              {featuredProperties &&
+                featuredProperties.featuredApartments.map(
+                  (apart: ApartmentI) => (
+                    <View key={apart.id} style={styles.property}>
+                      <Property apartment={apart} />
+                    </View>
+                  )
+                )}
+            </ScrollView>
+          </View>
+          {/* All Properties */}
+          <View style={styles.allPropertiesContainer}>
+            <View style={styles.propertiesHeaders}>
               <Text style={[styles.header, styles.featuredPropertiesHeader]}>
-                {t("HOME.FEATURED_PROPERTIES")}
+                {t("HOME.ALL_PROPERTIES")}
               </Text>
               <TouchableOpacity
                 onPress={() => {
@@ -99,16 +136,15 @@ function HomeScreen({ navigation }: any) {
               horizontal
               showsHorizontalScrollIndicator={false}
             >
-              {featuredProperties &&
-                featuredProperties.featuredApartments.map(
-                  (apart: ApartmentI) => (
-                    <View key={apart.id} style={styles.property}>
-                      <Property apartment={apart} />
-                    </View>
-                  )
-                )}
+              {allProperties &&
+                allProperties.apartments.map((apart: ApartmentI) => (
+                  <View key={apart.id} style={styles.property}>
+                    <Property apartment={apart} />
+                  </View>
+                ))}
             </ScrollView>
           </View>
+
           <View style={styles.sponsorContainer}>
             <Text style={styles.header}>{t("HOME.SPONSORS")}</Text>
             <ScrollView
@@ -155,6 +191,9 @@ const styles = StyleSheet.create({
     marginLeft: dpx(20),
   },
   propertiesContainer: {
+    marginTop: dpx(30),
+  },
+  allPropertiesContainer: {
     marginTop: dpx(20),
   },
   propertiesHeaders: {
@@ -176,13 +215,12 @@ const styles = StyleSheet.create({
     marginTop: dpx(10),
     overflow: "visible",
   },
-
   property: {
     width: dpx(270),
     minHeight: dpx(270),
     marginLeft: dpx(20),
   },
   sponsorContainer: {
-    marginTop: dpx(10),
+    marginTop: dpx(20),
   },
 });

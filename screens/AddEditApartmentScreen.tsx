@@ -422,7 +422,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
               ref_address.current?.focus();
             }
           }}
-          items={cities.cities}
+          items={cities?.cities || []}
           style={pickerSelectStyles}
           onDonePress={() => ref_address.current?.focus()}
         />

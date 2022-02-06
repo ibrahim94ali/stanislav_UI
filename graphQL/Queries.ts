@@ -139,6 +139,28 @@ export const GET_APARTMENT_BY_ID = gql`
   }
 `;
 
+export const GET_APARTMENTS_FOR_MAPS = gql`
+  query GetApartmentsForMaps(
+    $westLng: Float!
+    $southLat: Float!
+    $eastLng: Float!
+    $northLat: Float!
+  ) {
+    getApartmentsForMaps(
+      westLng: $westLng
+      southLat: $southLat
+      eastLng: $eastLng
+      northLat: $northLat
+    ) {
+      id
+      title
+      price
+      adType
+      geolocation
+    }
+  }
+`;
+
 export const GET_MY_APARTMENTS = gql`
   query MyApartments {
     myApartments {
@@ -276,6 +298,16 @@ export const GET_SEARCHED_APARTMENTS = gql`
 export const GET_CITIES = gql`
   query getCities {
     cities {
+      value
+      label
+      url
+    }
+  }
+`;
+
+export const GET_POPULAR_CITIES = gql`
+  query getPopularCities {
+    popularCities {
       value
       label
       url

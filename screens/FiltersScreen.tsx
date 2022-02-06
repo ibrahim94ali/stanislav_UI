@@ -197,7 +197,7 @@ const FiltersScreen = ({ navigation }: any) => {
             onValueChange={(itemValue: CityType | undefined) => {
               setSelectedCity(itemValue);
             }}
-            items={cities.cities}
+            items={cities?.cities || []}
             style={pickerSelectStyles}
           />
         </View>

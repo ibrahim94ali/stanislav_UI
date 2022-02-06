@@ -22,7 +22,9 @@ export default {
     HOME: {
       SEARCH_PROPERTY: "Kërko postime",
       CITIES: "Qytetet",
+      POPULAR_CITIES: "Qytetet popullore",
       FEATURED_PROPERTIES: "Postimet e sponsorizuara",
+      ALL_PROPERTIES: "Të Gjitha Postimet",
       SEE_ALL: "Shiko gjithcka",
       SPONSORS: "Sponsorët",
     },

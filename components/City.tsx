@@ -1,11 +1,10 @@
-import { useReactiveVar } from "@apollo/client";
 import React from "react";
 import { ImageBackground, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { CityType, SearchFiltersI } from "../interfaces";
-import { filtersVar, resetFilters, setFilters } from "../Store";
+import { resetFilters, setFilters } from "../Store";
 
 interface Props {
   label: string;
@@ -15,7 +14,6 @@ interface Props {
 }
 
 const City = (props: Props) => {
-  const filters = useReactiveVar(filtersVar);
   const goToCity = () => {
     resetFilters();
     const newFilters: SearchFiltersI = {
@@ -51,7 +49,7 @@ const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
     alignItems: "center",
-    width: dpx(250),
+    width: dpx(270),
     height: dpx(120),
     marginLeft: dpx(20),
 

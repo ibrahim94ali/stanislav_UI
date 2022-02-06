@@ -26,7 +26,10 @@ const MyFavoriteApartmentsScreen = ({ navigation }: any) => {
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>{t("PROFILE.FAV_APT")}</Text>
+        <Text style={styles.header}>
+          {t("PROFILE.FAV_APT")}
+          {myFavApartments && ` (${myFavApartments.favorites?.length})`}
+        </Text>
         <View style={{ width: dpx(40) }}></View>
       </Header>
 

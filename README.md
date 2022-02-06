@@ -1,16 +1,14 @@
 TODO:
 
+- Show price / m2 on UI only
 - Setup links to be universal links, update links
 - Add old share icon back with universal link
 - Apollo Cache, combine data for apartments with ids
 - Remove unnecessary requested data in queries and mutations
 - Update API with better mongoose calls
-- Fix bug in first time entering, language is english even its different
-- ApartmentDetailsScreen to work with cached data
 - Improve forms
 - Upload API to Vercel?
 - Maps filters
-- Maps gather data based on geolocation boundaries
 
 ---
 

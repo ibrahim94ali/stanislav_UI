@@ -22,7 +22,9 @@ export default {
     HOME: {
       SEARCH_PROPERTY: "Search Property",
       CITIES: "Cities",
+      POPULAR_CITIES: "Popular Cities",
       FEATURED_PROPERTIES: "Featured Properties",
+      ALL_PROPERTIES: "All Properties",
       SEE_ALL: "See all",
       SPONSORS: "Sponsors",
     },
