@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  ImageBackground,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { ApartmentI } from "../interfaces";
@@ -31,10 +26,10 @@ const Property = ({
       }
     >
       <View style={styles.photo}>
-        <ImageBackground
+        <Image
           source={{ uri: apartment.photos[0] }}
           style={{ width: "100%", height: "100%" }}
-        ></ImageBackground>
+        />
       </View>
       <PropertyDetails apartment={apartment} />
     </TouchableOpacity>

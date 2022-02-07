@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, Linking, StyleSheet } from "react-native";
+import { Image, Linking, StyleSheet } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { dpx } from "../constants/Spacings";
 
@@ -15,7 +15,7 @@ const Sponsor = (props: Props) => {
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToSponsor()}>
-      <ImageBackground
+      <Image
         source={{ uri: props.logoUrl }}
         style={{
           width: "100%",
@@ -26,7 +26,7 @@ const Sponsor = (props: Props) => {
           borderBottomRightRadius: dpx(10),
           overflow: "hidden",
         }}
-      ></ImageBackground>
+      />
     </TouchableOpacity>
   );
 };

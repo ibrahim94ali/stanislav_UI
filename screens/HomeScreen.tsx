@@ -34,6 +34,7 @@ function HomeScreen({ navigation }: any) {
       variables: {
         limit: 10,
       },
+      fetchPolicy: "no-cache",
     }
   );
   const { data: popularCities, loading: isCityLoading } =

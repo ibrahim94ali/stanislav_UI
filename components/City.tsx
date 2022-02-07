@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, StyleSheet, Text } from "react-native";
+import { Image, StyleSheet, Text } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
@@ -24,7 +24,7 @@ const City = (props: Props) => {
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => goToCity()}>
-      <ImageBackground
+      <Image
         source={{ uri: props.url }}
         style={{
           width: "100%",
@@ -37,7 +37,7 @@ const City = (props: Props) => {
           overflow: "hidden",
           opacity: 0.5,
         }}
-      ></ImageBackground>
+      />
       <Text style={styles.title}>{props.label}</Text>
     </TouchableOpacity>
   );

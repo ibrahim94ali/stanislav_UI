@@ -61,7 +61,7 @@ const ApartmentListScreen = (props: Props) => {
     variables: {
       q: q,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       setApartments(data.searchedApartments);
     },
@@ -75,7 +75,7 @@ const ApartmentListScreen = (props: Props) => {
       ...filters,
       limit: DATA_LIMIT,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       setApartments(data.apartments);
     },

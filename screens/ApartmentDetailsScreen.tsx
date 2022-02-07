@@ -80,6 +80,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       variables: {
         id,
       },
+      fetchPolicy: "no-cache",
     });
 
   useEffect(() => {

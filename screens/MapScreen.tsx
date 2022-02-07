@@ -27,7 +27,7 @@ const MapScreen = ({ navigation }: any) => {
       eastLng: 21.69999998062849,
       northLat: 42.55022659900675,
     },
-    fetchPolicy: "network-only",
+    fetchPolicy: "no-cache",
   });
 
   const handleRegionChange = (region: Region) => {

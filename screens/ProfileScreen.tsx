@@ -32,7 +32,7 @@ function ProfileScreen({ navigation }: any) {
 
   const handleLogout = async () => {
     setUser(null);
-    client.resetStore();
+    await client.clearStore();
   };
 
   const onLangValueChange = (lang: string) => {
