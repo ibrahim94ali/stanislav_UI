@@ -9,12 +9,16 @@ import mk from "./mk";
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
   .init({
+    compatibilityJSON: "v3",
     resources: { en, tr, sq, mk },
-    lng: Localization.locale,
+    lng: Localization.locale?.split("-")[0],
     fallbackLng: "en",
 
     interpolation: {
       escapeValue: false,
+    },
+    react: {
+      useSuspense: false,
     },
   });
 

@@ -18,11 +18,14 @@ const Property = ({
     <TouchableOpacity
       style={styles.container}
       onPress={() =>
-        navigation.navigate("ApartmentDetailsScreen", {
-          id: apartment.id,
-          apartmentParamData: apartment,
-          showActions,
-        })
+        navigation.navigate(
+          "ApartmentDetailsScreen" as never,
+          {
+            id: apartment.id,
+            apartmentParamData: apartment,
+            showActions,
+          } as never
+        )
       }
     >
       <View style={styles.photo}>
