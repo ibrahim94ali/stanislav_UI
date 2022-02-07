@@ -38,8 +38,10 @@ import { useTranslation } from "react-i18next";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { customMapStyle } from "../constants/googleMapsStyle";
 import { userVar } from "../Store";
-import moment from "moment";
-import "moment/min/locales";
+import format from "date-fns/format";
+import mk from "date-fns/locale/mk";
+import sq from "date-fns/locale/sq";
+import tr from "date-fns/locale/tr";
 import QRCode from "react-native-qrcode-svg";
 import * as WebBrowser from "expo-web-browser";
 
@@ -91,8 +93,6 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       setIsFav(apartmentData.getApartmentById.isFavorite);
     }
   }, [apartmentData]);
-
-  moment.locale(i18n.language);
 
   const user = useReactiveVar(userVar);
 
@@ -534,7 +534,16 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
               {t("APARTMENT_DETAILS.CREATED_AT")}
             </Text>
             <Text style={styles.date}>
-              {moment(apartment.createdAt).format("LL")}
+              {format(new Date(apartment.createdAt), "dd MMMM yyyy", {
+                locale:
+                  i18n.language === "tr"
+                    ? tr
+                    : i18n.language === "sq"
+                    ? sq
+                    : i18n.language === "mk"
+                    ? mk
+                    : undefined,
+              })}
             </Text>
           </View>
           <View style={styles.qrCodeContainer}>
