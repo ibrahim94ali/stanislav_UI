@@ -139,7 +139,12 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       return;
     }
 
-    const RESIZE_RATIO = result.width > 800 ? 800 / result.width : 1;
+    const RESIZE_RATIO =
+      result.height > 800
+        ? 800 / result.height
+        : result.width > 600
+        ? 600 / result.width
+        : 1;
 
     const manipResult = await ImageManipulator.manipulateAsync(result.uri, [
       {
