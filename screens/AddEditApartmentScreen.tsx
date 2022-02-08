@@ -47,7 +47,11 @@ import RNPickerSelect from "react-native-picker-select";
 import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { GET_CITIES } from "../graphQL/Queries";
+import {
+  GET_APARTMENTS,
+  GET_CITIES,
+  GET_MY_APARTMENTS,
+} from "../graphQL/Queries";
 
 const PHOTO_UPLOAD_LIMIT = 10;
 
@@ -151,34 +155,14 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
   const [addApartment, { loading: loadingNewApartment }] = useMutation(
     ADD_APARTMENT,
     {
-      update(cache, { data }) {
-        if (data) {
-          cache.reset();
-        }
-      },
+      refetchQueries: [GET_MY_APARTMENTS, GET_APARTMENTS],
     }
   );
 
   const [updateApartment, { loading: loadingUpatedApartment }] = useMutation(
     UPDATE_APARTMENT,
     {
-      update(cache, { data }) {
-        const myUpdatedApartment: ApartmentI = data?.updateApartment;
-
-        if (!myUpdatedApartment) return;
-
-        cache.writeFragment({
-          id: `Apartment:${myUpdatedApartment.id}`,
-          fragment: gql`
-            fragment id on Apartment {
-              id
-            }
-          `,
-          data: {
-            ...myUpdatedApartment,
-          },
-        });
-      },
+      refetchQueries: [GET_MY_APARTMENTS, GET_APARTMENTS],
     }
   );
 

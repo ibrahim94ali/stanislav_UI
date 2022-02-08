@@ -25,7 +25,12 @@ import {
   REMOVE_FAV_APARTMENT,
 } from "../graphQL/Mutations";
 import { dpx } from "../constants/Spacings";
-import { GET_APARTMENT_BY_ID, GET_FAV_APARTMENTS } from "../graphQL/Queries";
+import {
+  GET_APARTMENTS,
+  GET_APARTMENT_BY_ID,
+  GET_FAV_APARTMENTS,
+  GET_MY_APARTMENTS,
+} from "../graphQL/Queries";
 import LoadingSpinner from "../components/LoadingSpinner";
 import PropertyDetails from "../components/PropertyDetails";
 import IconButton from "../components/IconButton";
@@ -82,7 +87,6 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
       variables: {
         id,
       },
-      fetchPolicy: "no-cache",
     });
 
   useEffect(() => {
@@ -184,16 +188,7 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
 
   const [deleteApartment, { data: deletedApartment, loading: loadingDelete }] =
     useMutation(DELETE_APARTMENT, {
-      update(cache, { data }) {
-        const myDeletedApartmentId: string = data?.deleteApartment.id;
-
-        if (!myDeletedApartmentId) return;
-
-        cache.evict({
-          id: `Apartment:${myDeletedApartmentId}`,
-        });
-        cache.gc();
-      },
+      refetchQueries: [GET_MY_APARTMENTS, GET_APARTMENTS],
     });
 
   const handleFavorite = () => {

@@ -61,7 +61,6 @@ const ApartmentListScreen = (props: Props) => {
     variables: {
       q: q,
     },
-    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       setApartments(data.searchedApartments);
     },
@@ -75,7 +74,6 @@ const ApartmentListScreen = (props: Props) => {
       ...filters,
       limit: DATA_LIMIT,
     },
-    fetchPolicy: "no-cache",
     onCompleted: (data) => {
       setApartments(data.apartments);
     },
@@ -137,7 +135,7 @@ const ApartmentListScreen = (props: Props) => {
 
     const isScrollToBottom =
       e.nativeEvent.layoutMeasurement.height + e.nativeEvent.contentOffset.y >=
-      e.nativeEvent.contentSize.height - 500;
+      e.nativeEvent.contentSize.height - 1000;
 
     const resultsLength = apartments.length;
 
