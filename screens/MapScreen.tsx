@@ -1,6 +1,6 @@
 import { useQuery } from "@apollo/client";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { StyleSheet, View, Dimensions, Text, Platform } from "react-native";
 import MapView, {
@@ -17,24 +17,75 @@ import { formatPrice } from "../helperMethods";
 import { AdType, ApartmentI } from "../interfaces";
 import LoadingSpinner from "../components/LoadingSpinner";
 
+interface MapRegionCoordinates {
+  westLng: number;
+  southLat: number;
+  eastLng: number;
+  northLat: number;
+}
+
+const initialRegionForMap = {
+  latitude: 41.8,
+  longitude: 21.2,
+  latitudeDelta: 1,
+  longitudeDelta: 1,
+};
+
+const initialRegionCoordinates = {
+  westLng: 20.69999970495701,
+  southLat: 41.04483366347347,
+  eastLng: 21.69999998062849,
+  northLat: 42.55022659900675,
+};
+
 const MapScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
+
+  const [regionCoordinates, setRegionCoordinates] =
+    useState<MapRegionCoordinates>(() => initialRegionCoordinates);
+
   const { data, loading, refetch } = useQuery(GET_APARTMENTS_FOR_MAPS, {
     variables: {
-      // Initial rectangle based on initialRegion
-      westLng: 20.69999970495701,
-      southLat: 41.04483366347347,
-      eastLng: 21.69999998062849,
-      northLat: 42.55022659900675,
+      ...initialRegionCoordinates,
     },
     fetchPolicy: "no-cache",
   });
+
+  useEffect(() => {
+    const blurSubscription = navigation.addListener("blur", () => {
+      refetch({
+        westLng: 0,
+        southLat: 0,
+        eastLng: 0,
+        northLat: 0,
+      });
+    });
+
+    const focusSubscription = navigation.addListener("focus", () => {
+      refetch({
+        ...regionCoordinates,
+      });
+    });
+
+    return () => {
+      blurSubscription();
+      focusSubscription();
+    };
+  }, [navigation]);
 
   const handleRegionChange = (region: Region) => {
     const westLng = region.longitude - region.longitudeDelta / 2; // westLng - min lng
     const southLat = region.latitude - region.latitudeDelta / 2; // southLat - min lat
     const eastLng = region.longitude + region.longitudeDelta / 2; // eastLng - max lng
     const northLat = region.latitude + region.latitudeDelta / 2; // northLat - max lat
+
+    setRegionCoordinates({
+      westLng,
+      southLat,
+      eastLng,
+      northLat,
+    });
+
     refetch({
       westLng,
       southLat,
@@ -53,12 +104,7 @@ const MapScreen = ({ navigation }: any) => {
           provider={PROVIDER_GOOGLE}
           customMapStyle={customMapStyle}
           onRegionChangeComplete={handleRegionChange}
-          initialRegion={{
-            latitude: 41.8,
-            longitude: 21.2,
-            latitudeDelta: 1,
-            longitudeDelta: 1,
-          }}
+          initialRegion={initialRegionForMap}
         >
           {data?.getApartmentsForMaps?.map((apartment: ApartmentI) => (
             <Marker
