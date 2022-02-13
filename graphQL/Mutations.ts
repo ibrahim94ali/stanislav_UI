@@ -5,20 +5,24 @@ export const REGISTER_USER = gql`
     $email: String!
     $password: String!
     $name: String!
-    $phone: String!
+    $phoneNumber: PhoneNumberInput!
     $type: String!
   ) {
     register(
       email: $email
       password: $password
       name: $name
-      phone: $phone
+      phoneNumber: $phoneNumber
       type: $type
     ) {
       id
       email
       token
-      phone
+      phoneNumber {
+        countryCode
+        countryCodeName
+        shortPhoneNumber
+      }
       name
       type
       verified
@@ -27,11 +31,19 @@ export const REGISTER_USER = gql`
 `;
 
 export const UPDATE_USER = gql`
-  mutation UpdateUser($name: String!, $phone: String!, $type: String!) {
-    updateUser(name: $name, phone: $phone, type: $type) {
+  mutation UpdateUser(
+    $name: String!
+    $phoneNumber: PhoneNumberInput!
+    $type: String!
+  ) {
+    updateUser(name: $name, phoneNumber: $phoneNumber, type: $type) {
       id
       email
-      phone
+      phoneNumber {
+        countryCode
+        countryCodeName
+        shortPhoneNumber
+      }
       name
       type
       verified
@@ -44,7 +56,11 @@ export const UPDATE_PASSWORD = gql`
     updatePassword(password: $password, newPassword: $newPassword) {
       id
       email
-      phone
+      phoneNumber {
+        countryCode
+        countryCodeName
+        shortPhoneNumber
+      }
       name
       type
       verified
@@ -64,7 +80,11 @@ export const LOGIN_USER = gql`
       id
       email
       token
-      phone
+      phoneNumber {
+        countryCode
+        countryCodeName
+        shortPhoneNumber
+      }
       name
       verified
       type
@@ -135,7 +155,10 @@ export const ADD_APARTMENT = gql`
       isWheelChairAccessible
       owner {
         name
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         email
         verified
         type
@@ -211,7 +234,10 @@ export const UPDATE_APARTMENT = gql`
       isWheelChairAccessible
       owner {
         name
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         email
         verified
         type
@@ -237,7 +263,10 @@ export const ADD_FAV_APARTMENT = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         verified
         type
       }
@@ -273,7 +302,10 @@ export const REMOVE_FAV_APARTMENT = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         verified
         type
       }

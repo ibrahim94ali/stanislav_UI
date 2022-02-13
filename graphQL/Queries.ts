@@ -53,7 +53,10 @@ export const GET_APARTMENTS = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         type
         verified
       }
@@ -89,7 +92,10 @@ export const GET_APARTMENT_BY_ID = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         type
         verified
       }
@@ -193,7 +199,10 @@ export const GET_FAV_APARTMENTS = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         type
         verified
       }
@@ -228,7 +237,10 @@ export const GET_FEATURED_APARTMENTS = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         type
         verified
       }
@@ -245,7 +257,10 @@ export const GET_SEARCHED_APARTMENTS = gql`
       owner {
         name
         email
-        phone
+        phoneNumber {
+          countryCode
+          shortPhoneNumber
+        }
         type
         verified
       }

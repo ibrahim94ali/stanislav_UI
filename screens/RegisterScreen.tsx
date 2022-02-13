@@ -15,7 +15,7 @@ import {
   UPDATE_PASSWORD,
   UPDATE_USER,
 } from "../graphQL/Mutations";
-import { UserI } from "../interfaces";
+import PhoneInput from "react-native-phone-number-input";
 import Colors from "../constants/Colors";
 import { dpx } from "../constants/Spacings";
 import { ScrollView } from "react-native-gesture-handler";
@@ -48,14 +48,20 @@ export default function RegisterScreen({
   const [password, onPasswordChange] = useState("");
   const [confirmPassword, onConfirmPasswordChange] = useState("");
   const [name, onNameChange] = useState(isEditing && user ? user.name : "");
-  const [phone, onPhoneChange] = useState(isEditing && user ? user.phone : "");
+  const [phone, onPhoneChange] = useState(
+    isEditing && user ? user.phoneNumber.shortPhoneNumber : ""
+  );
+  const [phoneCountryCode] = useState(
+    isEditing && user ? user.phoneNumber.countryCodeName : "MK"
+  );
   const [type, setType] = useState(isEditing && user ? user.type : "person");
 
   //refs for inputs
-  const ref_password = useRef<TextInput>();
-  const ref_confirmPassword = useRef<TextInput>();
-  const ref_name = useRef<TextInput>();
-  const ref_phone = useRef<TextInput>();
+  const ref_password = useRef<TextInput>(null);
+  const ref_confirmPassword = useRef<TextInput>(null);
+  const ref_name = useRef<TextInput>(null);
+  const ref_phoneInput = useRef<PhoneInput>(null);
+  const ref_phoneNumber = useRef<TextInput>(null);
 
   const [createUser, { loading: loadingCreateUser }] =
     useMutation(REGISTER_USER);
@@ -84,11 +90,20 @@ export default function RegisterScreen({
   };
 
   const handleSubmit = () => {
+    if (!ref_phoneInput.current) return;
+
+    const { number } =
+      ref_phoneInput.current.getNumberAfterPossiblyEliminatingZero();
+    const phoneNumber = {
+      countryCode: `+${ref_phoneInput.current.getCallingCode()}`,
+      countryCodeName: ref_phoneInput.current.getCountryCode(),
+      shortPhoneNumber: number,
+    };
     if (isEditing) {
       updateUser({
         variables: {
           name: name,
-          phone: phone,
+          phoneNumber: phoneNumber,
           type: type,
         },
       }).then((data: any) => {
@@ -105,7 +120,7 @@ export default function RegisterScreen({
           email: email,
           password: password,
           name: name,
-          phone: phone,
+          phoneNumber: phoneNumber,
           type: type,
         },
       }).then((data: any) => {
@@ -156,7 +171,7 @@ export default function RegisterScreen({
           autoCapitalize="none"
           returnKeyType="next"
           onSubmitEditing={() => ref_confirmPassword.current?.focus()}
-          ref={ref_password as any}
+          ref={ref_password}
         ></TextInput>
       )}
       {!isEditing && (
@@ -171,7 +186,7 @@ export default function RegisterScreen({
           autoCapitalize="none"
           returnKeyType="next"
           onSubmitEditing={() => ref_name.current?.focus()}
-          ref={ref_confirmPassword as any}
+          ref={ref_confirmPassword}
         ></TextInput>
       )}
       <TextInput
@@ -182,20 +197,30 @@ export default function RegisterScreen({
         placeholderTextColor={Colors.gray}
         textContentType="name"
         returnKeyType="next"
-        onSubmitEditing={() => ref_phone.current?.focus()}
-        ref={ref_name as any}
+        onSubmitEditing={() => ref_phoneNumber.current?.focus()}
+        ref={ref_name}
       ></TextInput>
-      <TextInput
-        style={styles.input}
-        onChangeText={(text) => onPhoneChange(text)}
-        value={phone}
-        placeholder={t("REGISTER.PHONE") + " *"}
-        placeholderTextColor={Colors.gray}
-        textContentType="telephoneNumber"
-        keyboardType="number-pad"
-        returnKeyType="done"
-        ref={ref_phone as any}
-      ></TextInput>
+      <View style={styles.phoneWrapper}>
+        <PhoneInput
+          ref={ref_phoneInput}
+          defaultCode={phoneCountryCode as any}
+          defaultValue={phone}
+          layout="first"
+          containerStyle={styles.phoneContainer}
+          textContainerStyle={styles.phoneTextContainer}
+          codeTextStyle={styles.phoneCodeTextStyle}
+          textInputStyle={styles.phoneTextInputStyle}
+          textInputProps={{
+            placeholder: "xxxxxxxx",
+            keyboardType: "phone-pad",
+            // @ts-ignore
+            ref: ref_phoneNumber,
+          }}
+          onChangeFormattedText={(text) => {
+            onPhoneChange(text);
+          }}
+        />
+      </View>
       <View style={styles.optionContainer}>
         <FilterOptions
           title={t("REGISTER.TYPE")}
@@ -215,7 +240,8 @@ export default function RegisterScreen({
             (!isEditing && !email) ||
             (!isEditing && !password) ||
             !name ||
-            phone.length < 9 ||
+            !ref_phoneInput.current?.isValidNumber(phone) ||
+            (!isEditing && password.length < 6) ||
             (!isEditing && password !== confirmPassword)
           }
         />
@@ -250,7 +276,7 @@ export default function RegisterScreen({
             autoCapitalize="none"
             returnKeyType="next"
             onSubmitEditing={() => ref_confirmPassword.current?.focus()}
-            ref={ref_password as any}
+            ref={ref_password}
           ></TextInput>
           <TextInput
             style={styles.input}
@@ -262,7 +288,7 @@ export default function RegisterScreen({
             textContentType="password"
             autoCapitalize="none"
             returnKeyType="done"
-            ref={ref_confirmPassword as any}
+            ref={ref_confirmPassword}
           ></TextInput>
           <View style={styles.buttonContainer}>
             <Button
@@ -270,7 +296,10 @@ export default function RegisterScreen({
               color={Colors.primary}
               onPress={handlePasswordSubmit}
               disabled={
-                !oldPassword || !password || password !== confirmPassword
+                !oldPassword ||
+                !password ||
+                password.length < 6 ||
+                password !== confirmPassword
               }
             />
           </View>
@@ -333,6 +362,30 @@ const styles = StyleSheet.create({
     marginBottom: dpx(10),
     fontFamily: "Montserrat_400Regular",
     fontSize: dpx(14),
+  },
+  phoneWrapper: {
+    width: "90%",
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
+    borderRadius: dpx(10),
+    marginBottom: dpx(10),
+    overflow: "hidden",
+  },
+  phoneContainer: {
+    backgroundColor: Colors.bg,
+  },
+  phoneTextContainer: {
+    backgroundColor: Colors.bg,
+  },
+  phoneTextInputStyle: {
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
+    color: Colors.black,
+  },
+  phoneCodeTextStyle: {
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
+    color: Colors.black,
   },
   optionContainer: {
     alignSelf: "stretch",

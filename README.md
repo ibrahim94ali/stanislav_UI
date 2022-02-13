@@ -1,6 +1,5 @@
 TODO:
 
-- Improve forms and validations
 - Add a screen to let users enter you a message
 - Add a screen to let users apply for sponsors or sponsored properties
 - Remove user deletion, make it deactive and let user know that they can sign in back in 1 month and only after 1 month their data will be deleted

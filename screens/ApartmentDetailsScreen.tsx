@@ -566,19 +566,22 @@ const ApartmentDetailsScreen = ({ route, navigation }: any) => {
                 <View style={styles.personIcons}>
                   <IconButton
                     handlePress={() =>
-                      Linking.openURL(`tel:${apartment.owner?.phone}`)
+                      Linking.openURL(
+                        `tel:${apartment.owner?.phoneNumber.countryCode} ${apartment.owner?.phoneNumber.shortPhoneNumber}`
+                      )
                     }
                   >
                     <Entypo name="phone" color={Colors.black} size={dpx(22)} />
                   </IconButton>
-                  {apartment.owner?.phone && (
+                  {apartment.owner?.phoneNumber && (
                     <View style={{ marginLeft: dpx(10) }}>
                       <IconButton
                         handlePress={() =>
                           Linking.openURL(
-                            `https://wa.me/389${apartment.owner?.phone.slice(
-                              -8
-                            )}`
+                            `https://wa.me/${apartment.owner?.phoneNumber.countryCode.replace(
+                              "+",
+                              ""
+                            )}${apartment.owner?.phoneNumber.shortPhoneNumber}`
                           )
                         }
                       >

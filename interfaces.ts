@@ -29,7 +29,11 @@ export interface UserI {
   id: string;
   email: string;
   name: string;
-  phone: string;
+  phoneNumber: {
+    countryCode: string;
+    countryCodeName: string;
+    shortPhoneNumber: string;
+  };
   verified: boolean;
   type: string;
   token?: string;
