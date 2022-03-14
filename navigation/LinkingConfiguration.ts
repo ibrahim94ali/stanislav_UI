@@ -13,8 +13,8 @@ const linking: LinkingOptions<RootStackParamList> = {
             screens: {
               HomeScreen: "home",
               FiltersScreen: "filters",
-              ApartmentListScreen: "propertyList",
-              ApartmentDetailsScreen: "propertyDetails",
+              ApartmentListScreen: "property-list",
+              ApartmentDetailsScreen: "property-details",
             },
           },
           Map: {
@@ -29,9 +29,9 @@ const linking: LinkingOptions<RootStackParamList> = {
               ProfileScreen: "profile",
               RegisterScreen: "register",
               LoginScreen: "login",
-              AddEditApartmentScreen: "addEditProperty",
-              MyApartmentsScreen: "myProperties",
-              MyFavoriteApartmentsScreen: "myFavoriteProperties",
+              AddEditApartmentScreen: "add-edit-property",
+              MyApartmentsScreen: "my-properties",
+              MyFavoriteApartmentsScreen: "my-favorite-properties",
             },
           },
         },

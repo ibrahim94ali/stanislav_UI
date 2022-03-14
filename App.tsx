@@ -105,10 +105,12 @@ export default function App() {
   const awsUri =
     "http://stanislav-env-2.eba-ada5zbfj.eu-central-1.elasticbeanstalk.com/graphql";
 
+  const webApi = "https://www.stanislove.mk/api/graphql";
+
   const link = from([
     errorLink,
     createUploadLink({
-      uri: herokuUri,
+      uri: webApi,
     }),
   ]);
 
