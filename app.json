@@ -51,7 +51,7 @@
             {
               "scheme": "https",
               "host": "*.stanislove.mk",
-              "pathPrefix": "/property-details"
+              "pathPrefix": ".*"
             }
           ],
           "category": ["BROWSABLE", "DEFAULT"]
