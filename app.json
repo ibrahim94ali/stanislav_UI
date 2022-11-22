@@ -3,7 +3,7 @@
     "name": "Stanislove",
     "slug": "stanislove",
     "description": "Stanisove is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "orientation": "portrait",
     "icon": "./assets/images/s_icon_bg.png",
     "scheme": "stanislove",
@@ -14,7 +14,8 @@
       "backgroundColor": "#F6F1EB"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/69a50e43-1f28-435c-b18e-7928a8ad1e03"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -27,12 +28,13 @@
     },
     "android": {
       "package": "com.ibrahimaliu.stanislove",
-      "versionCode": 12,
+      "versionCode": 13,
       "permissions": [
-        "ACCESS_COARSE_LOCATION",
-        "ACCESS_FINE_LOCATION",
-        "FOREGROUND_SERVICE",
-        "READ_EXTERNAL_STORAGE"
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.RECORD_AUDIO"
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/s_adaptive_icon.png",
@@ -68,6 +70,14 @@
           "photosPermission": "The app accesses your photos to let you share your property photos when adding a new property."
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "69a50e43-1f28-435c-b18e-7928a8ad1e03"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
+    }
   }
 }
