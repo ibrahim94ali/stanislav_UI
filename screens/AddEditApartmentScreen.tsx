@@ -1,5 +1,5 @@
-import { gql, useMutation, useQuery } from "@apollo/client";
-import React, { useEffect, useRef, useState } from "react";
+import { useMutation, useQuery } from "@apollo/client";
+import React, { useRef, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -98,7 +98,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
     itemOnEdit ? itemOnEdit.roomCount : undefined
   );
   const [geolocation, setGeolocation] = useState<number[]>(
-    itemOnEdit ? itemOnEdit.geolocation : [0, 0]
+    itemOnEdit ? itemOnEdit.geolocation : [41.9960504, 21.4307344]
   );
   const [amenities, setAmenities] = useState<string[]>(
     itemOnEdit ? itemOnEdit.amenities : []
@@ -112,6 +112,8 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [fullScreenPhotoIndex, setFullScreenPhotoIndex] = useState(0);
+
+  const pageTitle = itemOnEdit ? t("ADD_EDIT_APT.EDIT") : t("ADD_EDIT_APT.ADD");
 
   //refs for inputs
   const ref_description = useRef<TextInput>();
@@ -130,14 +132,16 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       return;
     }
 
-    let result = await ImagePicker.launchImageLibraryAsync({
+    let pickedImages = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 0.3,
     });
 
-    if (result.cancelled) {
+    if (pickedImages?.canceled || !pickedImages?.assets?.length) {
       return;
     }
+
+    const result = pickedImages.assets[0];
 
     const RESIZE_RATIO =
       result.height > 800
@@ -170,25 +174,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
       refetchQueries: [GET_MY_APARTMENTS, GET_APARTMENTS],
     }
   );
-
-  //setting user location as default location
-  useEffect(() => {
-    (async () => {
-      if (itemOnEdit) {
-        return;
-      }
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        Alert.alert(t("PERMISSIONS.SORRY"), t("PERMISSIONS.ADDRESS"));
-        return;
-      }
-
-      let location = await Location.getCurrentPositionAsync({});
-      if (location?.coords) {
-        setGeolocation([location.coords.latitude, location.coords.longitude]);
-      }
-    })();
-  }, []);
 
   const handleDeletePhotoModal = (index: number, isNew: boolean) => {
     Alert.alert(t("DELETE_MODAL.PHOTO_TITLE"), t("DELETE_MODAL.PHOTO_MSG"), [
@@ -291,14 +276,6 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
 
   const attemptGeocodeAsync = async () => {
     if (!address) return;
-
-    const { status: statusLocation } =
-      await Location.requestForegroundPermissionsAsync();
-
-    if (statusLocation !== "granted") {
-      Alert.alert(t("PERMISSIONS.SORRY"), t("PERMISSIONS.ADDRESS"));
-      return;
-    }
 
     try {
       const result = await Location.geocodeAsync(address + `, ${city}`);
@@ -631,9 +608,7 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         <IconButton handlePress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" color={Colors.black} size={dpx(24)} />
         </IconButton>
-        <Text style={styles.header}>
-          {itemOnEdit ? t("ADD_EDIT_APT.EDIT") : t("ADD_EDIT_APT.ADD")}
-        </Text>
+        <Text style={styles.header}>{pageTitle}</Text>
         <IconButton
           handlePress={pickImage}
           disabled={

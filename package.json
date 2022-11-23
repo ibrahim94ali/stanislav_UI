@@ -13,6 +13,11 @@
   "jest": {
     "preset": "jest-expo"
   },
+  "resolutions": {
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.9",
+    "graphql": "15.8.0"
+  },
   "dependencies": {
     "@apollo/client": "^3.5.8",
     "@expo-google-fonts/montserrat": "^0.2.2",
