@@ -2,7 +2,11 @@ import { Dimensions } from "react-native";
 
 const BASE_HEIGHT = 812;
 const DESIGN_WIDTH = 375;
-const { width: viewportWidth } = Dimensions.get("window");
+const { width: viewportWidth, height: viewportHeight } =
+  Dimensions.get("window");
+
+export const width = viewportWidth;
+export const height = viewportHeight;
 
 export const getHeightPercentageOf: (pixels: number) => number = (pixels) =>
   (pixels / BASE_HEIGHT) * 100;

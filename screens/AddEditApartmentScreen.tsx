@@ -37,14 +37,12 @@ import {
 } from "../constants/Selectable";
 import * as ImageManipulator from "expo-image-manipulator";
 import LoadingSpinner from "../components/LoadingSpinner";
-import { dpx } from "../constants/Spacings";
+import { dpx, width } from "../constants/Spacings";
 import Button from "../components/Button";
 import Header from "../components/Header";
 import IconButton from "../components/IconButton";
 import LocationPicker from "../components/LocationPicker";
 import FilterOptions from "../components/FilterOptions";
-import RNPickerSelect from "react-native-picker-select";
-import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -52,6 +50,7 @@ import {
   GET_CITIES,
   GET_MY_APARTMENTS,
 } from "../graphQL/Queries";
+import Selection from "../components/Selection";
 
 const PHOTO_UPLOAD_LIMIT = 10;
 
@@ -378,21 +377,15 @@ const AddEditApartmentScreen = ({ navigation, route }: any) => {
         returnKeyType="next"
       />
 
-      <View style={styles.cityContainer}>
-        <RNPickerSelect
-          placeholder={{}}
-          value={city}
-          onValueChange={(itemValue: CityType) => {
-            setCity(itemValue);
-            if (Platform.OS === "android") {
-              ref_address.current?.focus();
-            }
-          }}
-          items={cities?.cities || []}
-          style={pickerSelectStyles}
-          onDonePress={() => ref_address.current?.focus()}
-        />
-      </View>
+      <Selection
+        value={city}
+        onValueChange={(itemValue: any) => {
+          setCity(itemValue);
+        }}
+        items={cities?.cities || []}
+        labelContainerStyle={styles.cityContainer}
+        labelStyle={styles.cityText}
+      />
 
       <TextInput
         style={styles.input}
@@ -680,9 +673,16 @@ const styles = StyleSheet.create({
     borderRadius: dpx(10),
     borderWidth: 1,
     borderColor: Colors.lightGray,
-    alignSelf: "stretch",
-    marginHorizontal: dpx(20),
+    width: width - dpx(37),
   },
+  cityText: {
+    paddingVertical: dpx(10),
+    paddingLeft: dpx(10),
+    fontFamily: "Montserrat_400Regular",
+    fontSize: dpx(14),
+    color: Colors.black,
+  },
+
   noImageContainer: {
     borderWidth: 1,
     borderStyle: "dashed",

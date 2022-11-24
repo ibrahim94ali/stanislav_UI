@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { StyleSheet, Text, View, Dimensions } from "react-native";
 import MultiSlider from "@ptomasroos/react-native-multi-slider";
 import Colors from "../constants/Colors";
-import { dpx } from "../constants/Spacings";
+import { dpx, width } from "../constants/Spacings";
 import {
   AdType,
   AmenityType,
@@ -21,8 +21,6 @@ import {
   heatingTypes,
   wheelChairAccessibleTypes,
 } from "../constants/Selectable";
-import RNPickerSelect from "react-native-picker-select";
-import { pickerSelectStyles } from "../constants/PickerStyle";
 import { useTranslation } from "react-i18next";
 import { formatPrice } from "../helperMethods";
 import { useQuery, useReactiveVar } from "@apollo/client";
@@ -35,6 +33,7 @@ import FilterOptions from "../components/FilterOptions";
 import Button from "../components/Button";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { filtersVar, setFilters } from "../Store";
+import Selection from "../components/Selection";
 
 const CustomSliderMarker = () => {
   return (
@@ -50,14 +49,6 @@ const FiltersScreen = ({ navigation }: any) => {
   const filters = useReactiveVar(filtersVar);
 
   const { data: cities, loading: isCityLoading } = useQuery(GET_CITIES);
-
-  const placeholder = {
-    label: t("FILTER_OPTIONS.ANY"),
-    color: Colors.gray,
-    value: undefined,
-  };
-
-  const { width: viewportWidth } = Dimensions.get("window");
 
   const [selectedCity, setSelectedCity] = useState<CityType | undefined>(
     filters.city
@@ -191,14 +182,13 @@ const FiltersScreen = ({ navigation }: any) => {
       >
         <Text style={styles.headerFilter}>{t("SEARCH_FORM.CITY")}</Text>
         <View style={styles.cityContainer}>
-          <RNPickerSelect
-            placeholder={placeholder}
-            value={selectedCity}
-            onValueChange={(itemValue: CityType | undefined) => {
+          <Selection
+            value={selectedCity ?? t("FILTER_OPTIONS.ANY")}
+            onValueChange={(itemValue: any) => {
               setSelectedCity(itemValue);
             }}
             items={cities?.cities || []}
-            style={pickerSelectStyles}
+            showAny
           />
         </View>
         <View style={styles.filterContainer}>
@@ -315,7 +305,7 @@ const FiltersScreen = ({ navigation }: any) => {
                 ? filterLimits.maxPrice.rent / 40
                 : filterLimits.maxPrice.purchase / 40
             }
-            sliderLength={viewportWidth * 0.85}
+            sliderLength={width * 0.85}
             customMarker={() => {
               return <CustomSliderMarker />;
             }}
@@ -349,7 +339,7 @@ const FiltersScreen = ({ navigation }: any) => {
             min={0}
             max={filterLimits.maxArea}
             step={10}
-            sliderLength={viewportWidth * 0.85}
+            sliderLength={width * 0.85}
             customMarker={() => {
               return <CustomSliderMarker />;
             }}
@@ -387,7 +377,7 @@ const FiltersScreen = ({ navigation }: any) => {
               min={0}
               max={filterLimits.maxAge}
               step={1}
-              sliderLength={viewportWidth * 0.85}
+              sliderLength={width * 0.85}
               customMarker={() => {
                 return <CustomSliderMarker />;
               }}
@@ -424,7 +414,7 @@ const FiltersScreen = ({ navigation }: any) => {
               min={0}
               max={filterLimits.maxRoom}
               step={1}
-              sliderLength={viewportWidth * 0.85}
+              sliderLength={width * 0.85}
               customMarker={() => {
                 return <CustomSliderMarker />;
               }}
@@ -462,7 +452,7 @@ const FiltersScreen = ({ navigation }: any) => {
               min={0}
               max={filterLimits.maxFloor}
               step={1}
-              sliderLength={viewportWidth * 0.85}
+              sliderLength={width * 0.85}
               values={[minFloor, maxFloor]}
               customMarker={() => {
                 return <CustomSliderMarker />;

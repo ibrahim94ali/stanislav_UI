@@ -3,7 +3,7 @@
     "name": "Stanislove",
     "slug": "stanislove",
     "description": "Stanisove is an app to find you the best houses, apartments, shops, lands, villas for rent and for purchase in North Macedonia. There are tens of useful filters to help you find what you are looking for.",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "orientation": "portrait",
     "icon": "./assets/images/s_icon_bg.png",
     "scheme": "stanislove",
@@ -28,7 +28,7 @@
     },
     "android": {
       "package": "com.ibrahimaliu.stanislove",
-      "versionCode": 14,
+      "versionCode": 15,
       "permissions": ["android.permission.READ_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/s_adaptive_icon.png",

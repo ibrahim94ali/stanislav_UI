@@ -1,19 +1,18 @@
 import * as React from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Colors from "../constants/Colors";
 import { useTranslation } from "react-i18next";
-import RNPickerSelect from "react-native-picker-select";
-import { pickerSelectStyles } from "../constants/PickerStyle";
 import { dpx } from "../constants/Spacings";
 import { useApolloClient, useReactiveVar } from "@apollo/client";
 import Button from "../components/Button";
 import { MaterialIcons } from "@expo/vector-icons";
 import IconButton from "../components/IconButton";
 import Header from "../components/Header";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { setUser, userVar } from "../Store";
+import Selection from "../components/Selection";
 
 function ProfileScreen({ navigation }: any) {
   const { t, i18n } = useTranslation();
@@ -35,37 +34,40 @@ function ProfileScreen({ navigation }: any) {
     await client.clearStore();
   };
 
-  const onLangValueChange = (lang: string) => {
+  const onLangValueChange = async (lang: any) => {
     setSelectedLang(lang);
-    if (Platform.OS === "android") {
-      handleLanguageChange(lang);
-    }
-  };
-
-  const handleLanguageChange = async (lang: string) => {
     i18n.changeLanguage(lang);
     await AsyncStorage.setItem("lang", lang);
   };
 
+  const languageLabel = useCallback(() => {
+    switch (selectedLang) {
+      case "mk":
+        return "Македонски";
+      case "sq":
+        return "Shqip";
+      case "tr":
+        return "Türkçe";
+      default:
+        return "English";
+    }
+  }, [selectedLang]);
+
   return (
     <SafeAreaView edges={["top"]} style={styles.container}>
       <Header>
-        <View style={styles.langContainer}>
-          <RNPickerSelect
-            placeholder={{}}
-            value={selectedLang}
-            onValueChange={onLangValueChange}
-            onClose={() => handleLanguageChange(selectedLang)}
-            itemKey="value"
-            items={[
-              { label: "English", value: "en" },
-              { label: "Македонски", value: "mk" },
-              { label: "Shqip", value: "sq" },
-              { label: "Türkçe", value: "tr" },
-            ]}
-            style={pickerSelectStyles}
-          />
-        </View>
+        <Selection
+          value={languageLabel()}
+          onValueChange={onLangValueChange}
+          labelContainerStyle={styles.langContainer}
+          labelStyle={styles.langItem}
+          items={[
+            { label: "English", value: "en" },
+            { label: "Македонски", value: "mk" },
+            { label: "Shqip", value: "sq" },
+            { label: "Türkçe", value: "tr" },
+          ]}
+        />
         {user && (
           <IconButton handlePress={handleLogout}>
             <MaterialIcons name="logout" color={Colors.black} size={dpx(20)} />
@@ -156,6 +158,12 @@ const styles = StyleSheet.create({
     borderRadius: dpx(10),
     borderWidth: 1,
     borderColor: Colors.lightGray,
+  },
+  langItem: {
+    fontSize: dpx(14),
+    fontFamily: "Montserrat_500Medium",
+    color: Colors.black,
+    padding: dpx(10),
   },
   actions: {
     flex: 1,
