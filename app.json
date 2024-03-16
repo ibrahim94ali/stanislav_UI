@@ -28,7 +28,7 @@
     },
     "android": {
       "package": "com.ibrahimaliu.stanislove",
-      "versionCode": 15,
+      "versionCode": 16,
       "permissions": ["android.permission.READ_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/s_adaptive_icon.png",
